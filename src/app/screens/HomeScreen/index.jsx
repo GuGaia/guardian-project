@@ -39,6 +39,7 @@ export default function Page() {
             <GrdTextInput
               label="E-mail"
               placeholder="example@gmail.com"
+              inputMode="email"
               onChangeText={(value) => {loginForm.email = value}}
             />
             <GrdTextInput
