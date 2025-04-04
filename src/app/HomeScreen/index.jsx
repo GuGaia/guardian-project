@@ -57,7 +57,7 @@ export default function Page() {
             />
             <GrdSolidButton
               label="Entrar"
-              onPress={() => router.push('/screens/ContactList')}
+              onPress={() => router.push('/ContactList')}
               textStyle={styles.loginButtonText}
             />
           </View>
