@@ -1,31 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
-import { theme } from '../../../theme/theme';
-import { globalStyles } from '../../../theme/globalStyles';
+import { theme } from '@/theme/theme';
+import { globalStyles } from '@/theme/globalStyles';
 
-
-export const GrdTextInput = ({ label, placeholder, value: initialValue = '', onChangeText, secureTextEntry = false, ...props }) => {
-    const [text, setText] = useState(initialValue);
-
-    const handleTextChange = (newText) => {
-        setText(newText);
-        if (onChangeText) {
-            onChangeText(newText);
-            console.log(text);
-        }
-    };
-
+export function GrdTextInput({
+    label,
+    ...props 
+}) {
     return (
         <View style={styles.container}>
             <Text style={[globalStyles.label, styles.label]}>{label}</Text>
             <View style={[globalStyles.input, styles.input]}>
                 <TextInput
                     style={globalStyles.inputText}
-                    placeholder={placeholder}
                     placeholderTextColor={theme.colors.grdGray00}
-                    value={text}
-                    onChangeText={handleTextChange}
-                    secureTextEntry={secureTextEntry}
                     {...props}
                 />
             </View>
@@ -35,7 +23,6 @@ export const GrdTextInput = ({ label, placeholder, value: initialValue = '', onC
 
 const styles = StyleSheet.create({
     container: {
-        width: 284,
         flexDirection: 'column',
         justifyContent: 'flex-start',
         gap: 8,
@@ -44,6 +31,7 @@ const styles = StyleSheet.create({
         color: theme.colors.grdOrangeMedium,
     },
     input: {
+        width: '100%',
         height: 48,
     }
 })

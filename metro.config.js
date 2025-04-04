@@ -1,4 +1,5 @@
 const { getDefaultConfig } = require('expo/metro-config');
+const path = require('path');
 
 module.exports = (() => {
   const config = getDefaultConfig(__dirname);
@@ -13,6 +14,10 @@ module.exports = (() => {
     ...resolver,
     assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
     sourceExts: [...resolver.sourceExts, 'svg'],
+    extraNodeModules: {
+      '@': path.resolve(__dirname, './src'),
+      '@assets': path.resolve(__dirname, './assets'),
+    },
   };
 
   return config;

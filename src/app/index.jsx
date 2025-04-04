@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { HomeScreen } from "./src/screens/HomeScreen";
-import { loadFonts } from './src/utils/loadFonts';
+import HomeScreen from "./screens/HomeScreen";
+import { loadFonts } from '../utils/loadFonts';
 
 export default function Page() {
   const [fontsLoaded, setFontsLoaded] = useState(false);

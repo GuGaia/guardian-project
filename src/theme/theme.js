@@ -4,7 +4,7 @@ export const theme = {
     grdOrangeMedium: '#F55F38',
     grdWhite00: '#FFFFFF',
     grdBlack00: '#000000',
-    grdPinkMedium: '#F55F38',
+    grdPinkMedium: '#E01071',
     grdPinkDark: '#C00E5E',
     grdGray00: '#929ea7',
   },

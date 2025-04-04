@@ -9,7 +9,7 @@ export const globalStyles = StyleSheet.create({
   },
   centerContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -46,15 +46,16 @@ export const globalStyles = StyleSheet.create({
 
   // Component styles
   button: {
-    backgroundColor: theme.colors.primary,
+    width: "100%",
+    backgroundColor: 'transparent',
+    borderRadius: theme.borderRadius.lg,
     padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
     alignItems: 'center',
   },
   buttonText: {
-    color: theme.colors.white,
+    color: theme.colors.grdBlack00,
     fontSize: theme.fontSizes.body,
-    fontFamily: theme.fonts.ubuntuMedium,
+    fontFamily: theme.fonts.interRegular,
   },
   card: {
     backgroundColor: theme.colors.white,

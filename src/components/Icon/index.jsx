@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { getIcon } from '../../theme/icons';
+import { getIcon } from '@/theme/icons';
 
 export const Icon = ({ name, size = 24, color, style, ...props }) => {
   const IconComponent = getIcon(name);
