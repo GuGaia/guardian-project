@@ -1,12 +1,14 @@
 // Importação dos ícones SVG
-import GuardianOwl from '@assets/icons/guardian-owl.svg';
+import GuardianOwl from '@assets/icons/guardiaOwlBlue.svg';
 import ArrowLeft from '@assets/icons/arrow-left.svg';
+import GuardianOwlWhite from '@assets/icons/GuardianOwlWhite.svg';
 
 // Objeto com todos os ícones
 export const icons = {
   // Brand
   guardianOwl: GuardianOwl,
   arrowLeft: ArrowLeft,
+  GuardianOwlWhite: GuardianOwlWhite,
 };
 
 // Função auxiliar para obter um ícone
@@ -23,4 +25,5 @@ export const IconTypes = {
   // Brand
   guardianOwl: 'guardianOwl',
   arrowLeft: 'arrowLeft',
+  GuardianOwlWhite: 'GuardianOwlWhite',
 }; 

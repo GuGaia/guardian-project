@@ -1,12 +1,12 @@
 export const theme = {
   colors: {
-    grdOrangeLight: '#FFD7EA',
-    grdOrangeMedium: '#F55F38',
+    grdBlueBackground: '#D9E7FF',
+    grdBlue: '#3573FA',
+    grdBlueLight: '#5C97FF',
     grdWhite00: '#FFFFFF',
     grdBlack00: '#000000',
-    grdPinkMedium: '#E01071',
-    grdPinkDark: '#C00E5E',
-    grdGray00: '#929ea7',
+    grdRed: '#DB1313',
+    grdGray00: '#212023',
   },
   fonts: {
     ubuntuLight: 'Ubuntu-Light',
@@ -17,6 +17,19 @@ export const theme = {
     interRegular: 'Inter-Regular',
     interMedium: 'Inter-Medium',
   },
+  
+  /** 
+  icons: {
+    home: require('@/assets/icons/Home.svg'),
+    guide: require('@/assets/icons/guide.png'),
+    contacts: require('@/assets/icons/contacts.png'),
+    settings: require('@/assets/icons/settings.svg'),
+    guardianOwl: require('@/assets/icons/GuardianOwl.svg'),
+  },  
+   */
+
+
+
   fontSizes: {
     caption: 12,    // Para textos pequenos, legendas
     small: 14,      // Para textos secundários
@@ -32,6 +45,7 @@ export const theme = {
     h5: 48,         // Para cabeçalhos de nível 5
     display: 50,    // Para textos de destaque/display
   },
+
   spacing: {
     xs: 4,
     sm: 8,

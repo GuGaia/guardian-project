@@ -49,15 +49,16 @@ export default function Page() {
               secureTextEntry
             />
           </View>
+          
           <View style={styles.buttonContainer}>
             <GrdOutlinedButton
               label="Cadastrar"
-              onPress={() => console.log('Tentativa de cadastro com: ', loginForm)}
+               onPress={() => console.log('Tentativa de cadastro com: ', loginForm)}
               textStyle={styles.registerButtonText}
             />
             <GrdSolidButton
               label="Entrar"
-              onPress={() => router.push('/ContactList')}
+              onPress={() => router.push('/MainMenu')}
               textStyle={styles.loginButtonText}
             />
           </View>
@@ -73,7 +74,6 @@ const styles = StyleSheet.create({
     gap: 24 ,
   },
   displayContainer: {
-    backgroundColor: 'transparent',
     flexDirection: 'column',
     alignItems: 'center',
   },
@@ -94,22 +94,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: theme.fontSizes.display,
-    color: theme.colors.grdOrangeMedium,
+    color: theme.colors.grdBlue,
     textAlign: 'center',
     marginBottom: theme.spacing.md,
   },
   text: {
-    // Estilos específicos que complementam o globalStyles.text
-    color: theme.colors.grdOrangeMedium,
+    color: theme.colors.grd,
   },
   header: {
     width: '100%',
     height: 24,
-    backgroundColor: theme.colors.grdOrangeMedium,
+    backgroundColor: theme.colors.grdBlue,
   },
   loginButtonText: {
     color: theme.colors.grdWhite00,
-    fontFamily: theme.fonts.interBold,
+    fontFamily: theme.fonts.Ubuntu,
     fontSize: theme.fontSizes.body,
   }
 });

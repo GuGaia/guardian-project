@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: theme.colors.grdWhite00,
+        backgroundColor: theme.colors.grdBlueLight,
     },
     subtitle: {
         color: theme.colors.grdWhite00,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
     },
     contactCard: {
-        backgroundColor: theme.colors.grdPinkMedium,
+        backgroundColor: theme.colors.grdBlue,
         borderRadius: 12,
         marginVertical: 8,
         paddingVertical: 11,
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     },
     contactRelationship: {
         fontSize: theme.fontSizes.h3,
-        color: theme.colors.grdWhite00,
+        color: theme.colors.grdBlue,
     },
     iconContainer: {
         position: 'absolute',
