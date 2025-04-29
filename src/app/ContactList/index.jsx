@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 
 export default function Page() {
+    const router = useRouter();
 
     const mockContacts = [
         {
@@ -150,91 +151,117 @@ export default function Page() {
         }
     ]
 
-    const router = useRouter();
-
     return (
-        <View style={[globalStyles.container, styles.container]}>
-            <View style={styles.headerCard}>
-                <Text style={[globalStyles.subtitle, styles.subtitle]}>Contatos de Emergência</Text>
-                <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.back()}>
-                    <Icon name="arrowLeft" size={24} color={theme.colors.grdWhite00} />
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()}>
+                    <Text style={styles.backText}>{'< Voltar'}</Text>
                 </TouchableOpacity>
             </View>
+
+            <View style={styles.titleCard}>
+                <View style={styles.titleRow}>
+                    <Icon name="user" size={32} color="white" />
+                    <View style={{ marginLeft: 8 }}>
+                        <Text style={styles.title}>Contatos de</Text>
+                        <Text style={styles.title}>emergência</Text>
+                    </View>
+                </View>
+            </View>
+
+            <TouchableOpacity style={styles.addButton}>
+                <Icon name="plus" size={16} color="white" />
+                <Text style={styles.addButtonText}>Adicionar contato</Text>
+            </TouchableOpacity>
+
             <FlatList
                 data={mockContacts}
-                contentContainerStyle={styles.listContainer}
+                contentContainerStyle={styles.list}
+                keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <View style={styles.cardContainer}>
-                        <View style={styles.contactCard}>
-                            <Text style={styles.contactName}>{item.name}</Text>
-                        </View>
+                    <View style={styles.contactItem}>
+                        <Text style={styles.contactName}>{item.name}</Text>
                     </View>
                 )}
             />
-            <View style={styles.footerCard}/>
+
+            <TouchableOpacity style={styles.fab}>
+                <Icon name="home" size={24} color="white" />
+            </TouchableOpacity>
         </View>
-    )
+    );
 }
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
-    footerCard: {
-        height: 72,
-        backgroundColor: theme.colors.grdPinkMedium,
-    },
-    headerCard: {
-        height: 244,
-        marginTop: 52,
-        marginHorizontal: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: theme.colors.grdPinkMedium,
-        borderRadius: 12,
-        position: 'relative',
-    },
     container: {
         flex: 1,
-        backgroundColor: theme.colors.grdBlueLight,
+        backgroundColor: '#D9E7FF',
     },
-    subtitle: {
-        color: theme.colors.grdWhite00,
-        fontSize: theme.fontSizes.h1,
-    },
-    cardContainer: {
+    header: {
+        backgroundColor: '#3573FA',
+        paddingTop: 40,
         paddingHorizontal: 12,
+        paddingBottom: 8,
     },
-    contactCard: {
-        backgroundColor: theme.colors.grdBlue,
-        borderRadius: 12,
-        marginVertical: 8,
-        paddingVertical: 11,
-        paddingHorizontal: 22,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        overflow: 'hidden',
+    backText: {
+        color: '#D9E7FF',
+        fontWeight: 'bold',
+    },
+    titleCard: {
+        backgroundColor: '#3573FA',
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
+        paddingVertical: 24,
+        alignItems: 'center',
+    },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    title: {
+        color: 'white',
+        fontSize: 22,
+        fontWeight: 'bold',
+    },
+    addButton: {
+        flexDirection: 'row',
+        backgroundColor: '#3573FA',
+        alignSelf: 'center',
+        alignItems: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        marginVertical: 20,
+    },
+    addButtonText: {
+        color: 'white',
+        marginLeft: 8,
+        fontWeight: 'bold',
+    },
+    list: {
+        paddingHorizontal: 20,
+    },
+    contactItem: {
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#3573FA',
     },
     contactName: {
-        fontFamily: theme.fonts.interBold,
-        fontSize: theme.fontSizes.body,
-        color: theme.colors.grdWhite00,
+        color: '#3573FA',
+        fontWeight: 'bold',
     },
-    contactPhone: {
-        fontSize: theme.fontSizes.h3,
-        color: theme.colors.grdWhite00,
-    },
-    contactRelationship: {
-        fontSize: theme.fontSizes.h3,
-        color: theme.colors.grdBlue,
-    },
-    iconContainer: {
+    fab: {
         position: 'absolute',
-        bottom: 16,
-        left: 16,
-    },
-    listContainer: {
-        paddingVertical: 12,
+        bottom: 24,
+        alignSelf: 'center',
+        backgroundColor: '#3573FA',
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 6,
     },
 });
-

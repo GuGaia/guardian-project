@@ -15,9 +15,12 @@ export default function MainMenu () {
 
 	return (
 		<SafeAreaView style={styles.container}>
+
+
+
 			<ScrollView  style={styles.scrollView}>
 				
-				<View style={styles.view}>
+			<View style={styles.view}>
 					<Text style={styles.text}>
 						{"Central de socorro"}
 					</Text>
@@ -31,6 +34,10 @@ export default function MainMenu () {
 					/>
 					<Text style={styles.text}>
 						{"Botão de Emergência"} 
+					</Text>
+
+					<Text style={styles.text2}>
+						{"acione ajuda agora"} 
 					</Text>
 				
 				</TouchableOpacity>
@@ -111,7 +118,8 @@ const styles = StyleSheet.create({
 	view: {
 	  backgroundColor: "#3573FA",
 	  paddingVertical: 12,
-	  marginBottom: 36,
+	  marginBottom: 36, 
+	 
 	},
 	text: {
 	  color: "#D9E7FF",
@@ -120,13 +128,20 @@ const styles = StyleSheet.create({
 	  textAlign: "center",
 	  marginHorizontal: 16,
 	},
+	text2: {
+		color: "#D9E7FF",
+		fontSize: width * 0.04, // tamanho adaptável
+		textAlign: "center",
+		marginHorizontal: 16,
+	  },
+
+
 
 	EmergencyButton:{
 
 		
 		flex: 1,
-		
-
+	
 		backgroundColor: theme.colors.grdRed,
 		borderRadius: 12,
 		paddingVertical: 20,
