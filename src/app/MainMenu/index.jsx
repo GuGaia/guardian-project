@@ -17,7 +17,6 @@ export default function MainMenu () {
 		<SafeAreaView style={styles.container}>
 
 
-
 			<ScrollView  style={styles.scrollView}>
 				
 			<View style={styles.view}>
@@ -26,7 +25,7 @@ export default function MainMenu () {
 					</Text>
 				</View>
 
-				<TouchableOpacity style={styles.EmergencyButton}  onPress={() => router.push('/EmergencyButton')}>
+				<TouchableOpacity style={styles.EmergencyButton}  onPress={() => router.push('/EmergencyMode')}>
 				<Image
 						source={require('../../../assets/images/EmergencyButton.png')}
 						resizeMode = {"stretch"}
@@ -46,16 +45,22 @@ export default function MainMenu () {
                     
                     <View style={styles.row2}>
 					<TouchableOpacity style={styles.row3} onPress={() => router.push('/Settings')}>
-                            <Text style={styles.text}>
+                           
+						<Icon 
+							name="settings"
+							size={30}
+						/>
+							
+							
+							<Text style={styles.text}>
                                 {"Configurações"}
                             </Text>
 
 						</TouchableOpacity>
 						<TouchableOpacity style={styles.row4} onPress={() => router.push('/ContactList')}>
-							<Image
-								source={{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/U9b7Iuerty/prqb2a5f_expires_30_days.png"}}
-								resizeMode={"stretch"}
-								style={styles.image3}
+							<Icon 
+								name="contacts"
+								size={30}
 							/>
 							<Text style={styles.text}>
 								{"Contatos de emergência"}
@@ -65,9 +70,7 @@ export default function MainMenu () {
 	
 				</View>
 				
-        
-                
-	
+    
     
 
 				<View style={styles.OrientationsToContacts}>
@@ -89,11 +92,10 @@ export default function MainMenu () {
 
 			<View style={styles.navbar}>
 				<View style={styles.navbarContent}>
-					<Image
-						source={{ uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/U9b7Iuerty/g7g8stmp_expires_30_days.png" }}
-						resizeMode="contain"
-						style={styles.navbarIcon}
-					/>
+						<Icon 
+							name="Home"
+							size={40}
+						/>
 				</View>
 			</View>
 
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
 	 
 	},
 	text: {
-	  color: "#D9E7FF",
+	  color: "#FFFFFF",
 	  fontSize: width * 0.05, // tamanho adaptável
 	  fontWeight: "bold",
 	  textAlign: "center",
