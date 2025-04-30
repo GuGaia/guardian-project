@@ -173,7 +173,6 @@ export default function Page() {
             </View>
 
             <TouchableOpacity style={styles.addButton}>
-                <Icon name="plus" size={16} color="white" />
                 <Text style={styles.addButtonText}>Adicionar contato</Text>
             </TouchableOpacity>
 
@@ -182,7 +181,8 @@ export default function Page() {
                 contentContainerStyle={styles.list}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.contactItem}>
+                    
+                    <TouchableOpacity style={styles.contactItem}activeOpacity={0.8} onPress={() => router.push('/ContactDetails')}>
                         <Text style={styles.contactName}>{item.name}</Text>
                     </TouchableOpacity>
                 )}

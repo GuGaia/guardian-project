@@ -70,17 +70,17 @@ export default function MainMenu () {
     
 
 				<TouchableOpacity style={styles.OrientationsToContacts} activeOpacity={0.8} onPress={() => router.push('/Orientations')}>
-					<Image
+					
+						<Image
 						source={require('../../../assets/images/OrientationsToContacts.png')}
-						resizeMode = {"stretch"}
+						resizeMode={"stretch"}
 						style={styles.image4}
-					/>
-					 <Text style={styles.text}>
-                                {"Saiba como orientar seus contatos de emergência"}
-                    </Text>
+						/>
+						<Text style={styles.orientationText}>
+						{"Saiba como orientar seus contatos de emergência"}
+						</Text>
 					
 				</TouchableOpacity>
-
 
 
 			</ScrollView>
@@ -108,7 +108,6 @@ const styles = StyleSheet.create({
 
 	container: {
 	  flex: 1,
-	  backgroundColor: "#FFFFFF",
 	},
 	scrollView: {
 	  backgroundColor: "#D9E7FF",
@@ -127,13 +126,20 @@ const styles = StyleSheet.create({
 	  marginHorizontal: 16,
 	},
 	text2: {
-		color: "#D9E7FF",
-		fontSize: width * 0.04, // tamanho adaptável
+		color: "#FFFFFF",
+		fontSize: width * 0.04, 
 		textAlign: "center",
 		marginHorizontal: 16,
 	  },
 
-
+	  orientationText: {
+		color: "#FFFFFF",
+		fontSize: width * 0.045,
+		flexShrink: 1,
+		flexWrap: 'wrap',
+		flex: 1,
+		fontWeight: "bold",
+	  },
 
 	EmergencyButton:{
 
@@ -168,12 +174,9 @@ const styles = StyleSheet.create({
 	},
 
 	iconContainer: {
-
 		color: "#FFFFFF",
 		size: 34,
-
 	},
-
 
 	row2: {
 	  flexDirection: "row",
@@ -201,20 +204,9 @@ const styles = StyleSheet.create({
 	  paddingHorizontal: 10,
 	  alignItems: "center",
 	},
-	image2: {
-	  borderRadius: 12,
-	  width: width * 0.06,
-	  height: width * 0.06,
-	  marginRight: 8,
-	},
-	image3: {
-	  borderRadius: 12,
-	  width: width * 0.06,
-	  height: width * 0.06,
-	  marginRight: 8,
-	},
 	
 	OrientationsToContacts: {
+		
 	  flexDirection: "row",
 	  alignItems: "center",
 	  backgroundColor: "#3573FA",
@@ -236,17 +228,6 @@ const styles = StyleSheet.create({
 	  width: width * 0.25, // proporcional à tela
 	  height: width * 0.25,
 	  marginRight: 15,
-	},
-	input: {
-	  flex: 1,
-	  color: "#D9E7FF",
-	  fontSize: width * 0.04,
-	  paddingVertical: 10,
-		fontWeight: "bold",
-		flex: 1,
-		flexWrap: "wrap",
-		marginRight: 8, 
-		numberOfLines: 2,
 	},
 	navbar: {
 		position: 'absolute',
