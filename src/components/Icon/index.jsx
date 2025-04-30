@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { getIcon } from '@/theme/icons';
 
-export const Icon = ({ name, size = 24, color, style, ...props }) => {
+export const Icon = ({ name, size = 24, dimensions, color, style, ...props }) => {
   const IconComponent = getIcon(name);
   
   if (!IconComponent) {
@@ -10,9 +10,13 @@ export const Icon = ({ name, size = 24, color, style, ...props }) => {
     return null;
   }
 
+  // Se dimensions for fornecido, use-o diretamente
+  const width = dimensions ? dimensions.width : size;
+  const height = dimensions ? dimensions.height : size;
+
   return React.createElement(IconComponent, {
-    width: size,
-    height: size,
+    width: width,
+    height: height,
     color: color,
     style: [styles.icon, style],
     ...props

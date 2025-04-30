@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
 import { theme } from '@/theme/theme';
 import { globalStyles } from '@/theme/globalStyles';
@@ -7,13 +7,17 @@ export function GrdTextInput({
     label,
     ...props 
 }) {
+    const [isFocused, setIsFocused] = useState(false);
+
     return (
         <View style={styles.container}>
             <Text style={[globalStyles.label, styles.label]}>{label}</Text>
-            <View style={[globalStyles.input, styles.input]}>
+            <View style={[globalStyles.input, isFocused && styles.inputFocused]}>
                 <TextInput
                     style={globalStyles.inputText}
                     placeholderTextColor={theme.colors.grdGray00}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
                     {...props}
                 />
             </View>
@@ -28,10 +32,9 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     label: {
-        color: theme.colors.grdOrangeMedium,
+        color: theme.colors.grdBlue,
     },
-    input: {
-        width: '100%',
-        height: 48,
-    }
+    inputFocused: {
+        borderWidth: 2,
+    },
 })
