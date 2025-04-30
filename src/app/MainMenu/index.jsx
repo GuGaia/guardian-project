@@ -1,11 +1,7 @@
 import React, {useState} from "react";
-import { SafeAreaView, View, ScrollView, Text, Image, TextInput, StyleSheet,TouchableOpacity} from "react-native"
-import { globalStyles } from '@/theme/globalStyles';
+import { SafeAreaView, View, ScrollView, Text, Image, TextInput, StyleSheet,TouchableOpacity} from "react-native";
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { GrdTextInput } from '@/components/inputs/GrdTextInput';
-import { GrdOutlinedButton } from '@/components/buttons/GrdOutlinedButton';
-import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
 
@@ -73,7 +69,7 @@ export default function MainMenu () {
     
     
 
-				<View style={styles.OrientationsToContacts}>
+				<TouchableOpacity style={styles.OrientationsToContacts} activeOpacity={0.8} onPress={() => router.push('/Orientations')}>
 					<Image
 						source={require('../../../assets/images/OrientationsToContacts.png')}
 						resizeMode = {"stretch"}
@@ -83,7 +79,7 @@ export default function MainMenu () {
                                 {"Saiba como orientar seus contatos de emergência"}
                     </Text>
 					
-				</View>
+				</TouchableOpacity>
 
 
 
@@ -91,12 +87,12 @@ export default function MainMenu () {
 			
 
 			<View style={styles.navbar}>
-				<View style={styles.navbarContent}>
-						<Icon 
-							name="Home"
-							size={40}
-						/>
-				</View>
+			<TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.push('/MainMenu')}>
+					<Icon 
+						name="Home"
+						size={40}
+					/>
+                </TouchableOpacity>
 			</View>
 
 
@@ -125,7 +121,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 	  color: "#FFFFFF",
-	  fontSize: width * 0.05, // tamanho adaptável
+	  fontSize: width * 0.05, 
 	  fontWeight: "bold",
 	  textAlign: "center",
 	  marginHorizontal: 16,
@@ -169,6 +165,13 @@ const styles = StyleSheet.create({
 
 	buttonContainer: {
 	  paddingHorizontal: 20,
+	},
+
+	iconContainer: {
+
+		color: "#FFFFFF",
+		size: 34,
+
 	},
 
 

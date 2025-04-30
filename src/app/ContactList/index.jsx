@@ -155,13 +155,16 @@ export default function Page() {
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.backText}>{'< Voltar'}</Text>
+                    <Text style={styles.backText}>{'<- Voltar'}</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.titleCard}>
                 <View style={styles.titleRow}>
-                    <Icon name="user" size={32} color="white" />
+                    <Icon 
+                    name="contacts" 
+                    size={45} 
+                    />
                     <View style={{ marginLeft: 8 }}>
                         <Text style={styles.title}>Contatos de</Text>
                         <Text style={styles.title}>emergência</Text>
@@ -179,15 +182,20 @@ export default function Page() {
                 contentContainerStyle={styles.list}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <View style={styles.contactItem}>
+                    <TouchableOpacity style={styles.contactItem}>
                         <Text style={styles.contactName}>{item.name}</Text>
-                    </View>
+                    </TouchableOpacity>
                 )}
             />
-
-            <TouchableOpacity style={styles.fab}>
-                <Icon name="home" size={24} color="white" />
-            </TouchableOpacity>
+            <View style={styles.navbar}>
+                        <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.push('/MainMenu')}>
+                                <Icon 
+                                    name="Home"
+                                    size={40}
+                                />
+                            </TouchableOpacity>
+            </View>  
+            
         </View>
     );
 }
@@ -200,19 +208,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#D9E7FF',
     },
     header: {
-        backgroundColor: '#3573FA',
-        paddingTop: 40,
+        backgroundColor: theme.colors.grdBlueLight,
+        paddingTop: width * 0.04,
         paddingHorizontal: 12,
         paddingBottom: 8,
     },
     backText: {
-        color: '#D9E7FF',
+        color: '#FFFFFF',
         fontWeight: 'bold',
+        fontSize: width * 0.04,
     },
     titleCard: {
         backgroundColor: '#3573FA',
-        borderBottomLeftRadius: 12,
-        borderBottomRightRadius: 12,
         paddingVertical: 24,
         alignItems: 'center',
     },
@@ -222,8 +229,9 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'white',
-        fontSize: 22,
+        fontSize: 30,
         fontWeight: 'bold',
+        paddingLeft: 20,
     },
     addButton: {
         flexDirection: 'row',
@@ -264,4 +272,30 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         elevation: 6,
     },
+    navbar: {
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		right: 0,
+		height: 70, 
+		backgroundColor: theme.colors.grdBlue,
+		justifyContent: "center",
+		alignItems: "center",
+		paddingBottom: 10, // espaço para telefones com borda
+
+		elevation: 10, // para Android
+	  },
+	  navbarContent: {
+		width: 60,
+		height: 60,
+		backgroundColor: theme.colors.grdBlueLight,
+		borderRadius: 30, // deixa redondo
+		justifyContent: "center",
+		alignItems: "center",
+	  },
+	  navbarIcon: {
+		width: 30,
+		height: 30,
+		tintColor: "#FFFFFF", 
+	  },	  
 });
