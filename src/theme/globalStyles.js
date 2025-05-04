@@ -5,7 +5,7 @@ export const globalStyles = StyleSheet.create({
   // Layout styles
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.grdBlueBackground,
   },
   centerContainer: {
     flex: 1,
@@ -45,12 +45,29 @@ export const globalStyles = StyleSheet.create({
   },
 
   // Component styles
-  button: {
+  buttonSmall: {
     width: "100%",
     backgroundColor: 'transparent',
     borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 28,
+  },
+  buttonMedium: {
+    width: "100%",
+    backgroundColor: 'transparent',
+    borderRadius: theme.borderRadius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 42,
+  },
+  buttonLarge: {
+    width: "100%",
+    backgroundColor: 'transparent',
+    borderRadius: theme.borderRadius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
   },
   buttonText: {
     color: theme.colors.grdBlack00,
@@ -68,18 +85,18 @@ export const globalStyles = StyleSheet.create({
     height: 48,
     borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
-    borderColor: theme.colors.grdOrangeMedium,
+    borderColor: theme.colors.grdBlue,
     fontSize: theme.fontSizes.body,
     fontFamily: theme.fonts.interBold,
     backgroundColor: theme.colors.grdWhite00,
   },
   inputText: {
     color: theme.colors.grdBlack00,
-    fontSize: theme.fontSizes.caption,
+    fontSize: theme.fontSizes.small,
     fontFamily: theme.fonts.interRegular,
     justifyContent: 'center',
     height: 48,
     borderRadius: theme.borderRadius.lg,
-    padding: 8,
+    paddingHorizontal: 8,
   }
 }); 
