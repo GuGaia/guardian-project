@@ -1,258 +1,191 @@
-import React, {useState} from "react";
-import { SafeAreaView, View, ScrollView, Text, Image, TextInput, StyleSheet,TouchableOpacity} from "react-native";
+import React from "react";
+import { SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
 
-
-
-export default function MainMenu () {
-
-	return (
-		<SafeAreaView style={styles.container}>
-
-
-			<ScrollView  style={styles.scrollView}>
-				
-			<View style={styles.view}>
-					<Text style={styles.text}>
-						{"Central de socorro"}
-					</Text>
-				</View>
-
-				<TouchableOpacity style={styles.EmergencyButton}  onPress={() => router.push('/EmergencyMode')}>
-				<Image
-						source={require('../../../assets/images/EmergencyButton.png')}
-						resizeMode = {"stretch"}
-						style={styles.image4}
-					/>
-					<Text style={styles.text}>
-						{"Botão de Emergência"} 
-					</Text>
-
-					<Text style={styles.text2}>
-						{"acione ajuda agora"} 
-					</Text>
-				
-				</TouchableOpacity>
-
-                <View style={styles.buttonContainer}>
-                    
-                    <View style={styles.row2}>
-					<TouchableOpacity style={styles.row3} onPress={() => router.push('/Settings')}>
-                           
-						<Icon 
-							name="settings"
-							size={30}
-						/>
-							
-							
-							<Text style={styles.text}>
-                                {"Configurações"}
-                            </Text>
-
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.row4} onPress={() => router.push('/ContactList')}>
-							<Icon 
-								name="contacts"
-								size={30}
-							/>
-							<Text style={styles.text}>
-								{"Contatos de emergência"}
-							</Text>
-						</TouchableOpacity>
-                	</View>
-	
-				</View>
-				
-    
-    
-
-				<TouchableOpacity style={styles.OrientationsToContacts} activeOpacity={0.8} onPress={() => router.push('/Orientations')}>
-					
-						<Image
-						source={require('../../../assets/images/OrientationsToContacts.png')}
-						resizeMode={"stretch"}
-						style={styles.image4}
-						/>
-						<Text style={styles.orientationText}>
-						{"Saiba como orientar seus contatos de emergência"}
-						</Text>
-					
-				</TouchableOpacity>
-
-
-			</ScrollView>
-			
-
-			<View style={styles.navbar}>
-			<TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.push('/MainMenu')}>
-					<Icon 
-						name="Home"
-						size={40}
-					/>
-                </TouchableOpacity>
-			</View>
-
-
-
-		</SafeAreaView>
-	)
-}
-
 const { width, height } = Dimensions.get('window');
 
+const baseCard = {
+  borderRadius: 12,
+  shadowColor: "#00000040",
+  shadowOpacity: 0.3,
+  shadowOffset: { width: 0, height: 4 },
+  shadowRadius: 4,
+  elevation: 4,
+};
+
+const buttonBase = {
+  ...baseCard,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  paddingVertical: width* 0.04,
+  marginBottom: width* 0.04,
+  marginHorizontal: width* 0.04,
+};
+
+function CardButton({ onPress, icon, text, style, imageSource }) {
+	return (
+	  <TouchableOpacity style={[buttonBase, style]} onPress={onPress}>
+		{imageSource ? (
+		  <Image source={imageSource} resizeMode="contain" style={[styles.image, { marginRight: 10 }]} />
+		) : (
+		  <Icon name={icon} size={30} style={{ marginRight: 10 }} />
+		)}
+		<View style={{ flex: 1 }}>
+		  <Text style={styles.buttonText} numberOfLines={2} adjustsFontSizeToFit>
+			{text}
+		  </Text>
+		</View>
+	  </TouchableOpacity>
+	);
+  }
+  
+
+export default function MainMenu() {
+  return (
+
+
+    <SafeAreaView style={styles.container}>
+
+      <ScrollView style={styles.scrollView}>
+
+		
+
+			<View style={styles.header}>
+			<Text style={styles.text}>{"Central de socorro"}</Text>
+			</View>
+
+			<CardButton
+			imageSource={require('../../../assets/images/EmergencyButton.png')}
+			text="Botão de Emergência"
+			onPress={() => router.push('/EmergencyMode')}
+			style={styles.emergencyButton}
+			/>
+		
+
+
+			
+				<View style={styles.buttonRow}>
+					<CardButton
+						icon="settings"
+						text="Configurações"
+						onPress={() => router.push('/Settings')}
+						style={styles.GeneralButton}
+					/>
+
+					<CardButton
+						icon="contacts"
+						text="Contatos"
+						onPress={() => router.push('/ContactList')}
+						style={styles.GeneralButton}
+					/>
+
+			
+			</View>
+
+			<CardButton
+			imageSource={require('../../../assets/images/OrientationsToContacts.png')}
+			text="Saiba como orientar seus contatos de emergência"
+			onPress={() => router.push('/Orientations')}
+			style={styles.orientationsButton}
+			/>
+      </ScrollView>
+
+   		<View style={styles.navbar}>
+		   <TouchableOpacity style={styles.navbarContent} onPress={() => router.push('/MainMenu')}>
+			 <Icon name="Home" size={40} style={styles.navbarIcon} />
+		   </TouchableOpacity>
+		 </View>
+
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
-
-	container: {
-	  flex: 1,
-	},
-	scrollView: {
-	  backgroundColor: "#D9E7FF",
-	},
-	view: {
-	  backgroundColor: "#3573FA",
-	  paddingVertical: 12,
-	  marginBottom: 36, 
-	 
-	},
-	text: {
-	  color: "#FFFFFF",
-	  fontSize: width * 0.05, 
-	  fontWeight: "bold",
-	  textAlign: "center",
-	  marginHorizontal: 16,
-	},
-	text2: {
-		color: "#FFFFFF",
-		fontSize: width * 0.04, 
-		textAlign: "center",
-		marginHorizontal: 16,
-	  },
-
-	  orientationText: {
-		color: "#FFFFFF",
-		fontSize: width * 0.045,
-		flexShrink: 1,
-		flexWrap: 'wrap',
-		flex: 1,
-		fontWeight: "bold",
-	  },
-
-	EmergencyButton:{
-
-		
-		flex: 1,
-	
-		backgroundColor: theme.colors.grdRed,
-		borderRadius: 12,
-		paddingVertical: 20,
-		paddingHorizontal: 10,
-		marginRight: 20,
-		alignItems: "center",
-		borderRadius: 12,
-	  paddingVertical: 15,
-	  paddingLeft: 17,
-	  marginBottom: 30,
-	  marginHorizontal: 20,
-	  shadowColor: "#00000040",
-	  shadowOpacity: 0.3,
-	  shadowOffset: {
-		width: 0,
-		height: 4,
-	  },
-	  shadowRadius: 4,
-	  elevation: 4,
-
-
-	},
-
-	buttonContainer: {
-	  paddingHorizontal: 20,
-	},
-
-	iconContainer: {
-		color: "#FFFFFF",
-		size: 34,
-	},
-
-	row2: {
-	  flexDirection: "row",
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    backgroundColor: "#D9E7FF",
+  },
+  header: {
+    backgroundColor: "#3573FA",
+    paddingVertical:  height * 0.01,
+    marginBottom: height*0.04,
+  },
+  text: {
+    color: "#FFFFFF",
+    fontSize: width * 0.05,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginHorizontal:  width * 0.04,
+  },
+  text2: {
+    color: "#FFFFFF",
+    fontSize: width * 0.04,
+    textAlign: "center",
+    marginHorizontal:  width * 0.01,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: width * 0.04,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  emergencyButton: {
+    backgroundColor: theme.colors.grdRed,
+    ...baseCard,
+    paddingVertical: height*0.04,
+    paddingHorizontal: width*0.04,
+  },
+  buttonRow: {	  
+	 flexDirection: "row",
 	  alignItems: "flex-start",
-	  marginBottom: 16,
-	  marginHorizontal: 0,
-	  justifyContent: "space-between",
-	},
-	row3: {
-	  flex: 1,
-	  flexDirection: "row",
-	  backgroundColor: "#5C97FF",
-	  borderRadius: 12,
-	  paddingVertical: 20,
-	  paddingHorizontal: 10,
-	  marginRight: 8,
-	  alignItems: "center",
-	},
-	row4: {
-	  flex: 1,
-	  flexDirection: "row",
-	  backgroundColor: "#5C97FF",
-	  borderRadius: 12,
-	  paddingVertical: 20,
-	  paddingHorizontal: 10,
-	  alignItems: "center",
-	},
-	
-	OrientationsToContacts: {
-		
-	  flexDirection: "row",
-	  alignItems: "center",
-	  backgroundColor: "#3573FA",
-	  borderRadius: 12,
-	  paddingVertical: 15,
-	  paddingLeft: 17,
-	  marginBottom: 30,
-	  marginHorizontal: 20,
-	  shadowColor: "#00000040",
-	  shadowOpacity: 0.3,
-	  shadowOffset: {
-		width: 0,
-		height: 4,
-	  },
-	  shadowRadius: 4,
-	  elevation: 4,
-	},
-	image4: {
-	  width: width * 0.25, // proporcional à tela
-	  height: width * 0.25,
-	  marginRight: 15,
-	},
-	navbar: {
-		position: 'absolute',
-		bottom: 0,
-		left: 0,
-		right: 0,
-		height: 70, 
-		backgroundColor: theme.colors.grdBlue,
-		justifyContent: "center",
-		alignItems: "center",
-		paddingBottom: 10, // espaço para telefones com borda
-
-		elevation: 10, // para Android
-	  },
-	  navbarContent: {
-		width: 60,
-		height: 60,
-		backgroundColor: theme.colors.grdBlueLight,
-		borderRadius: 30, // deixa redondo
-		justifyContent: "center",
-		alignItems: "center",
-	  },
-	  navbarIcon: {
-		width: 30,
-		height: 30,
-		tintColor: "#FFFFFF", 
-	  },	  
-  });
+	  justifyContent: "space",
+  },
+  iconContainer: {
+    color: "#FFFFFF",
+    size: width*0.04,
+  },
+  orientationsButton: {
+    backgroundColor: "#3573FA",
+    ...baseCard,
+    paddingVertical: height*0.03,
+    paddingHorizontal: width*0.04,
+  },
+  GeneralButton: {
+    backgroundColor: theme.colors.grdBlueLight,
+    ...baseCard,
+    paddingVertical: height*0.03,
+    paddingHorizontal: width*0.04,
+  },
+  image: {
+    width: width * 0.2, 
+    height: width * 0.2, 
+  },
+  navbar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
+    backgroundColor: theme.colors.grdBlue,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 10,
+    elevation: 10,
+  },
+  navbarContent: {
+    width: 60,
+    height: 60,
+    backgroundColor: theme.colors.grdBlueLight,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  navbarIcon: {
+    tintColor: "#FFFFFF",}
+});
