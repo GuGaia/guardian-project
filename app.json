@@ -4,14 +4,14 @@
     "slug": "guardian-project",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/guardian-owl.png",
+    "icon": "./assets/images/guardiaOwlBlue.png",
     "scheme": "guardian-project",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/guardian-owl.png",
+      "image": "./assets/images/guardiaOwlBlue.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FFD7EA"
+      "backgroundColor": "#D9E7FF"
     },
     "ios": {
       "supportsTablet": true
@@ -25,7 +25,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/guardian-owl.png"
+      "favicon": "./assets/images/guardiaOwlBlue.png"
     },
     "plugins": [
       "expo-router",
