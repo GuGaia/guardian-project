@@ -1,7 +1,15 @@
 from rest_framework import serializers
-from .models import Contact
+from client.models import Client
+from contact.models import Contact
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = '__all__'
+        fields = ['id', 'phone', 'email']
+
+class ClientSerializer(serializers.ModelSerializer):
+    contacts = ContactSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Client
+        fields = ['id', 'name', 'contacts']
