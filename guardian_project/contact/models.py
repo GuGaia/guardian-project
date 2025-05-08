@@ -2,12 +2,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
-class Client(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
 class Contact(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='contacts')
     name = models.CharField(max_length=255)
