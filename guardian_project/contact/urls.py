@@ -1,10 +1,19 @@
-from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.urls import path
 from .views import ContactViewSet
 
-router = DefaultRouter()
-router.register(r'', ContactViewSet)  # rota: /api/contacts/
+contact_list = ContactViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
+})
+contact_detail = ContactViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy',
+})
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', contact_list, name='contact-list'),
+    path('<int:pk>/', contact_detail, name='contact-detail'),
 ]
