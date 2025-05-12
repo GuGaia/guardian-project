@@ -1,6 +1,7 @@
 # contacts/models.py
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from client.models import Client
 
 class Contact(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='contacts')
