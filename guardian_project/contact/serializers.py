@@ -13,4 +13,4 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = ['id', 'phone', 'email', 'channel', 'channel_id']
+        fields = ['id', 'name', 'phone_number', 'relationship', 'plataform', 'channel', 'channel_id', 'client']
