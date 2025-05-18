@@ -23,7 +23,7 @@ class EmailView(APIView):
 
         send_mail(
             subject="Esse é o email que estou enviando",
-            message="Conteúdo do e-mail kkkkkk",
+            message="Conteúdo do e-mail kkkkkk", # current_user.default_message
             recipient_list=[contact_emails]
         )
 
