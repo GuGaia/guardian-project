@@ -1,40 +1,37 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from communication.services.email_service import send_mail
+from client.models import Client
+from communication.services.alert_service import send_alert_for_client
 
 class EmailView(APIView):
-    """View para operações relacionadas a e-mails"""
-    
     def post(self, request, *args, **kwargs):
-        """Envia um e-mail"""
-        # user = request.user
+        client_id = request.data.get("client_id")
+        if not client_id:
+            return Response(
+                {"error": "client_id é obrigatório"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            client = Client.objects.get(id=client_id)
+        except Client.DoesNotExist:
+            return Response(
+                {"error": "Cliente não encontrado"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-        # send_mail(
-        #     subject='Nova mensagem de {}'.format(user.get_full_name()),
-        #     message='Oi, você recebeu uma nova mensagem de {}.'.format(user.email),
-        #     from_email='',  # ou noreply@seusite.com
-        #     recipient_list=[user.contacts.email],
-        # )
+        # coordenadas de exemplo p teste
+        lat = request.data.get("latitude", -23.55052)
+        lon = request.data.get("longitude", -46.633308)
 
-        # client = Client.objects.get(user=request.user)
-        # contact_emails = client.get_contact_emails()
-        contact_emails = 'fekoso8574@bamsrad.com'
-
-        send_mail(
-            subject="Esse é o email que estou enviando",
-            message="Conteúdo do e-mail kkkkkk", # current_user.default_message
-            recipient_list=[contact_emails]
-        )
-
+        send_alert_for_client(client, lat, lon)
         return Response(
-            {"status": "E-mail enviado com sucesso"},
+            {"status": "sucess"},
             status=status.HTTP_200_OK
         )
-        
+
     def get(self, request, *args, **kwargs):
-        """Retorna status do serviço de e-mail"""
         return Response(
-            {"status": "Serviço de e-mail operacional"},
+            {"status": "Serviço de e-mail"},
             status=status.HTTP_200_OK
         )
