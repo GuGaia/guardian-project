@@ -3,9 +3,11 @@ from .models import Contact
 from .serializers import ContactSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 class ContactViewSet(viewsets.ModelViewSet):
     serializer_class = ContactSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         client_pk = self.kwargs.get('client_pk')

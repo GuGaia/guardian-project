@@ -5,32 +5,32 @@ from contact.models import Contact
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient
 from rest_framework import status
+from django.urls import reverse
 
 
 class ContactModelTest(TestCase):
-
     def setUp(self):
-        self.client = Client.objects.create(
+        self.client_user = Client.objects.create_user(
             name="Maria", email="maria@example.com", password="1234"
         )
         self.channel = CommunicationChannel.objects.create(name="WhatsApp")
 
     def test_create_contact_successfully(self):
         contact = Contact.objects.create(
-            client=self.client,
+            client=self.client_user,
             name="João Contato",
             phone_number="+5511999999999",
             plataform="Mobile",
             relationship="Amigo",
             channel=self.channel
         )
-        self.assertEqual(contact.client, self.client)
+        self.assertEqual(contact.client, self.client_user)
         self.assertEqual(contact.channel, self.channel)
         self.assertEqual(contact.name, "João Contato")
 
     def test_missing_name_should_fail(self):
         contact = Contact(
-            client=self.client,
+            client=self.client_user,
             name="",
             phone_number="123",
             plataform="App",
@@ -42,7 +42,7 @@ class ContactModelTest(TestCase):
 
     def test_missing_plataform_should_fail(self):
         contact = Contact(
-            client=self.client,
+            client=self.client_user,
             name="Contato",
             phone_number="123",
             plataform="",
@@ -54,7 +54,7 @@ class ContactModelTest(TestCase):
 
     def test_missing_relationship_should_fail(self):
         contact = Contact(
-            client=self.client,
+            client=self.client_user,
             name="Contato",
             phone_number="123",
             plataform="App",
@@ -66,7 +66,7 @@ class ContactModelTest(TestCase):
 
     def test_phone_number_max_length(self):
         contact = Contact(
-            client=self.client,
+            client=self.client_user,
             name="Teste",
             phone_number="9" * 21,  # 21 caracteres, acima do permitido
             plataform="App",
@@ -78,7 +78,7 @@ class ContactModelTest(TestCase):
 
     def test_update_contact_name(self):
         contact = Contact.objects.create(
-            client=self.client,
+            client=self.client_user,
             name="Antigo Nome",
             phone_number="123",
             plataform="App",
@@ -92,19 +92,19 @@ class ContactModelTest(TestCase):
 
     def test_delete_client_cascades_to_contact(self):
         contact = Contact.objects.create(
-            client=self.client,
+            client=self.client_user,
             name="Contato",
             phone_number="123",
             plataform="App",
             relationship="Família",
             channel=self.channel
         )
-        self.client.delete()
+        self.client_user.delete()
         self.assertEqual(Contact.objects.count(), 0)
 
     def test_delete_channel_cascades_to_contact(self):
         contact = Contact.objects.create(
-            client=self.client,
+            client=self.client_user,
             name="Contato",
             phone_number="123",
             plataform="App",
@@ -114,13 +114,12 @@ class ContactModelTest(TestCase):
         self.channel.delete()
         self.assertEqual(Contact.objects.count(), 0)
 
-from rest_framework.test import APIClient
-from rest_framework import status
 
 class ContactAPITest(TestCase):
     def setUp(self):
-        self.client_api = APIClient()
-        self.client_obj = Client.objects.create(name="Maria", email="maria@example.com", password="1234")
+        self.client_user = Client.objects.create_user(
+            name="Maria", email="maria@example.com", password="1234"
+        )
         self.channel_obj = CommunicationChannel.objects.create(name="WhatsApp")
         self.contact_data = {
             "name": "João Contato",
@@ -128,12 +127,20 @@ class ContactAPITest(TestCase):
             "plataform": "Mobile",
             "relationship": "Amigo",
             "channel_id": self.channel_obj.id,
-            "client": self.client_obj.id
+            "client": self.client_user.id
         }
+        self.client_api = APIClient()
+        response = self.client_api.post("/api/token/", {
+            "email": "maria@example.com",
+            "password": "1234"
+        }, format="json")
+        self.assertEqual(response.status_code, 200, msg="Erro ao obter token JWT")
+        token = response.data["access"]
+        self.client_api.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
     def create_contact_instance(self):
         return Contact.objects.create(
-            client=self.client_obj,
+            client=self.client_user,
             channel=self.channel_obj,
             name=self.contact_data["name"],
             phone_number=self.contact_data["phone_number"],
@@ -142,13 +149,13 @@ class ContactAPITest(TestCase):
         )
 
     def test_create_contact_via_api(self):
-        url = f"/api/clients/{self.client_obj.id}/contacts/"
+        url = f"/api/clients/{self.client_user.id}/contacts/"
         response = self.client_api.post(url, self.contact_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], self.contact_data["name"])
 
     def test_delete_contact_returns_custom_response(self):
         contact = self.create_contact_instance()
-        url = f"/api/clients/{self.client_obj.id}/contacts/{contact.id}/"
+        url = f"/api/clients/{self.client_user.id}/contacts/{contact.id}/"
         response = self.client_api.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

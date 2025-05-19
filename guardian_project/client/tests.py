@@ -67,6 +67,21 @@ class ClientModelTest(TestCase):
 class ClientAPITest(TestCase):
     def setUp(self):
         self.client_api = APIClient()
+
+        self.auth_user = Client.objects.create_user(
+            name="Usuário Autenticado",
+            email="auth@example.com",
+            password="senha123"
+        )
+
+        response = self.client_api.post("/api/token/", {
+            "email": "auth@example.com",
+            "password": "senha123"
+        }, format="json")
+        self.token = response.data["access"]
+
+        self.client_api.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
+
         self.client_data = {
             "name": "Usuário Teste",
             "email": "teste@email.com",
@@ -80,7 +95,7 @@ class ClientAPITest(TestCase):
         self.assertEqual(response.data["email"], self.client_data["email"])
 
     def test_list_clients_via_api(self):
-        Client.objects.create(**self.client_data)
+        Client.objects.create_user(**self.client_data)
         response = self.client_api.get("/api/clients/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)

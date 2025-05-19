@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient
 from rest_framework import status
+from client.models import Client
 
 class CommunicationChannelModelTest(TestCase):
 
@@ -38,6 +39,12 @@ class CommunicationChannelModelTest(TestCase):
 class CommunicationAPITest(TestCase):
     def setUp(self):
         self.client_api = APIClient()
+        self.user = Client.objects.create_user(
+            email="user@example.com",
+            password="teste123",
+            name="Usuário Teste"
+        )
+        self.client_api.force_authenticate(user=self.user)
         self.channel_data = {"name": "Telegram"}
 
     def test_create_channel_via_api(self):
