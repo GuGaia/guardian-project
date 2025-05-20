@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/images/guardiaOwlBlue.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FFD7EA"
+      "backgroundColor": "#D9E7FF"
     },
     "ios": {
       "supportsTablet": true
