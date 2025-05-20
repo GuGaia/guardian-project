@@ -16,6 +16,7 @@ export default function Page() {
 
   const handleLogin = () => {
     console.log('Login attempt with:', loginForm);
+    router.push('/MainMenu'); 
   }
 
   const handleRegister = () => {
@@ -66,7 +67,7 @@ export default function Page() {
           <View style={styles.buttonContainer}>
             <GrdSolidButton
               label="Entrar"
-              onPress={() => router.push('/MainMenu')}
+              onPress={() => handleLogin(loginForm)}
               textStyle={styles.loginButtonText}
               size="large"
             />
@@ -78,7 +79,7 @@ export default function Page() {
             <View style={styles.registerButtonContainer}>
               <GrdOutlinedButton
                 label="Cadastrar"
-                onPress={() => console.log('Tentativa de cadastro com: ', loginForm)}
+                onPress={() => handleRegister(loginForm)}
                 textStyle={styles.registerButtonText}
                 size="small"
               />
