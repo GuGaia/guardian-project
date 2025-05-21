@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config
 from twilio.rest import Client as ClientSMS
@@ -43,7 +44,8 @@ INSTALLED_APPS = [
     'client',
     'contact',
     'rest_framework',
-    'communication'
+    'communication',
+    'auth_app'
 ]
 
 MIDDLEWARE = [
@@ -140,3 +142,12 @@ EMAIL_HOST_PASSWORD =config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS=config('EMAIL_USE_TLS')
 EMAIL_PORT=config('EMAIL_PORT')
 EMAIL_HOST=config('EMAIL_HOST')
+
+# AUTENTICATION
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+JWT_SECRET_KEY = config('JWT_SECRET_KEY')
