@@ -8,5 +8,11 @@ class Client(models.Model):
     active = models.BooleanField(default=True)
     have_plus = models.BooleanField(default=False)
 
+    def get_contact_emails(self):
+        return self.contact_set.exclude(email__isnull=True).exclude(email__exact='').values_list('email', flat=True)
+
     def __str__(self):
         return self.name
+    
+    class Meta:
+        db_table = 'clients'

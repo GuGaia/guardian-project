@@ -3,6 +3,9 @@ from client.models import Client
 from communication.models import CommunicationChannel
 from contact.models import Contact
 from django.core.exceptions import ValidationError
+from rest_framework.test import APIClient
+from rest_framework import status
+
 
 class ContactModelTest(TestCase):
 
@@ -110,3 +113,42 @@ class ContactModelTest(TestCase):
         )
         self.channel.delete()
         self.assertEqual(Contact.objects.count(), 0)
+
+from rest_framework.test import APIClient
+from rest_framework import status
+
+class ContactAPITest(TestCase):
+    def setUp(self):
+        self.client_api = APIClient()
+        self.client_obj = Client.objects.create(name="Maria", email="maria@example.com", password="1234")
+        self.channel_obj = CommunicationChannel.objects.create(name="WhatsApp")
+        self.contact_data = {
+            "name": "João Contato",
+            "phone_number": "+5511999999999",
+            "plataform": "Mobile",
+            "relationship": "Amigo",
+            "channel_id": self.channel_obj.id,
+            "client": self.client_obj.id
+        }
+
+    def create_contact_instance(self):
+        return Contact.objects.create(
+            client=self.client_obj,
+            channel=self.channel_obj,
+            name=self.contact_data["name"],
+            phone_number=self.contact_data["phone_number"],
+            plataform=self.contact_data["plataform"],
+            relationship=self.contact_data["relationship"]
+        )
+
+    def test_create_contact_via_api(self):
+        url = f"/api/clients/{self.client_obj.id}/contacts/"
+        response = self.client_api.post(url, self.contact_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["name"], self.contact_data["name"])
+
+    def test_delete_contact_returns_custom_response(self):
+        contact = self.create_contact_instance()
+        url = f"/api/clients/{self.client_obj.id}/contacts/{contact.id}/"
+        response = self.client_api.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
