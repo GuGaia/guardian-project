@@ -64,6 +64,8 @@ export function AuthProvider({children}) {
                     token: mockResponse.token
                 });
 
+                console.log("user: ", user);
+
                 return mockResponse;
             } else {
                 throw new Error('Invalid credentials');

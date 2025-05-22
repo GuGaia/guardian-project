@@ -10,9 +10,11 @@ const StackLayout = () => {
   useEffect(() => {
     const inAuthGroup = segments[0] === '(LoggedIn)';
 
-    if(inAuthGroup && !user?.autenticated) {
+    if(inAuthGroup && !user?.authenticated) {
+      console.log("user: ", user);
       router.replace('/Login');
-    } else if(user?.autenticated) {
+    } else if(user?.authenticated) {
+      console.log("user: ", user);
       router.replace('/(LoggedIn)/MainMenu');
     }
   }, [user])
