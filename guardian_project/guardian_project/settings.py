@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from decouple import config
 from twilio.rest import Client as ClientSMS
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -144,10 +145,18 @@ EMAIL_PORT=config('EMAIL_PORT')
 EMAIL_HOST=config('EMAIL_HOST')
 
 # AUTENTICATION
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ),
+# }
 
+# JWT
 JWT_SECRET_KEY = config('JWT_SECRET_KEY')
+
+SIMPLE_JWT = {
+    'SIGNING_KEY': JWT_SECRET_KEY,  # <- aqui é onde você usa o valor que definiu
+    'ALGORITHM': 'HS256',
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}

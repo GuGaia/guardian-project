@@ -34,7 +34,7 @@ def login_view(request):
         # Correção principal: usar %s para placeholders no Django
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT id, name, password FROM clients WHERE email = %s", 
+                "SELECT id, name, email, password, default_message, active, have_plus FROM clients WHERE email = %s", 
                 [email]
             )
             user = cursor.fetchone()
@@ -44,7 +44,7 @@ def login_view(request):
                 'detail': 'Invalid credentials'
             }, status=status.HTTP_401_UNAUTHORIZED)
 
-        user_id, name, hashed_password = user
+        user_id, name, email, hashed_password, default_message, active, have_plus = user
 
         # Tratar diferentes tipos de dados da senha hash
         if isinstance(hashed_password, memoryview):
@@ -63,9 +63,14 @@ def login_view(request):
         payload = {
             'sub': str(user_id),
             'name': name,
+            'email': email,
+            'default_message': default_message,
+            'active': active,
+            'have_plus': have_plus,
             'exp': expiration,
-            'iat': datetime.utcnow()  # issued at
+            'iat': datetime.utcnow()
         }
+
         
         token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm='HS256')
 
