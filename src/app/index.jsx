@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import HomeScreen from "./HomeScreen";
+import HomeScreen from "./Login";
 import { loadFonts } from '../utils/loadFonts';
 
 export default function Page() {

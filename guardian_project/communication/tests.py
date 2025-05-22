@@ -2,6 +2,8 @@ from django.test import TestCase
 from communication.models import CommunicationChannel
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from rest_framework.test import APIClient
+from rest_framework import status
 
 class CommunicationChannelModelTest(TestCase):
 
@@ -33,3 +35,18 @@ class CommunicationChannelModelTest(TestCase):
         updated = CommunicationChannel.objects.get(pk=channel.pk)
         self.assertEqual(updated.name, 'Radio FM')
 
+class CommunicationAPITest(TestCase):
+    def setUp(self):
+        self.client_api = APIClient()
+        self.channel_data = {"name": "Telegram"}
+
+    def test_create_channel_via_api(self):
+        response = self.client_api.post("/api/communications/", self.channel_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["name"], self.channel_data["name"])
+
+    def test_list_channels_via_api(self):
+        CommunicationChannel.objects.create(name="SMS")
+        response = self.client_api.get("/api/communications/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreaterEqual(len(response.data), 1)

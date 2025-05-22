@@ -8,6 +8,7 @@ export function GrdSolidButton({
     onPress,
     textStyle,
     size = 'medium',
+    style,
     ...props
 }) {
     const getButtonSizeStyle = () => {
@@ -25,7 +26,8 @@ export function GrdSolidButton({
         <TouchableOpacity
             style={[
                 getButtonSizeStyle(),
-                { backgroundColor: theme.colors.grdBlue }
+                { backgroundColor: theme.colors.grdBlue },
+                style,
             ]}
             onPress={onPress}
             {...props}
