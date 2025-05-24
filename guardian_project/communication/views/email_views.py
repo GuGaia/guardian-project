@@ -14,18 +14,8 @@ class EmailView(APIView):
         if not user_data:
             return Response({'detail': 'Unauthorized'}, status=401)
 
-        user_id = user_data['sub']
-        user_name = user_data['name']
-        print(user_data)
-
-        client_id = request.data.get("client_id")
-        if not client_id:
-            return Response(
-                {"error": "client_id é obrigatório"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         try:
-            client = Client.objects.get(id=client_id)
+            client = Client.objects.get(id=user_data['sub'])
         except Client.DoesNotExist:
             return Response(
                 {"error": "Cliente não encontrado"},
