@@ -28,6 +28,10 @@ class SmsView(APIView):
 
         send_alert_for_client(client)
 
+        lat = request.data.get("latitude")
+        lon = request.data.get("longitude")
+        send_alert_for_client(client, lat, lon)
+
         return Response(
             {"status": "SMS enviado com sucesso"},
             status=status.HTTP_200_OK
