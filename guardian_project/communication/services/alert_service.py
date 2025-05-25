@@ -3,7 +3,7 @@ from .geocode_service import reverse_geocode
 from .email_service import service_send_mail
 from .sms_service import service_send_sms
 
-def send_alert_for_client(client, lat: float = None, lon: float = None):
+def send_alert_for_client(client, lat: float = None, lon: float = None, channel_type: str=''):
     address = None
     if lat is not None and lon is not None:
         address = reverse_geocode(lat, lon)
@@ -27,10 +27,14 @@ def send_alert_for_client(client, lat: float = None, lon: float = None):
         else:
             full_msg = base_msg
 
-        if channel == "sms":
+        if channel_type == "sms":
+            # print(f"{contact.phone_number}\n {full_msg}")
             send_sms_func(contact.phone_number, full_msg)
-        elif channel == "email":
+        elif channel_type == "email":
             service_send_mail(client.default_message, full_msg, contact.email)
+        elif channel_type == '':
+            print("erro!")
+            return False
 #        elif channel == "whatsapp":
 #            send_whatsapp(contact.phone_number, full_msg)
 

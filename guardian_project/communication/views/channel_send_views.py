@@ -1,16 +1,12 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from communication.services.alert_service import send_alert_for_client
-from decouple import config
 from client.models import Client
+from communication.services.alert_service import send_alert_for_client
 from common.auth import validate_token
 
-class SmsView(APIView):
-    """View para operações relacionadas a e-mails"""
-
+class ChannelSendView(APIView):
     def post(self, request, *args, **kwargs):
-        """Envia um sms"""
         auth_header = request.headers.get('Authorization', '')
         token = auth_header.replace('Bearer ', '')
         user_data = validate_token(token)
@@ -26,13 +22,13 @@ class SmsView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        send_alert_for_client(client)
+        # coordenadas de exemplo p teste
+        lat = request.data.get("latitude", -23.55052)
+        lon = request.data.get("longitude", -46.633308)
+        channel_call = request.headers.get('channel', '')
 
-        lat = request.data.get("latitude")
-        lon = request.data.get("longitude")
-        send_alert_for_client(client, lat, lon, "sms")
-
+        send_alert_for_client(client, lat, lon, channel_call)
         return Response(
-            {"status": "SMS enviado com sucesso"},
+            {"status": "sucess"},
             status=status.HTTP_200_OK
         )

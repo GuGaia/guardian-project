@@ -4,6 +4,7 @@ from .views import (
     CommunicationViewSet,
     EmailView,
     SmsView,
+    ChannelSendView,
 )
 
 router = DefaultRouter()
@@ -17,8 +18,13 @@ sms_patterns = [
     path('send/', SmsView.as_view(), name='send-sms'),
 ]
 
+channel_send_patterns = [
+    path('send/', ChannelSendView.as_view(), name='channel-send'),
+]
+
 urlpatterns = [
     path('', include(router.urls)),
     path('emails/', include(email_patterns)),
     path('sms/', include(sms_patterns)),
+    path('channel_send/', include(channel_send_patterns)),
 ]

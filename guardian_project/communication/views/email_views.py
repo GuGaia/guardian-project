@@ -26,7 +26,8 @@ class EmailView(APIView):
         lat = request.data.get("latitude", -23.55052)
         lon = request.data.get("longitude", -46.633308)
 
-        send_alert_for_client(client, lat, lon)
+        channel_call = request.headers.get('Authorization', '')
+        send_alert_for_client(client, lat, lon, "email")
         return Response(
             {"status": "sucess"},
             status=status.HTTP_200_OK
