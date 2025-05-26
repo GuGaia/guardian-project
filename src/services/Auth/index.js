@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 // Configuração do Axios
 const api = axios.create({
     // No Expo Go, precisamos usar o IP da sua máquina na rede local
-    baseURL: 'http://192.168.0.103:8000/api', // Substitua pelo seu IP local
+    baseURL: 'http://192.168.0.101:8000/api', // Garantindo que estamos usando a porta 8000
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'

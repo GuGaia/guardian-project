@@ -43,6 +43,13 @@ class EmailView(APIView):
         )
 
     def get(self, request, *args, **kwargs):
+        auth_header = request.headers.get('Authorization', '')
+        token = auth_header.replace('Bearer ', '')
+        user_data = validate_token(token)
+
+        if not user_data:
+            return Response({'detail': 'Unauthorized'}, status=401)
+    
         return Response(
             {"status": "Serviço de e-mail"},
             status=status.HTTP_200_OK
