@@ -32,5 +32,8 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
     objects = ClientManager()
 
+    def get_contact_emails(self):
+        return self.contact_set.exclude(email__isnull=True).exclude(email__exact='').values_list('email', flat=True)
+
     def __str__(self):
         return self.email

@@ -1,3 +1,5 @@
+# contact/views.py
+
 from rest_framework import viewsets
 from .models import Contact
 from .serializers import ContactSerializer
@@ -11,7 +13,10 @@ class ContactViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         client_pk = self.kwargs.get('client_pk')
-        return Contact.objects.filter(client_id=client_pk)
+        if client_pk:
+            return Contact.objects.filter(client_id=client_pk)
+        return Contact.objects.all()               
+
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()

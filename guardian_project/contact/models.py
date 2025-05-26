@@ -11,6 +11,7 @@ class Contact(models.Model):
     plataform = models.CharField(max_length=20)
     relationship = models.CharField(max_length=50)
     channel = models.ForeignKey(CommunicationChannel, related_name='contacts', on_delete=models.CASCADE)
+    email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.client.name})  {self.channel.name}"
