@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/clients/<int:client_pk>/contacts/',
          include('contact.urls')),
     path('api/communications/', include('communication.urls')),
+    path('api/', include('auth_app.urls')), 
 ]
 
 from rest_framework_simplejwt.views import (

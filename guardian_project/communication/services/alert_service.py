@@ -1,5 +1,7 @@
 from contact.models import Contact
 from .geocode_service import reverse_geocode
+from .email_service import send_mail
+from .sms_service import send_sms
 
 def send_alert_for_client(client, lat: float = None, lon: float = None):
     address = None
@@ -26,16 +28,18 @@ def send_alert_for_client(client, lat: float = None, lon: float = None):
             full_msg = base_msg
 
         if channel == "sms":
-            send_sms(contact.phone_number, full_msg)
+            send_sms_func(contact.phone_number, full_msg)
         elif channel == "email":
-            send_email(contact.email, full_msg)
+            send_email_func(contact.email, full_msg)
 #        elif channel == "whatsapp":
 #            send_whatsapp(contact.phone_number, full_msg)
 
-def send_sms(number, message):
+def send_sms_func(number, message):
+    send_sms(number, message)
     print(f"Enviando SMS para {number}: {message}")
 
-def send_email(email, message):
+def send_email_func(email, message):
+    send_mail( "Alerta! Posso estar em Perigo!!", message, [email])
     print(f"Enviando Email para {email}: {message}")
 
 # def send_whatsapp(number, message):

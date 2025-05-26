@@ -36,4 +36,7 @@ class Client(AbstractBaseUser, PermissionsMixin):
         return self.contact_set.exclude(email__isnull=True).exclude(email__exact='').values_list('email', flat=True)
 
     def __str__(self):
-        return self.email
+        return self.name
+    
+    class Meta:
+        db_table = 'clients'
