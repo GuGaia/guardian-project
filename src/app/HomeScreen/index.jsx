@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Keyboard, Platform } from 'react-native';
-import { View, Text, StyleSheet, Image, Keyboard, Platform } from 'react-native';
 import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
@@ -39,26 +38,11 @@ export default function Page() {
         }
       }}
     >
-    <View 
-      style={[globalStyles.container, styles.container]}
-      onStartShouldSetResponder={() => true}
-      onResponderGrant={() => {
-        if (Platform.OS === 'web') {
-          const activeElement = document.activeElement;
-          if (activeElement && activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
-            Keyboard.dismiss();
-          }
-        } else {
-          Keyboard.dismiss();
-        }
-      }}
-    >
       <View style={styles.header} />
       <View style={[globalStyles.centerContainer, styles.centerContainer]}>
         <View style={styles.displayContainer}>
           <Icon 
             name="guardianOwl" 
-            size={111} 
             size={111} 
           />
           <Text style={[globalStyles.title, styles.title]}>Guardiã</Text>
@@ -86,22 +70,7 @@ export default function Page() {
               onPress={() => router.push('/MainMenu')}
               textStyle={styles.loginButtonText}
               size="large"
-              size="large"
             />
-            <View style={styles.separatorContainer}>
-              <View style={styles.separatorLine} />
-              <Text style={styles.separatorText}>ou</Text>
-              <View style={styles.separatorLine} />
-            </View>
-            <View style={styles.registerButtonContainer}>
-              <GrdOutlinedButton
-                label="Cadastrar"
-                onPress={() => console.log('Tentativa de cadastro com: ', loginForm)}
-                textStyle={styles.registerButtonText}
-                size="small"
-              />
-            </View>
-            
             <View style={styles.separatorContainer}>
               <View style={styles.separatorLine} />
               <Text style={styles.separatorText}>ou</Text>
@@ -155,9 +124,6 @@ const styles = StyleSheet.create({
     gap: 28,
     paddingVertical: 18,
     paddingHorizontal: 38,
-    gap: 28,
-    paddingVertical: 18,
-    paddingHorizontal: 38,
   },
   centerContainer: {
     backgroundColor: theme.colors.grdOrangeLight,
@@ -165,7 +131,6 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   title: {
-    fontSize: theme.fontSizes.h3,
     fontSize: theme.fontSizes.h3,
     color: theme.colors.grdBlue,
     textAlign: 'center',
@@ -194,24 +159,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     color: theme.colors.grdBlue,
     fontFamily: theme.fonts.interBold,
-    fontFamily: theme.fonts.interBold,
     fontSize: theme.fontSizes.body,
   },
-  separatorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  separatorLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: theme.colors.grdBlue,
-  },
-  separatorText: {
-    marginHorizontal: 10,
-    color: theme.colors.grdBlue,
-    fontFamily: theme.fonts.interBold,
-    fontSize: theme.fontSizes.body,
-  },
-  },]
 });

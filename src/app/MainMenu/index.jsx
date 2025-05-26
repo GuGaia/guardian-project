@@ -82,8 +82,7 @@ export default function MainMenu() {
 						onPress={() => router.push('/ContactList')}
 						style={styles.GeneralButton}
 					/>
-
-			
+          
 			</View>
 
 			<CardButton
@@ -118,14 +117,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#FFFFFF",
-    fontSize: width * 0.05,
+    fontSize: width * 0.09,
     fontWeight: "bold",
     textAlign: "center",
     marginHorizontal:  width * 0.04,
   },
   text2: {
     color: "#FFFFFF",
-    fontSize: width * 0.04,
+    fontSize: width * 0.01,
     textAlign: "center",
     marginHorizontal:  width * 0.01,
   },

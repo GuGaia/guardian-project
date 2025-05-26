@@ -10,6 +10,7 @@ const { width, height } = Dimensions.get('window');
 export default function Page() {
   const router = useRouter();
   const [modoDiscreto, setModoDiscreto] = useState(false);
+  const [ligacoes, setligacoes] = useState(false);
 
   const renderSection = (title: string, children: React.ReactNode) => (
     <View style={styles.section}>
@@ -30,9 +31,6 @@ export default function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backText}>← Voltar</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.titleCard}>
@@ -52,7 +50,7 @@ export default function Page() {
         {renderSection("Modo discreto", 
           <>
             <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Modo discreto</Text>
+              <Text style={styles.switchLabel}>Desativar notificações</Text>
               <Switch
                 value={modoDiscreto}
                 onValueChange={setModoDiscreto}
@@ -60,7 +58,17 @@ export default function Page() {
                 trackColor={{ false: "#AAC9FF", true: "#3573FA" }}
               />
             </View>
-            {renderBlueButton("configurar notificações")}
+
+             <View style={styles.switchRow}>
+              <Text style={styles.switchLabel}>Desativar alerta de chamadas</Text>
+              <Switch
+                value={ligacoes}
+                onValueChange={setligacoes}
+                thumbColor={ligacoes ? "#FFFFFF" : "#3573FA"}
+                trackColor={{ false: "#AAC9FF", true: "#3573FA" }}
+              />
+            </View>
+          
           </>
         )}
       </ScrollView>

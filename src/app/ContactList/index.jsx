@@ -114,41 +114,6 @@ export default function Page() {
             email: 'isabela.costa@email.com',
             relationship: 'Sobrinha'
         },
-        {
-            id: 16,
-            name: 'Thiago Almeida',
-            phone: '(11) 91234-5678',
-            email: 'thiago.almeida@email.com',
-            relationship: 'Sobrinho'
-        },
-        {
-            id: 17,
-            name: 'Amanda Ferreira',
-            phone: '(11) 98765-4321',
-            email: 'amanda.ferreira@email.com',
-            relationship: 'Colega de faculdade'
-        },
-        {
-            id: 18,
-            name: 'Pedro Souza',
-            phone: '(11) 94567-8901',
-            email: 'pedro.souza@email.com',
-            relationship: 'Amigo'
-        },
-        {
-            id: 19,
-            name: 'Carolina Mendes',
-            phone: '(11) 92345-6789',
-            email: 'carolina.mendes@email.com',
-            relationship: 'Vizinha'
-        },
-        {
-            id: 20,
-            name: 'Felipe Rodrigues',
-            phone: '(11) 95678-1234',
-            email: 'felipe.rodrigues@email.com',
-            relationship: 'Colega de academia'
-        }
     ]
 
     return (
@@ -172,7 +137,7 @@ export default function Page() {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.addButton}>
+            <TouchableOpacity style={styles.addButton} onPress={()=> router.push('/ContactDetails')} >
                 <Text style={styles.addButtonText}>Adicionar contato</Text>
             </TouchableOpacity>
 
