@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-jx+)pag+2=*5nps2+8r7$^rphnf)0xnld(91pcb@k-_q6d@t0%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '192.168.0.103']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', '192.168.0.101']
 
 
 # Application definition
@@ -64,10 +64,13 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    "exp://192.168.0.103:8081",
-    "exp://192.168.0.103:19000",
-    "exp://192.168.0.103:19001",
-    "exp://192.168.0.103:19002"
+    "http://localhost:8081",
+    "http://127.0.0.1:8081",
+    "exp://192.168.0.101:8081",
+    "exp://192.168.0.101:8000",
+    "exp://192.168.0.101:19000",
+    "exp://192.168.0.101:19001",
+    "exp://192.168.0.101:19002"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -92,6 +95,11 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# Adicionando configurações adicionais de CORS
+CORS_ORIGIN_ALLOW_ALL = True  # Permite todas as origens em desenvolvimento
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
 ROOT_URLCONF = 'guardian_project.urls'
 
