@@ -4,6 +4,8 @@ import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -21,9 +23,9 @@ const buttonBase = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
-  paddingVertical: width* 0.04,
-  marginBottom: width* 0.04,
-  marginHorizontal: width* 0.04,
+  paddingVertical: height* 0.04,
+  marginBottom: height* 0.015,
+  marginHorizontal: height* 0.03,
 };
 
 function CardButton({ onPress, icon, text, style, imageSource }) {
@@ -32,7 +34,7 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 		{imageSource ? (
 		  <Image source={imageSource} resizeMode="contain" style={[styles.image, { marginRight: 10 }]} />
 		) : (
-		  <Icon name={icon} size={30} style={{ marginRight: 10 }} />
+		  <Icon name={icon} size={((width * height)/ 1000) * 0.1} style={{ marginRight: 10 }} />
 		)}
 		<View style={{ flex: 1 }}>
 		  <Text style={styles.buttonText} numberOfLines={2} adjustsFontSizeToFit>
@@ -45,79 +47,87 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
   
 
 export default function MainMenu() {
+
   return (
 
+    <LinearGradient
+      colors={['#FFFFFF', '#83A4ED']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.background}
+    >
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.header}>
+            <Text style={styles.text}>{"Central de socorro"}</Text>
+          </View>
 
-    <SafeAreaView style={styles.container}>
+          <CardButton
+            imageSource={require('../../../assets/images/EmergencyButton.png')}
+            text="Botão de Emergência"
+            onPress={() => router.push('/EmergencyMode')}
+            style={styles.emergencyButton}
+          />
 
-      <ScrollView style={styles.scrollView}>
+          <CardButton
+            icon="settings"
+            text="Configurações"
+            onPress={() => router.push('/Settings')}
+            style={styles.GeneralButton}
+          />
 
-		
+          <CardButton
+            icon="contacts"
+            text="Contatos"
+            onPress={() => router.push('/ContactList')}
+            style={styles.GeneralButton}
+          />
 
-			<View style={styles.header}>
-			<Text style={styles.text}>{"Central de socorro"}</Text>
-			</View>
+          <CardButton
+            imageSource={require('../../../assets/images/OrientationsToContacts.png')}
+            text="Saiba como orientar seus contatos de emergência"
+            onPress={() => router.push('/Orientations')}
+            style={styles.orientationsButton}
+          />
+        </ScrollView>
 
-			<CardButton
-			imageSource={require('../../../assets/images/EmergencyButton.png')}
-			text="Botão de Emergência"
-			onPress={() => router.push('/EmergencyMode')}
-			style={styles.emergencyButton}
-			/>
-		
-
-
-			
-				<View style={styles.buttonRow}>
-					<CardButton
-						icon="settings"
-						text="Configurações"
-						onPress={() => router.push('/Settings')}
-						style={styles.GeneralButton}
-					/>
-
-					<CardButton
-						icon="contacts"
-						text="Contatos"
-						onPress={() => router.push('/ContactList')}
-						style={styles.GeneralButton}
-					/>
-          
-			</View>
-
-			<CardButton
-			imageSource={require('../../../assets/images/OrientationsToContacts.png')}
-			text="Saiba como orientar seus contatos de emergência"
-			onPress={() => router.push('/Orientations')}
-			style={styles.orientationsButton}
-			/>
-      </ScrollView>
-
-   		<View style={styles.navbar}>
-		   <TouchableOpacity style={styles.navbarContent} onPress={() => router.push('/MainMenu')}>
-			 <Icon name="Home" size={40} style={styles.navbarIcon} />
-		   </TouchableOpacity>
-		 </View>
-
-    </SafeAreaView>
+        <View style={styles.navbar}>
+          <TouchableOpacity
+            style={styles.navbarContent}
+            onPress={() => router.push('/MainMenu')}
+          >
+            <Icon
+              name="Home"
+              size={((width * height) / 1000) * 0.14}
+              style={styles.navbarIcon}
+            />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
+
 const styles = StyleSheet.create({
+
+    background: {
+      
+    flex: 1,
+  },
+
   container: {
     flex: 1,
   },
   scrollView: {
-    backgroundColor: "#D9E7FF",
   },
   header: {
-    backgroundColor: "#3573FA",
-    paddingVertical:  height * 0.01,
-    marginBottom: height*0.04,
+    paddingVertical:  height * 0.05,
+    marginBottom: height*0.02,
   },
   text: {
-    color: "#FFFFFF",
-    fontSize: width * 0.09,
+    color: theme.colors.grdBlue,
+    fontSize: ((width * height)/ 1000) * 0.07,
     fontWeight: "bold",
     textAlign: "center",
     marginHorizontal:  width * 0.04,
@@ -150,13 +160,13 @@ const styles = StyleSheet.create({
     size: width*0.04,
   },
   orientationsButton: {
-    backgroundColor: "#3573FA",
+    backgroundColor: theme.colors.grdBlue,
     ...baseCard,
     paddingVertical: height*0.03,
     paddingHorizontal: width*0.04,
   },
   GeneralButton: {
-    backgroundColor: theme.colors.grdBlueLight,
+    backgroundColor: theme.colors.grdBlue,
     ...baseCard,
     paddingVertical: height*0.03,
     paddingHorizontal: width*0.04,
@@ -170,18 +180,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 70,
-    backgroundColor: theme.colors.grdBlue,
+    height: ((width * height)/ 1000) * 0.16,
     justifyContent: "center",
     alignItems: "center",
     paddingBottom: 10,
     elevation: 10,
   },
   navbarContent: {
-    width: 60,
-    height: 60,
-    backgroundColor: theme.colors.grdBlueLight,
-    borderRadius: 30,
+    width: ((width * height)/ 1000) * 0.18,
+    height: ((width * height)/ 1000) * 0.18,
+    backgroundColor: theme.colors.grdBlue,
+    borderRadius: ((width * height)/ 1000) * 0.18,
     justifyContent: "center",
     alignItems: "center",
   },

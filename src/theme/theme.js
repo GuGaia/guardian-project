@@ -5,7 +5,7 @@ export const theme = {
     grdBlueLight: '#5C97FF',
     grdWhite00: '#FFFFFF',
     grdBlack00: '#000000',
-    grdRed: '#DB1313',
+    grdRed: '#B33E3E',
     grdGray00: '#212023',
   },
   fonts: {

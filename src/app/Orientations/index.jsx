@@ -5,15 +5,15 @@ import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 
+
+const { width, height } = Dimensions.get('window');
+
 export default function Page() {
     const router = useRouter();
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.backText}>{'<- Voltar'}</Text>
-                </TouchableOpacity>
             </View>
 
             <View style={styles.titleCard}>
@@ -27,20 +27,15 @@ export default function Page() {
             </View>
 
             
-            <View style={styles.navbar}>
-                        <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.push('/MainMenu')}>
-                                <Icon 
-                                    name="Home"
-                                    size={40}
-                                />
-                            </TouchableOpacity>
-            </View>  
+               <View style={styles.navbar}>
+                   <TouchableOpacity style={styles.navbarContent} onPress={() => router.push('/MainMenu')}>
+                     <Icon name="Home" size={ ((width * height)/ 1000) * 0.16} style={styles.navbarIcon} />
+                   </TouchableOpacity>
+                 </View> 
             
         </View>
     );
 }
-
-const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -112,29 +107,26 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         elevation: 6,
     },
-    navbar: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 70, 
-        backgroundColor: theme.colors.grdBlue,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingBottom: 10, 
-        elevation: 10, 
-      },
-      navbarContent: {
-        width: 60,
-        height: 60,
-        backgroundColor: theme.colors.grdBlueLight,
-        borderRadius: 30, 
-        justifyContent: "center",
-        alignItems: "center",
-      },
+  navbar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ((width * height)/ 1000) * 0.16,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 10,
+    elevation: 10,
+  },
+  navbarContent: {
+    width: ((width * height)/ 1000) * 0.18,
+    height: ((width * height)/ 1000) * 0.18,
+    backgroundColor: theme.colors.grdBlue,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
       navbarIcon: {
-        width: 30,
-        height: 30,
         tintColor: "#FFFFFF", 
       },	  
 });
