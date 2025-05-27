@@ -25,10 +25,15 @@ class ChannelSendView(APIView):
         # coordenadas de exemplo p teste
         lat = request.data.get("latitude", -23.55052)
         lon = request.data.get("longitude", -46.633308)
-        channel_call = request.headers.get('channel', '')
 
-        send_alert_for_client(client, lat, lon, channel_call)
+        alert_sent = send_alert_for_client(client, lat, lon)
+        if not alert_sent:
+            return Response(
+                {"error": "Falha ao enviar o alerta para o cliente."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
         return Response(
-            {"status": "sucess"},
+            {"status": "success"},
             status=status.HTTP_200_OK
         )

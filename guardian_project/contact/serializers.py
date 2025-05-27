@@ -7,11 +7,12 @@ from communication.models import CommunicationChannel
 from client.models import Client
 
 class ContactSerializer(serializers.ModelSerializer):
-    channel = CommunicationChannelSerializer(read_only=True)
-    channel_id = serializers.PrimaryKeyRelatedField(
+    channels = CommunicationChannelSerializer(many=True, read_only=True)
+    channel_ids = serializers.PrimaryKeyRelatedField(
         queryset=CommunicationChannel.objects.all(),
-        source='channel',
-        write_only=True
+        source='channels',
+        write_only=True,
+        many=True
     )
     client_id = serializers.PrimaryKeyRelatedField(
         queryset=Client.objects.all(),
@@ -25,10 +26,22 @@ class ContactSerializer(serializers.ModelSerializer):
             'id',
             'client_id',
             'name',
-            'phone_number',   
-            'plataform',
+            'phone_number',
             'relationship',
             'email',
-            'channel',
-            'channel_id',
+            'channels',
+            'channel_ids',
         ]
+
+    def create(self, validated_data):
+        channel_ids = validated_data.pop('channels', [])
+        contact = Contact.objects.create(**validated_data)
+        contact.channels.set(channel_ids)
+        return contact
+
+    def update(self, instance, validated_data):
+        channel_ids = validated_data.pop('channels', None)
+        instance = super().update(instance, validated_data)
+        if channel_ids is not None:
+            instance.channels.set(channel_ids)
+        return instance
