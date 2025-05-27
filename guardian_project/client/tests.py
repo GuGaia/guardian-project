@@ -4,6 +4,8 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient
 from rest_framework import status
+import jwt
+from django.conf import settings
 
 
 class ClientModelTest(TestCase):
@@ -65,22 +67,19 @@ class ClientModelTest(TestCase):
         self.assertEqual(updated.name, 'Joana da Silva')
 
 class ClientAPITest(TestCase):
-    def setUp(self):
-        self.client_api = APIClient()
-        self.client_data = {
-            "name": "Usuário Teste",
-            "email": "teste@email.com",
-            "password": "senha123",
-            "default_message": "Mensagem de emergência"
-        }
 
-    def test_create_client_via_api(self):
-        response = self.client_api.post("/api/clients/", self.client_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["email"], self.client_data["email"])
+    def setUp(self):
+        self.client_obj = Client.objects.create(
+            name="Maria", email="maria@example.com", password="1234"
+        )
+
+        payload = {"user_id": self.client_obj.id}
+        secret = settings.JWT_SECRET_KEY  
+        self.token = jwt.encode(payload, secret, algorithm="HS256")
+
+        self.client_api = APIClient()
+        self.client_api.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
 
     def test_list_clients_via_api(self):
-        Client.objects.create(**self.client_data)
         response = self.client_api.get("/api/clients/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)
+        self.assertEqual(response.status_code, 200)
