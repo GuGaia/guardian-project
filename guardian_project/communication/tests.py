@@ -6,6 +6,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from unittest.mock import patch, MagicMock
 from communication.services.alert_service import send_alert_for_client
+from communication.services.geocode_service import reverse_geocode
 
 class CommunicationChannelModelTest(TestCase):
 
@@ -81,3 +82,31 @@ class SendAlertForClientTest(TestCase):
 
         mock_contact_model.objects.filter.assert_called_once_with(client=mock_client)
         self.assertTrue(result)
+
+class ReverseGeocodeTest(TestCase):
+
+    @patch('communication.services.geocode_service.requests.get')
+    def test_reverse_geocode_success(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"display_name": "Rua Fictícia, São Paulo, Brasil"}
+        mock_get.return_value = mock_response
+
+        result = reverse_geocode(-23.5, -46.6)
+        self.assertEqual(result, "Rua Fictícia, São Paulo, Brasil")
+
+    @patch('communication.services.geocode_service.requests.get')
+    def test_reverse_geocode_http_error(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.status_code = 500
+        mock_get.return_value = mock_response
+
+        result = reverse_geocode(-23.5, -46.6)
+        self.assertIsNone(result)
+
+    @patch('communication.services.geocode_service.requests.get')
+    def test_reverse_geocode_exception(self, mock_get):
+        mock_get.side_effect = Exception("Erro na requisição")
+
+        result = reverse_geocode(-23.5, -46.6)
+        self.assertIsNone(result)
