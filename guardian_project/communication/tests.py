@@ -4,6 +4,8 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient
 from rest_framework import status
+from unittest.mock import patch, MagicMock
+from communication.services.alert_service import send_alert_for_client
 
 class CommunicationChannelModelTest(TestCase):
 
@@ -50,3 +52,32 @@ class CommunicationAPITest(TestCase):
         response = self.client_api.get("/api/communications/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
+
+class SendAlertForClientTest(TestCase):
+
+    @patch('communication.services.alert_service.Contact')
+    @patch('communication.services.alert_service.reverse_geocode')
+    def test_send_alert_with_coordinates(self, mock_reverse_geocode, mock_contact_model):
+        mock_client = MagicMock()
+        mock_client.default_message = 'Mensagem de alerta'
+        mock_reverse_geocode.return_value = 'Endereço Simulado'
+
+        mock_contact_model.objects.filter.return_value = ['Contato1', 'Contato2']
+
+        result = send_alert_for_client(mock_client, lat=-23.5, lon=-46.6)
+
+        mock_reverse_geocode.assert_called_once_with(-23.5, -46.6)
+        mock_contact_model.objects.filter.assert_called_once_with(client=mock_client)
+        self.assertTrue(result)
+
+    @patch('communication.services.alert_service.Contact')
+    def test_send_alert_without_coordinates(self, mock_contact_model):
+        mock_client = MagicMock()
+        mock_client.default_message = 'Mensagem padrão'
+
+        mock_contact_model.objects.filter.return_value = []
+
+        result = send_alert_for_client(mock_client)
+
+        mock_contact_model.objects.filter.assert_called_once_with(client=mock_client)
+        self.assertTrue(result)
