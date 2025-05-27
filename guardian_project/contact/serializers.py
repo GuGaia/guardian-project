@@ -14,17 +14,11 @@ class ContactSerializer(serializers.ModelSerializer):
         write_only=True,
         many=True
     )
-    client_id = serializers.PrimaryKeyRelatedField(
-        queryset=Client.objects.all(),
-        source='client',
-        write_only=True
-    )
 
     class Meta:
         model = Contact
         fields = [
             'id',
-            'client_id',
             'name',
             'phone_number',
             'relationship',
