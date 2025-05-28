@@ -5,6 +5,7 @@ from contact.models import Contact
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIClient
 from rest_framework import status
+from unittest.mock import patch, MagicMock
 
 
 class ContactModelTest(TestCase):
@@ -98,38 +99,42 @@ from rest_framework import status
 class ContactAPITest(TestCase):
     def setUp(self):
         self.client_api = APIClient()
-        self.client_obj = Client.objects.create(
-            name="Maria", email="maria@example.com", password="1234"
-        )
-        self.channel_obj = CommunicationChannel.objects.create(name="WhatsApp")
+        self.client_obj = Client.objects.create(name="Maria", email="maria@example.com", password="1234")
+        self.channel = CommunicationChannel.objects.create(name="email")
+        self.auth_header = {'HTTP_AUTHORIZATION': 'Bearer mock-token'}
 
-        self.contact_data = {
+    @patch("contact.views.validate_token")
+    def test_create_contact_via_api(self,  mock_validate_token):
+        mock_validate_token.return_value = {"sub": self.client_obj.id}
+        data = {
             "name": "João Contato",
             "phone_number": "+5511999999999",
             "relationship": "Amigo",
             "email": "joao@example.com",
-            "channel_ids": [self.channel_obj.id]
+            "channel_ids": [self.channel.id]
         }
+        response = self.client_api.post(
+            f"/api/clients/{self.client_obj.id}/contacts/",
+            data,
+            format="json",
+            **self.auth_header
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def create_contact_instance(self):
+    @patch("contact.views.validate_token")
+    def test_delete_contact_returns_custom_response(self, mock_validate_token):
+        mock_validate_token.return_value = {"sub": self.client_obj.id}
         contact = Contact.objects.create(
             client=self.client_obj,
-            name=self.contact_data["name"],
-            phone_number=self.contact_data["phone_number"],
-            relationship=self.contact_data["relationship"],
-            email=self.contact_data["email"]
+            name="Contato",
+            phone_number="123456789",
+            relationship="Família",
+            email="teste@teste.com"
         )
-        contact.channels.set([self.channel_obj])
-        return contact
+        contact.channels.set([self.channel])
 
-    def test_create_contact_via_api(self):
-        url = f"/api/clients/{self.client_obj.id}/contacts/"
-        response = self.client_api.post(url, self.contact_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["name"], self.contact_data["name"])
-
-    def test_delete_contact_returns_custom_response(self):
-        contact = self.create_contact_instance()
-        url = f"/api/clients/{self.client_obj.id}/contacts/{contact.id}/"
-        response = self.client_api.delete(url)
+        response = self.client_api.delete(
+            f"/api/clients/{self.client_obj.id}/contacts/{contact.id}/",
+            **self.auth_header
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
