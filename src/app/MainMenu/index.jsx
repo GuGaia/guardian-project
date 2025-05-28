@@ -6,12 +6,11 @@ import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Header } from "./Header";
 
-
-
 const { width, height } = Dimensions.get('window');
+
 
 const baseCard = {
   borderRadius: 12,
@@ -41,7 +40,7 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 		  <Icon name={icon} size={((width * height)/ 1000) * 0.07} style={{ marginRight: 10 }} />
 		)}
 		<View style={{ flex: 1 }}>
-		  <Text style={styles.buttonText} numberOfLines={2} adjustsFontSizeToFit>
+		  <Text style={styles.statusTitle} numberOfLines={2} adjustsFontSizeToFit>
 			{text}
 		  </Text>
 		</View>
@@ -49,12 +48,62 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 	);
   }
 
-  
-  
+function useLocation(isLoggedIn) {
+  const [location, setLocation] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      if (!isLoggedIn) {
+        setLocation({
+          latitude: -23.5505,
+          longitude: -46.6333,
+          address: 'Av. Exemplo, 123 - Cidade Fictícia',
+        });
+        return;
+      }
+
+      try {
+        const response = await fetch('https://api.seusistema.com/location', {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer seu_token_aqui', // Aqui você futuramente pega do contexto de auth
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Falha ao buscar localização');
+        }
+
+        const data = await response.json();
+        setLocation({
+          latitude: data.latitude,
+          longitude: data.longitude,
+          address: data.address,
+        });
+      } catch (err) {
+        console.error(err);
+        setError('Erro ao obter localização');
+        setLocation({
+          latitude: -23.5505,
+          longitude: -46.6333,
+          address: 'Av. Exemplo, 123 - Cidade Fictícia',
+        });
+      }
+    };
+
+    fetchLocation();
+  }, [isLoggedIn]);
+
+  return { location, error };
+}
+
 
 export default function MainMenu() {
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const { location, error } = useLocation(false);
 
   useEffect(() => {
     Animated.loop(
@@ -88,22 +137,62 @@ export default function MainMenu() {
         
         <Header/>
           
-          <View style={styles.sosContainer}>
+          <View style={{ flex:1, paddingBottom:  height* 0.08, justifyContent: "center" }}>
+            <Text style={{fontSize: 28, textAlign:"center", fontWeight: "bold",color: theme.colors.grdGray}}>Precisa de ajuda?</Text>
+            <Text style={{fontSize: 16, textAlign:"center", color: theme.colors.grdGray,paddingHorizontal:80}}>Pressione o botão e buscaremos ajuda para você</Text>
+            <View style={styles.sosContainer}>
+
+
             <Animated.View style={[ styles.outerCircle, {transform: [{ scale: pulseAnim }], },]}/>
               <TouchableOpacity style={styles.innerCircle} onPress={() => router.push('/EmergencyMode')}>
                 <TouchableOpacity style={styles.innerInnerCircle} onPress={() => router.push('/EmergencyMode')}>
                   <Text style={styles.SOStext}>Chame ajuda</Text>
                 </TouchableOpacity>
               </TouchableOpacity>
-          </View>
+          </View>     
+            
+          <View style={styles.statusRow}>
+            <View style={styles.statusCard}>
+              <Text style={styles.statusTitle}>Status do botão</Text>
+              <Text style={styles.statusValue}>ativo</Text>
+              <Animated.View
+                style={[
+                styles.statusIndicator,
+                { transform: [{ scale: pulseAnim }] },
+                ]}
+                />
+            
+            </View>
+              <View style={styles.statusCard}>
+                <Text style={styles.statusTitle}>Sua Localização</Text>
+
+                {location ? (
+                <View style={styles.locationMockup}>
+                <Text style={styles.locationText}> {location.address}{"\n"}</Text>
+                </View>
+                ) : (
+                <Text>Buscando localização...</Text>
+                )}
+
+                {error && <Text style={{ color: theme.colors.grdRed }}>{error}</Text>}
+
+                <Icon
+                name="Location"
+                size={24}
+                color="#fff"
+                style={styles.locationIcon}
+                />
+              </View>
+
+            </View>
 
           <CardButton
             text="Guias Salva-Vidas"
             onPress={() => router.push('/Tutorials')}
-            style={styles.orientationsButton}
+            style={styles.GeneralButton}
           />
     
-     
+          </View>
         <Navbar/>
       </SafeAreaView>
     </LinearGradient>
@@ -125,9 +214,6 @@ const styles = StyleSheet.create({
   scrollView: {
     
   },
-  header: {
-    height: height * 0.12,
-},
   sosContainer: {
   justifyContent: 'center',
   alignItems: 'center',
@@ -156,7 +242,6 @@ innerCircle: {
   backgroundColor: '#FF6B6B50', 
   justifyContent: 'center',
   alignItems: 'center',
-  elevation: 10,
 },
 innerInnerCircle: {
   width: ((width * height) / 1000) * 0.6,
@@ -167,52 +252,63 @@ innerInnerCircle: {
   alignItems: 'center',
 },
   text: {
-    color: theme.colors.grdBlue,
+    color: "white",
     fontSize: ((width * height)/ 1000) * 0.07,
     fontWeight: "bold",
     textAlign: "center",
   },
-  text2: {
-    color: "#FFFFFF",
-    fontSize: width * 0.01,
-    textAlign: "center",
-    marginHorizontal:  width * 0.01,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: width * 0.04,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  emergencyButton: {
-    backgroundColor: theme.colors.grdRed,
-    ...baseCard,
-    paddingVertical: height*0.04,
-    paddingHorizontal: width*0.04,
-  },
-  buttonRow: {	  
-	 flexDirection: "row",
-	  alignItems: "flex-start",
-	  justifyContent: "space",
-  },
-  iconContainer: {
-    color: "#FFFFFF",
-    size: width*0.04,
-  },
-  orientationsButton: {
-    backgroundColor: theme.colors.grdBlue,
-    ...baseCard,
-    paddingVertical: height*0.03,
-    paddingHorizontal: width*0.04,
-  },
   GeneralButton: {
-    backgroundColor: theme.colors.grdBlue,
+    backgroundColor: "white",
     ...baseCard,
     paddingVertical: height*0.03,
     paddingHorizontal: width*0.04,
   },
-  image: {
-    width: width * 0.2, 
-    height: width * 0.2, 
+    statusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginHorizontal: 20,
+    paddingBottom: 10,
   },
+
+  statusCard: {
+    backgroundColor: 'white',
+    width: width * 0.43,
+    padding: 16,
+    borderRadius: 12,
+    ...baseCard,
+  },
+
+  statusTitle: {
+    color: theme.colors.grdGray,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  statusValue: {
+    color: "#009933" ,
+    fontSize: 16,
+    marginTop: 8,
+    fontWeight: 'bold',
+  },
+  statusIndicator: {
+  position: 'absolute',
+  bottom: 8,
+  right: 8,
+  width: 14,
+  height: 14,
+  borderRadius: 7,
+  backgroundColor: '#00cc44',
+  shadowColor: '#00cc44',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.8,
+  shadowRadius: 4,
+  elevation: 6,
+},
+
+locationIcon: {
+  position: 'absolute',
+  bottom: 8,
+  right: 8,
+},
+
 });

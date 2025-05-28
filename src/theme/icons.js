@@ -7,6 +7,8 @@ import Home from '@assets/icons/Home.svg';
 import contacts from '@assets/icons/contacts.svg';
 import Plus from '@assets/icons/Plus.svg';
 import user from '@assets/icons/user.svg';
+import Location from '@assets/icons/Location.svg';
+
 
 
 
@@ -22,6 +24,7 @@ export const icons = {
   contacts: contacts,
   Plus:Plus,
   user:user,
+  Location:Location,
 };
 
 // Função auxiliar para obter um ícone
