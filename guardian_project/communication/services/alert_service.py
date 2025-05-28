@@ -25,10 +25,11 @@ def send_alert_for_client(client, lat: float = None, lon: float = None, channel_
                         " Veja no mapa: "
                         f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
                     )
-                full_msg = f"{base_msg}\n{loc_text}"
+                full_msg = f"{contact.name}\n {base_msg}\n{loc_text}\n"
             else:
-                full_msg = base_msg
+                full_msg = base_msg + f"{contact.name}\n" + f"\n"
 
+            print(f"full msg {full_msg}")
             if channel_name == "sms":
                 service_send_sms(contact.phone_number, full_msg)
             elif channel_name == "email":
