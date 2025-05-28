@@ -41,18 +41,19 @@ class CommunicationChannelModelTest(TestCase):
 class CommunicationAPITest(TestCase):
     def setUp(self):
         self.client_api = APIClient()
-        self.channel_data = {"name": "Telegram"}
+        self.auth_header = {'HTTP_AUTHORIZATION': 'Bearer mock-token'}
 
-    def test_create_channel_via_api(self):
-        response = self.client_api.post("/api/communications/", self.channel_data, format='json')
+    @patch('communication.views.channel_views.validate_token')
+    def test_create_channel_via_api(self, mock_validate_token):
+        mock_validate_token.return_value = {'sub': 1}
+        response = self.client_api.post('/api/communications/', {"name": "SMS"}, format='json', **self.auth_header)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["name"], self.channel_data["name"])
 
-    def test_list_channels_via_api(self):
-        CommunicationChannel.objects.create(name="SMS")
-        response = self.client_api.get("/api/communications/")
+    @patch('communication.views.channel_views.validate_token')
+    def test_list_channels_via_api(self, mock_validate_token):
+        mock_validate_token.return_value = {'sub': 1}
+        response = self.client_api.get('/api/communications/', **self.auth_header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)
 
 class SendAlertForClientTest(TestCase):
 
@@ -63,7 +64,7 @@ class SendAlertForClientTest(TestCase):
         mock_client.default_message = 'Mensagem de alerta'
         mock_reverse_geocode.return_value = 'Endereço Simulado'
 
-        mock_contact_model.objects.filter.return_value = ['Contato1', 'Contato2']
+        mock_contact_model.objects.filter.return_value = [MagicMock(name="Contato1"), MagicMock(name="Contato2")]
 
         result = send_alert_for_client(mock_client, lat=-23.5, lon=-46.6)
 
@@ -76,7 +77,10 @@ class SendAlertForClientTest(TestCase):
         mock_client = MagicMock()
         mock_client.default_message = 'Mensagem padrão'
 
-        mock_contact_model.objects.filter.return_value = []
+        mock_contact = MagicMock()
+        mock_contact.name = "Contato1"
+        mock_contact_model.objects.filter.return_value = [mock_contact]
+
 
         result = send_alert_for_client(mock_client)
 

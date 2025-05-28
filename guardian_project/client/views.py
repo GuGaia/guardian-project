@@ -22,10 +22,11 @@ class ClientViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(clients, many=True)
         return Response(serializer.data)
 
-    def put(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         auth_header = request.headers.get('Authorization', '')
         token = auth_header.replace('Bearer ', '')
         user_data = validate_token(token)
+        print("VALOR DO USER_DATA:", user_data)
 
         if not user_data:
             return Response({'detail': 'Unauthorized'}, status=401)
