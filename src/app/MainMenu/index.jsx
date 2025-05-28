@@ -7,6 +7,7 @@ import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
 import { useRef, useEffect } from 'react';
+import { Header } from './header';
 
 
 
@@ -47,6 +48,8 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 	  </TouchableOpacity>
 	);
   }
+
+  
   
 
 export default function MainMenu() {
@@ -73,40 +76,26 @@ export default function MainMenu() {
   return (
 
     <LinearGradient
-      colors={['#FFFFFF', '#D0ECEF']}
+      colors={['#FFFFFF', '#9FE7F5']}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={styles.background}
     >
       <SafeAreaView style={styles.container}>
-
+        
+        <Header/>
+     
         <ScrollView style={styles.scrollView}>
 
-        <View style={styles.sosContainer}>
-
-          <Animated.View
-            style={[ styles.outerCircle, {transform: [{ scale: pulseAnim }], },]}
-          />
-
-          <TouchableOpacity style={styles.innerCircle} onPress={() => router.push('/EmergencyMode')}>
-            <TouchableOpacity style={styles.innerInnerCircle} onPress={() => router.push('/EmergencyMode')}>
-            <Text style={styles.SOStext}>Chame ajuda</Text>
-          </TouchableOpacity>
-          </TouchableOpacity>
-        </View>
-          <CardButton
-            icon="settings"
-            text="Configurações"
-            onPress={() => router.push('/Settings')}
-            style={styles.GeneralButton}
-          />
-
-          <CardButton
-            icon="contacts"
-            text="Contatos"
-            onPress={() => router.push('/ContactList')}
-            style={styles.GeneralButton}
-          />
+          
+          <View style={styles.sosContainer}>
+            <Animated.View style={[ styles.outerCircle, {transform: [{ scale: pulseAnim }], },]}/>
+              <TouchableOpacity style={styles.innerCircle} onPress={() => router.push('/EmergencyMode')}>
+                <TouchableOpacity style={styles.innerInnerCircle} onPress={() => router.push('/EmergencyMode')}>
+                  <Text style={styles.SOStext}>Chame ajuda</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+          </View>
 
           <CardButton
             imageSource={require('../../../assets/images/OrientationsToContacts.png')}
@@ -116,12 +105,14 @@ export default function MainMenu() {
           />
 
           <CardButton
-          
             text="Tutoriais essenciais"
             onPress={() => router.push('/Tutorials')}
             style={styles.orientationsButton}
           />
+
         </ScrollView>
+
+        <Navbar/>
     
       </SafeAreaView>
     </LinearGradient>
@@ -143,10 +134,13 @@ const styles = StyleSheet.create({
   scrollView: {
     
   },
+  header: {
+    height: height * 0.12,
+},
   sosContainer: {
   justifyContent: 'center',
   alignItems: 'center',
-  marginVertical: '20%',
+  marginVertical: '10%',
   alignSelf: 'center',
 },
  SOStext: {

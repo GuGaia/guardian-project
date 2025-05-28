@@ -74,7 +74,7 @@ export default function Page() {
             </View>
 
             <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Bloqueio do botão de ligar</Text>
+              <Text style={styles.switchLabel}>Bloqueio do botão de ligar/desligar</Text>
               <Switch
                 value={BlockButtons}
                 onValueChange={setBlockButtons}
@@ -106,10 +106,10 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#D9E7FF',
-    },
+  container: {
+  flex: 1,
+  backgroundColor: theme.colors.grdBlueLight,
+},
     header: {
         backgroundColor: theme.colors.grdBlueLight,
         height: height * 0.03,

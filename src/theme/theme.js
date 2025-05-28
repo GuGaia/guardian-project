@@ -1,8 +1,8 @@
 export const theme = {
   colors: {
-    grdBlueBackground: '#D9E7FF',
+    grdBlueBackground: '#D0ECEF',
     grdBlue: '#2FADCC',
-    grdBlueLight: '#2196f3',
+    grdBlueLight: '#D0ECEF',
     grdWhite00: '#FFFFFF',
     grdBlack00: '#000000',
     grdRed: '#FF6B6B',

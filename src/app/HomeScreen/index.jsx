@@ -7,6 +7,7 @@ import { GrdTextInput } from '@/components/inputs/GrdTextInput';
 import { GrdOutlinedButton } from '@/components/buttons/GrdOutlinedButton';
 import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { Link, router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Page() {
 
@@ -24,7 +25,8 @@ export default function Page() {
   }
 
   return (
-    <View 
+
+      <View 
       style={[globalStyles.container, styles.container]}
       onStartShouldSetResponder={() => true}
       onResponderGrant={() => {
@@ -37,6 +39,13 @@ export default function Page() {
           Keyboard.dismiss();
         }
       }}
+    >
+      
+      <LinearGradient
+      colors={['#FFFFFF', '#D0ECEF']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.background}
     >
       <View style={styles.header} />
       <View style={[globalStyles.centerContainer, styles.centerContainer]}>
@@ -88,19 +97,29 @@ export default function Page() {
           </View>
         </View>
       </View>         
+      
+    </LinearGradient>
+
     </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
+
+
   buttonContainer: {
     flexDirection: 'column',
     gap: 24 ,
   },
+    background: {
+      
+      flex: 1,
+
+  },
+  
   container: {
-
-    colour: theme.colors.grdBlueLight,
-
+   flex:1,
   },
   registerButtonContainer: {
     paddingHorizontal: 58,

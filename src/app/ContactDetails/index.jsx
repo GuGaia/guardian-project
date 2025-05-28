@@ -25,10 +25,10 @@ export default function Page() {
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#D9E7FF',
-    },
+container: {
+  flex: 1,
+  backgroundColor: theme.colors.grdBlueLight,
+},
     header: {
         backgroundColor: theme.colors.grdBlueLight,
         paddingTop: width * 0.04,

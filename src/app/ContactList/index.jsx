@@ -162,10 +162,10 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#D9E7FF',
-    },
+   container: {
+  flex: 1,
+  backgroundColor: theme.colors.grdBlueLight,
+},
     header: {
         backgroundColor: theme.colors.grdBlueLight,
         height: height * 0.03,

@@ -8,6 +8,7 @@ import { Navbar } from '@/components/Navbar';
 
 const { width, height } = Dimensions.get('window');
 
+
 export default function EmergencyContactGuide() {
   const router = useRouter();
 
@@ -51,18 +52,19 @@ export default function EmergencyContactGuide() {
           </View>
         ))}
 
-       <Navbar/>
 
       </ScrollView>
+      
+       <Navbar/>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#D9E7FF'
-  },
+container: {
+  flex: 1,
+  backgroundColor: theme.colors.grdBlueLight,
+},
   content: {
     padding: width * 0.06,
     paddingBottom: height * 0.1
