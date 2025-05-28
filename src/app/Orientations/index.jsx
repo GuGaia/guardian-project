@@ -4,6 +4,7 @@ import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
+import { Navbar } from '@/components/Navbar';
 
 
 const { width, height } = Dimensions.get('window');
@@ -27,36 +28,26 @@ export default function Page() {
             </View>
 
             
-               <View style={styles.navbar}>
-                   <TouchableOpacity style={styles.navbarContent} onPress={() => router.push('/MainMenu')}>
-                     <Icon name="Home" size={ ((width * height)/ 1000) * 0.16} style={styles.navbarIcon} />
-                   </TouchableOpacity>
-                 </View> 
+         <Navbar/>
             
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+        container: {
         flex: 1,
         backgroundColor: '#D9E7FF',
     },
     header: {
         backgroundColor: theme.colors.grdBlueLight,
-        paddingTop: width * 0.04,
-        paddingHorizontal: 12,
-        paddingBottom: 8,
-    },
-    backText: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-        fontSize: width * 0.04,
+        height: height * 0.03,
     },
     titleCard: {
-        backgroundColor: '#3573FA',
-        paddingVertical: 24,
+        backgroundColor: theme.colors.grdBlue,
+         height: height * 0.15,
         alignItems: 'center',
+        justifyContent:'center',
     },
     titleRow: {
         flexDirection: 'row',
@@ -64,10 +55,13 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'white',
-        fontSize: 30,
         fontWeight: 'bold',
-        paddingLeft: 20,
-    },
+        fontSize:  ((width * height)/ 1000) * 0.08,
+  },
+  
+  scrollView: {
+    padding:  width * 0.07,
+  },
     addButton: {
         flexDirection: 'row',
         backgroundColor: '#3573FA',
@@ -106,27 +100,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 6,
-    },
-  navbar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: ((width * height)/ 1000) * 0.16,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: 10,
-    elevation: 10,
-  },
-  navbarContent: {
-    width: ((width * height)/ 1000) * 0.18,
-    height: ((width * height)/ 1000) * 0.18,
-    backgroundColor: theme.colors.grdBlue,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-      navbarIcon: {
-        tintColor: "#FFFFFF", 
-      },	  
+    },	  
 });

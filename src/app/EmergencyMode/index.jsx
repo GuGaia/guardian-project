@@ -14,36 +14,24 @@ export default function EmergencyMode() {
 
     return(
 
-        <SafeAreaView style={styles.background}>
+    <SafeAreaView style={styles.background}>
+    <View style={styles.mainContent}>
+        
+        <View style={styles.displayContainer}>
+        <Icon name="GuardianOwlWhite" size={148} />
+        </View>
 
-            <View style={styles.displayContainer}>
-                    <Icon 
-                            name="GuardianOwlWhite"
-                            size={148} 
-                        />
+        <View style={styles.containerText}>
+        <Text style={styles.text}>Aguarde</Text>
+        <Text style={styles.text2}>Ajuda está a caminho</Text>
+        </View>
 
-            </View>
+        <TouchableOpacity style={styles.Cancelbutton} onPress={() => router.push('/MainMenu')}>
+        <Text style={styles.text}>Cancelar</Text>
+        </TouchableOpacity>
 
-            <View style={styles.containerText} >
-
-            <Text style={styles.text}>     {"Aguarde"} </Text>
-
-             <Text style={styles.text2}>    {"Ajuda está a caminho"} </Text>
-                
-
-            </View>
-            
-
-                <TouchableOpacity style={styles.Cancelbutton} onPress={() => router.push('/MainMenu')}>
-                    
-                    <Text style={styles.text}>
-                        {"Cancelar"}
-                    </Text>
-                
-             </TouchableOpacity>                                        
-
-
-        </SafeAreaView>
+    </View>
+    </SafeAreaView>
 
     )
 }
@@ -51,6 +39,14 @@ export default function EmergencyMode() {
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+
+    mainContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: height * 0.2,
+    },
 
 	background: {
 	  flex: 1,
@@ -63,9 +59,9 @@ const styles = StyleSheet.create({
     Cancelbutton: {
 	
 		backgroundColor: theme.colors.grdRed,
-        width: '40%',
+        width: '50%',
+        height: height * 0.05,
         alignSelf: 'center',
-        paddingVertical: 12,
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
@@ -73,15 +69,9 @@ const styles = StyleSheet.create({
 
 	},
 
-containerText: {
-
-    padding:45,
-    
-},
 
     text: {
-
-        color: "#D9E7FF",
+        color: "white",
         fontSize: width * 0.05,
         fontWeight: "bold",
         textAlign: "center",
@@ -90,11 +80,11 @@ containerText: {
     },
 
     text2: {
-
-        color: "#D9E7FF",
+        color: "white",
         fontSize: width * 0.05,
         textAlign: "center",
-        marginHorizontal: 16
+        marginHorizontal: 16,
+        padding: 20, 
 
     }
       

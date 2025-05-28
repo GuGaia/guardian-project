@@ -5,6 +5,7 @@ import { Icon } from '@/components/Icon';
 import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Navbar } from '@/components/Navbar';
 
 
 const { width, height } = Dimensions.get('window');
@@ -51,7 +52,7 @@ export default function MainMenu() {
   return (
 
     <LinearGradient
-      colors={['#FFFFFF', '#83A4ED']}
+      colors={['#FFFFFF', '#2196f3']}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={styles.background}
@@ -59,7 +60,7 @@ export default function MainMenu() {
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.header}>
-            <Text style={styles.text}>{"Central de socorro"}</Text>
+            <Text style={styles.headerText}>{"Central de socorro"}</Text>
           </View>
 
           <CardButton
@@ -91,18 +92,9 @@ export default function MainMenu() {
           />
         </ScrollView>
 
-        <View style={styles.navbar}>
-          <TouchableOpacity
-            style={styles.navbarContent}
-            onPress={() => router.push('/MainMenu')}
-          >
-            <Icon
-              name="Home"
-              size={((width * height) / 1000) * 0.14}
-              style={styles.navbarIcon}
-            />
-          </TouchableOpacity>
-        </View>
+        <Navbar/>
+
+    
       </SafeAreaView>
     </LinearGradient>
   );
@@ -113,24 +105,32 @@ const styles = StyleSheet.create({
 
     background: {
       
-    flex: 1,
+      flex: 1,
+
   },
 
   container: {
     flex: 1,
   },
   scrollView: {
+    
   },
-  header: {
-    paddingVertical:  height * 0.05,
-    marginBottom: height*0.02,
-  },
+header: {
+  justifyContent: 'flex-end', 
+  alignItems: 'center',       
+},
+
+headerText: {
+  fontSize: ((width * height) / 1000) * 0.07,
+  fontWeight: 'bold',
+  color:theme.colors.grdBlue,
+  marginBottom: 20,
+},
   text: {
     color: theme.colors.grdBlue,
     fontSize: ((width * height)/ 1000) * 0.07,
     fontWeight: "bold",
     textAlign: "center",
-    marginHorizontal:  width * 0.04,
   },
   text2: {
     color: "#FFFFFF",
@@ -175,25 +175,4 @@ const styles = StyleSheet.create({
     width: width * 0.2, 
     height: width * 0.2, 
   },
-  navbar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: ((width * height)/ 1000) * 0.16,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: 10,
-    elevation: 10,
-  },
-  navbarContent: {
-    width: ((width * height)/ 1000) * 0.18,
-    height: ((width * height)/ 1000) * 0.18,
-    backgroundColor: theme.colors.grdBlue,
-    borderRadius: ((width * height)/ 1000) * 0.18,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navbarIcon: {
-    tintColor: "#FFFFFF",}
 });

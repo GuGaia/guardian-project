@@ -4,13 +4,17 @@ import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
+import { Navbar } from '@/components/Navbar';
 
 const { width, height } = Dimensions.get('window');
 
 export default function Page() {
   const router = useRouter();
-  const [modoDiscreto, setModoDiscreto] = useState(false);
-  const [ligacoes, setligacoes] = useState(false);
+  const [Notifications, setNotifications] = useState(false);
+  const [Callings, setCallings] = useState(false);
+  const [BlockButtons, setBlockButtons] = useState(false);
+  const [BlockPreVisualizationOfMensages, setBlockPreVisualizationOfMensages] = useState(false);
+
 
   const renderSection = (title: string, children: React.ReactNode) => (
     <View style={styles.section}>
@@ -52,102 +56,113 @@ export default function Page() {
             <View style={styles.switchRow}>
               <Text style={styles.switchLabel}>Desativar notificações</Text>
               <Switch
-                value={modoDiscreto}
-                onValueChange={setModoDiscreto}
-                thumbColor={modoDiscreto ? "#FFFFFF" : "#3573FA"}
-                trackColor={{ false: "#AAC9FF", true: "#3573FA" }}
+                value={Notifications}
+                onValueChange={setNotifications}
+                thumbColor={Notifications ? "#FFFFFF" : theme.colors.grdGray}
+                trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
               />
             </View>
 
              <View style={styles.switchRow}>
               <Text style={styles.switchLabel}>Desativar alerta de chamadas</Text>
               <Switch
-                value={ligacoes}
-                onValueChange={setligacoes}
-                thumbColor={ligacoes ? "#FFFFFF" : "#3573FA"}
-                trackColor={{ false: "#AAC9FF", true: "#3573FA" }}
+                value={Callings}
+                onValueChange={setCallings}
+                thumbColor={Callings ? "#FFFFFF" : theme.colors.grdGray}
+                trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
               />
             </View>
+
+            <View style={styles.switchRow}>
+              <Text style={styles.switchLabel}>Bloqueio do botão de ligar</Text>
+              <Switch
+                value={BlockButtons}
+                onValueChange={setBlockButtons}
+                thumbColor={BlockButtons ? "#FFFFFF" : theme.colors.grdGray}
+                trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
+              />
+            </View>
+
+             <View style={styles.switchRow}>
+              <Text style={styles.switchLabel}>Desabilitar mensagens na tela de bloqueio</Text>
+              <Switch
+                value={BlockPreVisualizationOfMensages}
+                onValueChange={setBlockPreVisualizationOfMensages}
+                thumbColor={BlockPreVisualizationOfMensages ? "#FFFFFF" : theme.colors.grdGray}
+                trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
+              />
+            </View>
+          
           
           </>
         )}
       </ScrollView>
 
-      <View style={styles.navbar}>
-        <TouchableOpacity style={styles.navbarContent} onPress={() => router.push('/MainMenu')}>
-          <Icon name="Home" size={30} style={styles.navbarIcon} />
-        </TouchableOpacity>
-      </View>
+      
+      <Navbar/>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#D9E7FF',
-  },
-  header: {
-    backgroundColor: theme.colors.grdBlueLight,
-    paddingTop: width * 0.04,
-    paddingHorizontal: 12,
-    paddingBottom: 8,
-  },
-  backText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: width * 0.04,
-  },
-  titleCard: {
-    backgroundColor: '#3573FA',
-    paddingVertical: 24,
-    alignItems: 'center',
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    color: 'white',
-    fontSize: 28,
-    fontWeight: 'bold',
-    paddingLeft: 20,
+    container: {
+        flex: 1,
+        backgroundColor: '#D9E7FF',
+    },
+    header: {
+        backgroundColor: theme.colors.grdBlueLight,
+        height: height * 0.03,
+    },
+    titleCard: {
+        backgroundColor: theme.colors.grdBlue,
+         height: height * 0.15,
+        alignItems: 'center',
+        justifyContent:'center',
+    },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    title: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize:  ((width * height)/ 1000) * 0.08,
   },
   scrollView: {
-    padding: 20,
+    padding:  width * 0.07,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: height * 0.05,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: height * 0.02,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize:  ((width * height)/ 1000) * 0.057,
     fontWeight: 'bold',
-    color: '#3573FA',
+    color: theme.colors.grdGray,
+    paddingRight: width * 0.02,
   },
   dividerLine: {
     flex: 1,
-    height: 1,
-    backgroundColor: '#3573FA',
+    height: 2,
+    backgroundColor: theme.colors.grdGray ,
     marginLeft: 8,
   },
   outlinedButton: {
     borderWidth: 1,
-    borderColor: '#3573FA',
+    borderColor: theme.colors.grdGray,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginTop: 4,
   },
   outlinedButtonText: {
-    color: '#3573FA',
-    fontWeight: 'bold',
-    fontSize: 14,
-    textAlign: 'center',
+    color: theme.colors.grdGray,
+    fontSize:  ((width * height)/ 1000) * 0.05,
   },
   switchRow: {
     flexDirection: 'row',
@@ -155,33 +170,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     marginBottom: 8,
+    
+    color: theme.colors.grdGray,
+    
   },
   switchLabel: {
-    fontSize: 16,
-    color: '#3573FA',
-    fontWeight: 'bold',
-  },
-  navbar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 70,
-    backgroundColor: theme.colors.grdBlue,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: 10,
-    elevation: 10,
-  },
-  navbarContent: {
-    width: 60,
-    height: 60,
-    backgroundColor: theme.colors.grdBlueLight,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  navbarIcon: {
-    tintColor: "#FFFFFF",
+    flex:1,
+    fontSize: ((width * height)/ 1000) * 0.05,
+    color: theme.colors.grdGray,
+    marginRight: width * 0.1,
+    flexShrink: 1,
   },
 });

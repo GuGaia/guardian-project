@@ -7,99 +7,17 @@ import { GrdTextInput } from '@/components/inputs/GrdTextInput';
 import { GrdOutlinedButton } from '@/components/buttons/GrdOutlinedButton';
 import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { useRouter } from 'expo-router';
+import { Navbar } from '@/components/Navbar';
+
 
 export default function Page() {
     const router = useRouter();
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.backText}>{'<- Voltar'}</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.titleCard}>
-                <View style={styles.titleRow}>
-    
-                    <View style={{ marginLeft: 8 }}>
-                        <Text style={styles.title}>Loren Ipsum</Text>
-                    </View>
-                </View>
-            </View>
-
-            <View style={styles.coluna}>
-            
-
-
-                <GrdOutlinedButton style= {styles.phone}
-                    label="Nome"
-                    
-                    textStyle={styles.TextInside}
-                    size="small"
-                />
-
-                <text>Telefone</text>
-                <GrdOutlinedButton style= {styles.phone}
-                    label="Telefone"
-                    
-                    textStyle={styles.TextInside}
-                    size="small"
-                />
-
-
-                <text>E-mail </text>
-                <GrdOutlinedButton style= {styles.phone}
-                    label="E-mail"
-                    textStyle={styles.TextInside}
-                    size="small"
-                />
-
-
-
-            </View>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-            <View style={styles.navbar}>
-                        <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.push('/MainMenu')}>
-                                <Icon 
-                                    name="Home"
-                                    size={40}
-                                />
-                            </TouchableOpacity>
-            </View>  
-            
+ 
+        
+         <Navbar/>
         </View>
     );
 }

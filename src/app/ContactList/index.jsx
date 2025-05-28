@@ -4,6 +4,9 @@ import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
+import { Navbar } from '@/components/Navbar';
+
+const { width, height } = Dimensions.get('window');
 
 export default function Page() {
     const router = useRouter();
@@ -119,9 +122,6 @@ export default function Page() {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.backText}>{'<- Voltar'}</Text>
-                </TouchableOpacity>
             </View>
 
             <View style={styles.titleCard}>
@@ -130,7 +130,7 @@ export default function Page() {
                     name="contacts" 
                     size={45} 
                     />
-                    <View style={{ marginLeft: 8 }}>
+                    <View style={{ marginLeft: ((width * height)/ 1000) * 0.05 }}>
                         <Text style={styles.title}>Contatos de</Text>
                         <Text style={styles.title}>emergência</Text>
                     </View>
@@ -138,6 +138,8 @@ export default function Page() {
             </View>
 
             <TouchableOpacity style={styles.addButton} onPress={()=> router.push('/ContactDetails')} >
+                
+                <Icon name="Plus" size={ ((width * height)/ 1000) * 0.08} style={styles.Icon} />
                 <Text style={styles.addButtonText}>Adicionar contato</Text>
             </TouchableOpacity>
 
@@ -152,20 +154,12 @@ export default function Page() {
                     </TouchableOpacity>
                 )}
             />
-            <View style={styles.navbar}>
-                        <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.push('/MainMenu')}>
-                                <Icon 
-                                    name="Home"
-                                    size={40}
-                                />
-                            </TouchableOpacity>
-            </View>  
+            
+            <Navbar/> 
             
         </View>
     );
 }
-
-const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -174,19 +168,13 @@ const styles = StyleSheet.create({
     },
     header: {
         backgroundColor: theme.colors.grdBlueLight,
-        paddingTop: width * 0.04,
-        paddingHorizontal: 12,
-        paddingBottom: 8,
-    },
-    backText: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-        fontSize: width * 0.04,
+        height: height * 0.03,
     },
     titleCard: {
-        backgroundColor: '#3573FA',
-        paddingVertical: 24,
+        backgroundColor: theme.colors.grdBlue,
+         height: height * 0.15,
         alignItems: 'center',
+        justifyContent:'center',
     },
     titleRow: {
         flexDirection: 'row',
@@ -194,13 +182,16 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'white',
-        fontSize: 30,
         fontWeight: 'bold',
-        paddingLeft: 20,
-    },
+        fontSize:  ((width * height)/ 1000) * 0.08,
+  },
+
+  scrollView: {
+    padding:  width * 0.07,
+  },
     addButton: {
         flexDirection: 'row',
-        backgroundColor: '#3573FA',
+        backgroundColor: theme.colors.grdBlue,
         alignSelf: 'center',
         alignItems: 'center',
         paddingVertical: 8,
@@ -214,53 +205,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     list: {
-        paddingHorizontal: 20,
+    padding:  width * 0.06,
     },
     contactItem: {
-        paddingVertical: 12,
+        paddingVertical: height*0.02,
         borderBottomWidth: 1,
-        borderBottomColor: '#3573FA',
+        borderBottomColor: theme.colors.grdGray,
     },
     contactName: {
-        color: '#3573FA',
+        color: theme.colors.grdGray,
         fontWeight: 'bold',
     },
-    fab: {
-        position: 'absolute',
-        bottom: 24,
-        alignSelf: 'center',
-        backgroundColor: '#3573FA',
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 6,
+      Icon: {
+        color: theme.colors.grdGray,
     },
-    navbar: {
-		position: 'absolute',
-		bottom: 0,
-		left: 0,
-		right: 0,
-		height: 70, 
-		backgroundColor: theme.colors.grdBlue,
-		justifyContent: "center",
-		alignItems: "center",
-		paddingBottom: 10, // espaço para telefones com borda
-
-		elevation: 10, // para Android
-	  },
-	  navbarContent: {
-		width: 60,
-		height: 60,
-		backgroundColor: theme.colors.grdBlueLight,
-		borderRadius: 30, // deixa redondo
-		justifyContent: "center",
-		alignItems: "center",
-	  },
-	  navbarIcon: {
-		width: 30,
-		height: 30,
-		tintColor: "#FFFFFF", 
-	  },	  
 });

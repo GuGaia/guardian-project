@@ -5,6 +5,7 @@ import GuardianOwlWhite from '@assets/icons/GuardianOwlWhite.svg';
 import settings from '@assets/icons/settings.svg';
 import Home from '@assets/icons/Home.svg';
 import contacts from '@assets/icons/contacts.svg';
+import Plus from '@assets/icons/Plus.svg';
 
 
 
@@ -18,6 +19,7 @@ export const icons = {
   settings: settings,
   Home: Home,
   contacts: contacts,
+  Plus:Plus,
 };
 
 // Função auxiliar para obter um ícone
