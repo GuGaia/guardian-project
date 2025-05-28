@@ -7,6 +7,7 @@ export const theme = {
     grdBlack00: '#000000',
     grdRed: '#FF6B6B',
     grdGray: '#2f2f2f',
+    grdGray00: '#959595',
   },
   fonts: {
     ubuntuLight: 'Ubuntu-Light',

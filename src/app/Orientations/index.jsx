@@ -13,31 +13,33 @@ export default function EmergencyContactGuide() {
   const router = useRouter();
 
   const steps = [
-    {
-      title: '1. Converse com seus contatos com antecedência',
+{
+      title: '1. O Guardiã é um canal de apoio',
+      description:
+        'O app é uma ponte. O preparo emocional e logístico dos seus contatos é o que transforma um alerta em socorro real.'
+    },
+      {
+      title: '2. Converse com seus contatos com antecedência',
       description:
         'Explique que você os cadastrou como contatos de emergência no Guardiã. Diga o porquê e o que isso significa. Exemplo: "Se eu apertar o botão de emergência, você vai receber uma mensagem com minha localização. É importante que você saiba o que fazer nesse momento."'
     },
+
     {
-      title: '2. Defina um protocolo de segurança',
+      title: '3. Defina um protocolo de segurança',
       description:
         'Combine como cada contato deve reagir. Por exemplo: (1) Me ligue imediatamente, (2) Vá ao meu encontro sem ligar, (3) Avise a polícia com minha localização. Escolha o que faz você se sentir mais seguro.'
     },
     {
-      title: '3. Reforce a importância da agilidade e discrição',
+      title: '4. Reforce a importância da agilidade e discrição',
       description:
         'Explique que a resposta deve ser rápida e discreta. Um som alto ou uma exposição indevida pode piorar a situação.'
     },
     {
-      title: '4. Revise os protocolos periodicamente',
+      title: '5. Revise os protocolos periodicamente',
       description:
         'As coisas mudam. Converse novamente com seus contatos a cada poucos meses para garantir que tudo ainda faz sentido.'
     },
-    {
-      title: '5. O Guardiã é um canal de apoio',
-      description:
-        'O app é uma ponte. O preparo emocional e logístico dos seus contatos é o que transforma um alerta em socorro real.'
-    }
+    
   ];
 
   return (

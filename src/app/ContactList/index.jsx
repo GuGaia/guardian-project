@@ -5,8 +5,11 @@ import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import { Navbar } from '@/components/Navbar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 const { width, height } = Dimensions.get('window');
+
 
 export default function Page() {
     const router = useRouter();
@@ -120,6 +123,7 @@ export default function Page() {
     ]
 
     return (
+
         <View style={styles.container}>
             <View style={styles.header}>
             </View>
@@ -137,7 +141,7 @@ export default function Page() {
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.addButton} onPress={()=> router.push('/ContactDetails')} >
+            <TouchableOpacity style={styles.addButton} onPress={()=> router.push('/ContactList/Adding')} >
                 
                 <Icon name="Plus" size={ ((width * height)/ 1000) * 0.08} style={styles.Icon} />
                 <Text style={styles.addButtonText}>Adicionar contato</Text>
@@ -149,7 +153,7 @@ export default function Page() {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
                     
-                    <TouchableOpacity style={styles.contactItem}activeOpacity={0.8} onPress={() => router.push('/ContactDetails')}>
+                    <TouchableOpacity style={styles.contactItem}activeOpacity={0.8} onPress={() => router.push('/ContactList/detalhes')}>
                         <Text style={styles.contactName}>{item.name}</Text>
                     </TouchableOpacity>
                 )}
@@ -162,10 +166,12 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-   container: {
+container: {
   flex: 1,
   backgroundColor: theme.colors.grdBlueLight,
 },
+
+
     header: {
         backgroundColor: theme.colors.grdBlueLight,
         height: height * 0.03,

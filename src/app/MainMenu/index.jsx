@@ -7,7 +7,7 @@ import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
 import { useRef, useEffect } from 'react';
-import { Header } from './header';
+import { Header } from "./Header";
 
 
 
@@ -73,6 +73,9 @@ export default function MainMenu() {
     ).start();
   }, []);
 
+  console.log(MainMenu); // Deve mostrar uma função. Se for undefined, o import está errado
+
+
   return (
 
     <LinearGradient
@@ -84,9 +87,6 @@ export default function MainMenu() {
       <SafeAreaView style={styles.container}>
         
         <Header/>
-     
-        <ScrollView style={styles.scrollView}>
-
           
           <View style={styles.sosContainer}>
             <Animated.View style={[ styles.outerCircle, {transform: [{ scale: pulseAnim }], },]}/>
@@ -98,22 +98,13 @@ export default function MainMenu() {
           </View>
 
           <CardButton
-            imageSource={require('../../../assets/images/OrientationsToContacts.png')}
-            text="Saiba como orientar seus contatos de emergência"
-            onPress={() => router.push('/Orientations')}
-            style={styles.orientationsButton}
-          />
-
-          <CardButton
-            text="Tutoriais essenciais"
+            text="Guias Salva-Vidas"
             onPress={() => router.push('/Tutorials')}
             style={styles.orientationsButton}
           />
-
-        </ScrollView>
-
-        <Navbar/>
     
+     
+        <Navbar/>
       </SafeAreaView>
     </LinearGradient>
   );
