@@ -1,184 +1,205 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, ScrollView, Text, TouchableOpacity, StyleSheet, Switch } from "react-native";
-import { theme } from '@/theme/theme';
-import { Icon } from '@/components/Icon';
-import { useRouter } from 'expo-router';
-import { Dimensions } from 'react-native';
-import { Navbar } from '@/components/Navbar';
+import {
+  SafeAreaView,
+  View,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Switch,
+  Dimensions,
+} from "react-native";
+import { theme } from "@/theme/theme";
+import { Icon } from "@/components/Icon";
+import { useRouter } from "expo-router";
+import { Navbar } from "@/components/Navbar";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
-export default function Page() {
+export default function SettingsPage() {
   const router = useRouter();
   const [Notifications, setNotifications] = useState(false);
   const [Callings, setCallings] = useState(false);
   const [BlockButtons, setBlockButtons] = useState(false);
-  const [BlockPreVisualizationOfMensages, setBlockPreVisualizationOfMensages] = useState(false);
-
+  const [BlockPreVisualizationOfMensages, setBlockPreVisualizationOfMensages] =
+    useState(false);
 
   const renderSection = (title: string, children: React.ReactNode) => (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        <View style={styles.dividerLine} />
-      </View>
+    <View style={styles.sectionCard}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.dividerLine} />
       {children}
     </View>
   );
 
-  const renderBlueButton = (text: string, onPress: () => void) => (
-    <TouchableOpacity onPress={onPress} style={styles.outlinedButton}>
-      <Text style={styles.outlinedButtonText}>{text}</Text>
+  const renderBlueButton = (
+    text: string,
+    onPress: () => void,
+    iconName?: string
+  ) => (
+    <TouchableOpacity onPress={onPress} style={styles.blueButton}>
+      {iconName && <Icon name={iconName} size={18} color="#FFF" />}
+      <Text style={styles.blueButtonText}>{text}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-      </View>
+      <View style={styles.header} />
 
       <View style={styles.titleCard}>
         <View style={styles.titleRow}>
-          <Icon name="settings" size={45} />
+          <Icon name="settings" size={42} color="white" />
           <Text style={styles.title}>Configurações</Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollView}>
-        {renderSection("Configuração do botão", 
-          renderBlueButton("Parear e configurar o botão físico", () => {})
+        {renderSection(
+          "Botão físico",
+          renderBlueButton(
+            "Parear e configurar",
+            () => {},
+            "bluetooth"
+          )
         )}
-        {renderSection("Resposta automática", 
-          renderBlueButton("Personalizar mensagem automática", () => {})
+
+        {renderSection(
+          "Resposta automática",
+          renderBlueButton(
+            "Editar mensagem automática",
+            () => {},
+            "message-circle"
+          )
         )}
-        {renderSection("Modo discreto", 
+
+        {renderSection("Modo discreto", (
           <>
             <View style={styles.switchRow}>
               <Text style={styles.switchLabel}>Desativar notificações</Text>
               <Switch
                 value={Notifications}
                 onValueChange={setNotifications}
-                thumbColor={Notifications ? "#FFFFFF" : theme.colors.grdGray}
-                trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
-              />
-            </View>
-
-             <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Desativar alerta de chamadas</Text>
-              <Switch
-                value={Callings}
-                onValueChange={setCallings}
-                thumbColor={Callings ? "#FFFFFF" : theme.colors.grdGray}
+                thumbColor={Notifications ? "#fff" : theme.colors.grdGray}
                 trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
               />
             </View>
 
             <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Bloqueio do botão de ligar/desligar</Text>
+              <Text style={styles.switchLabel}>Desativar alerta de chamadas</Text>
+              <Switch
+                value={Callings}
+                onValueChange={setCallings}
+                thumbColor={Callings ? "#fff" : theme.colors.grdGray}
+                trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
+              />
+            </View>
+
+            <View style={styles.switchRow}>
+              <Text style={styles.switchLabel}>Bloquear botão de energia</Text>
               <Switch
                 value={BlockButtons}
                 onValueChange={setBlockButtons}
-                thumbColor={BlockButtons ? "#FFFFFF" : theme.colors.grdGray}
+                thumbColor={BlockButtons ? "#fff" : theme.colors.grdGray}
                 trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
               />
             </View>
 
-             <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Desabilitar mensagens na tela de bloqueio</Text>
+            <View style={styles.switchRow}>
+              <Text style={styles.switchLabel}>Ocultar mensagens na tela bloqueada</Text>
               <Switch
                 value={BlockPreVisualizationOfMensages}
                 onValueChange={setBlockPreVisualizationOfMensages}
-                thumbColor={BlockPreVisualizationOfMensages ? "#FFFFFF" : theme.colors.grdGray}
+                thumbColor={BlockPreVisualizationOfMensages ? "#fff" : theme.colors.grdGray}
                 trackColor={{ false: "#AAC9FF", true: theme.colors.grdBlue }}
               />
             </View>
-          
-          
           </>
-        )}
+        ))}
       </ScrollView>
 
-      
-      <Navbar/>
-
+      <Navbar />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-  flex: 1,
-  backgroundColor: theme.colors.grdBlueLight,
-},
-    header: {
-        backgroundColor: theme.colors.grdBlueLight,
-        height: height * 0.03,
-    },
-    titleCard: {
-        backgroundColor: theme.colors.grdBlue,
-         height: height * 0.15,
-        alignItems: 'center',
-        justifyContent:'center',
-    },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    title: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize:  ((width * height)/ 1000) * 0.08,
+    flex: 1,
+    backgroundColor: theme.colors.grdBlueLight,
+  },
+  header: {
+    backgroundColor: theme.colors.grdBlueLight,
+    height: height * 0.03,
+  },
+  titleCard: {
+    backgroundColor: theme.colors.grdBlue,
+    height: height * 0.15,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 12,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  title: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: ((width * height) / 1000) * 0.08,
+    paddingLeft: 12,
   },
   scrollView: {
-    padding:  width * 0.07,
+    paddingHorizontal: 16,
+    padding: 20,
   },
-  section: {
-    marginBottom: height * 0.05,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: height * 0.02,
+  sectionCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 4,
   },
   sectionTitle: {
-    fontSize:  ((width * height)/ 1000) * 0.057,
-    fontWeight: 'bold',
-    color: theme.colors.grdGray,
-    paddingRight: width * 0.02,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: theme.colors.grdBlue,
+    marginBottom: 6,
   },
   dividerLine: {
-    flex: 1,
     height: 2,
-    backgroundColor: theme.colors.grdGray ,
-    marginLeft: 8,
+    backgroundColor: "#DCE5F7",
+    marginBottom: 12,
   },
-  outlinedButton: {
-    borderWidth: 1,
-    borderColor: theme.colors.grdGray,
+  blueButton: {
+    backgroundColor: theme.colors.grdBlue,
+    paddingVertical: 12,
     borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginTop: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 8,
   },
-  outlinedButtonText: {
-    color: theme.colors.grdGray,
-    fontSize:  ((width * height)/ 1000) * 0.05,
+  blueButtonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "600",
   },
   switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 8,
-    
-    color: theme.colors.grdGray,
-    
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
   },
   switchLabel: {
-    flex:1,
-    fontSize: ((width * height)/ 1000) * 0.05,
-    color: theme.colors.grdGray,
-    marginRight: width * 0.1,
-    flexShrink: 1,
+    flex: 1,
+    fontSize: 16,
+    color: "#444",
+    marginRight: 12,
+    flexWrap: "wrap",
   },
 });
