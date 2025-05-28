@@ -31,9 +31,15 @@ def send_alert_for_client(client, lat: float = None, lon: float = None, channel_
 
             print(f"full msg {full_msg}")
             if channel_name == "sms":
-                service_send_sms(contact.phone_number, full_msg)
+                success = service_send_sms(contact.phone_number, full_msg)
+                if not success:
+                    print(f"Falha ao enviar SMS para {contact.phone_number}")
+                    return False
             elif channel_name == "email":
-                service_send_mail(client.default_message, full_msg, contact.email)
+                success = service_send_mail(client.default_message, full_msg, contact.email)
+                if not success:
+                    print(f"Falha ao enviar e-mail para {contact.email}")
+                    return False
             else:
                 print(f"Erro! Tipo de canal inválido: {channel_name}")
                 return False
