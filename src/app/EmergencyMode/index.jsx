@@ -3,12 +3,10 @@ import { SafeAreaView, View, ScrollView, Text, Image, TextInput, StyleSheet,Touc
 import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { GrdTextInput } from '@/components/inputs/GrdTextInput';
-import { GrdOutlinedButton } from '@/components/buttons/GrdOutlinedButton';
-import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
-import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
+import { Link, router } from 'expo-router';
 
+const { width, height } = Dimensions.get('window');
 
 export default function EmergencyMode() {
 
@@ -35,8 +33,6 @@ export default function EmergencyMode() {
 
     )
 }
-
-const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
 

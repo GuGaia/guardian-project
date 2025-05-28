@@ -1,11 +1,13 @@
 import React from "react";
-import { SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { Animated, SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
+import { useRef, useEffect } from 'react';
+
 
 
 const { width, height } = Dimensions.get('window');
@@ -35,7 +37,7 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 		{imageSource ? (
 		  <Image source={imageSource} resizeMode="contain" style={[styles.image, { marginRight: 10 }]} />
 		) : (
-		  <Icon name={icon} size={((width * height)/ 1000) * 0.1} style={{ marginRight: 10 }} />
+		  <Icon name={icon} size={((width * height)/ 1000) * 0.07} style={{ marginRight: 10 }} />
 		)}
 		<View style={{ flex: 1 }}>
 		  <Text style={styles.buttonText} numberOfLines={2} adjustsFontSizeToFit>
@@ -49,27 +51,49 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 
 export default function MainMenu() {
 
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
   return (
 
     <LinearGradient
-      colors={['#FFFFFF', '#2196f3']}
+      colors={['#FFFFFF', '#D0ECEF']}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={styles.background}
     >
       <SafeAreaView style={styles.container}>
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>{"Central de socorro"}</Text>
-          </View>
 
-          <CardButton
-            imageSource={require('../../../assets/images/EmergencyButton.png')}
-            text="Botão de Emergência"
-            onPress={() => router.push('/EmergencyMode')}
-            style={styles.emergencyButton}
+        <ScrollView style={styles.scrollView}>
+
+        <View style={styles.sosContainer}>
+
+          <Animated.View
+            style={[ styles.outerCircle, {transform: [{ scale: pulseAnim }], },]}
           />
 
+          <TouchableOpacity style={styles.innerCircle} onPress={() => router.push('/EmergencyMode')}>
+            <TouchableOpacity style={styles.innerInnerCircle} onPress={() => router.push('/EmergencyMode')}>
+            <Text style={styles.SOStext}>Chame ajuda</Text>
+          </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
           <CardButton
             icon="settings"
             text="Configurações"
@@ -90,10 +114,14 @@ export default function MainMenu() {
             onPress={() => router.push('/Orientations')}
             style={styles.orientationsButton}
           />
+
+          <CardButton
+          
+            text="Tutoriais essenciais"
+            onPress={() => router.push('/Tutorials')}
+            style={styles.orientationsButton}
+          />
         </ScrollView>
-
-        <Navbar/>
-
     
       </SafeAreaView>
     </LinearGradient>
@@ -115,16 +143,43 @@ const styles = StyleSheet.create({
   scrollView: {
     
   },
-header: {
-  justifyContent: 'flex-end', 
-  alignItems: 'center',       
+  sosContainer: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginVertical: '20%',
+  alignSelf: 'center',
+},
+ SOStext: {
+  fontSize: ((width * height) / 1000) * 0.08,
+  color: 'white',
+  fontWeight: "bold",
+  textAlign: "center",
 },
 
-headerText: {
-  fontSize: ((width * height) / 1000) * 0.07,
-  fontWeight: 'bold',
-  color:theme.colors.grdBlue,
-  marginBottom: 20,
+outerCircle: {
+  position: 'absolute',
+  width: ((width * height) / 1000) * 0.75,
+  height: ((width * height) / 1000) * 0.75,
+  borderRadius: ((width * height) / 1000) * 0.8,
+  backgroundColor: '#FF6B6B50', 
+},
+
+innerCircle: {
+  width: ((width * height) / 1000) * 0.7,
+  height: ((width * height) / 1000) * 0.7,
+  borderRadius: ((width * height) / 1000) * 0.8,
+  backgroundColor: '#FF6B6B50', 
+  justifyContent: 'center',
+  alignItems: 'center',
+  elevation: 10,
+},
+innerInnerCircle: {
+  width: ((width * height) / 1000) * 0.6,
+  height: ((width * height) / 1000) * 0.6,
+  borderRadius: ((width * height) / 1000) * 0.6,
+  backgroundColor: "#FF6B6B",
+  justifyContent: 'center',
+  alignItems: 'center',
 },
   text: {
     color: theme.colors.grdBlue,

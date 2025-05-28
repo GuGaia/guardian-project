@@ -67,7 +67,7 @@ export default function Page() {
           <View style={styles.buttonContainer}>
             <GrdSolidButton
               label="Entrar"
-              onPress={() => router.push('/MainMenu')}
+              onPress={() => router.push('/HowThisWorks')}
               textStyle={styles.loginButtonText}
               size="large"
             />

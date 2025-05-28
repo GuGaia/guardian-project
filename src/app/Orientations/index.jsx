@@ -1,104 +1,97 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from 'react-native';
-import { globalStyles } from '@/theme/globalStyles';
-import { theme } from '@/theme/theme';
-import { Icon } from '@/components/Icon';
+import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { useRouter } from 'expo-router';
+import { theme } from '@/theme/theme';
 import { Navbar } from '@/components/Navbar';
-
 
 const { width, height } = Dimensions.get('window');
 
-export default function Page() {
-    const router = useRouter();
+export default function EmergencyContactGuide() {
+  const router = useRouter();
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-            </View>
+  const steps = [
+    {
+      title: '1. Converse com seus contatos com antecedência',
+      description:
+        'Explique que você os cadastrou como contatos de emergência no Guardiã. Diga o porquê e o que isso significa. Exemplo: "Se eu apertar o botão de emergência, você vai receber uma mensagem com minha localização. É importante que você saiba o que fazer nesse momento."'
+    },
+    {
+      title: '2. Defina um protocolo de segurança',
+      description:
+        'Combine como cada contato deve reagir. Por exemplo: (1) Me ligue imediatamente, (2) Vá ao meu encontro sem ligar, (3) Avise a polícia com minha localização. Escolha o que faz você se sentir mais seguro.'
+    },
+    {
+      title: '3. Reforce a importância da agilidade e discrição',
+      description:
+        'Explique que a resposta deve ser rápida e discreta. Um som alto ou uma exposição indevida pode piorar a situação.'
+    },
+    {
+      title: '4. Revise os protocolos periodicamente',
+      description:
+        'As coisas mudam. Converse novamente com seus contatos a cada poucos meses para garantir que tudo ainda faz sentido.'
+    },
+    {
+      title: '5. O Guardiã é um canal de apoio',
+      description:
+        'O app é uma ponte. O preparo emocional e logístico dos seus contatos é o que transforma um alerta em socorro real.'
+    }
+  ];
 
-            <View style={styles.titleCard}>
-                <View style={styles.none}>
-                    
-                    <Text style={styles.title}>Orientações</Text>
-                    <Text style={styles.title}>para</Text>
-                    <Text style={styles.title}>emergencias</Text>
-                 
-                </View>
-            </View>
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.header}>Guia: Como orientar seus contatos</Text>
 
-            
-         <Navbar/>
-            
-        </View>
-    );
+        {steps.map((step, index) => (
+          <View key={index} style={styles.card}>
+            <Text style={styles.stepTitle}>{step.title}</Text>
+            <Text style={styles.stepDescription}>{step.description}</Text>
+          </View>
+        ))}
+
+       <Navbar/>
+
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-        container: {
-        flex: 1,
-        backgroundColor: '#D9E7FF',
-    },
-    header: {
-        backgroundColor: theme.colors.grdBlueLight,
-        height: height * 0.03,
-    },
-    titleCard: {
-        backgroundColor: theme.colors.grdBlue,
-         height: height * 0.15,
-        alignItems: 'center',
-        justifyContent:'center',
-    },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    title: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize:  ((width * height)/ 1000) * 0.08,
+  container: {
+    flex: 1,
+    backgroundColor: '#D9E7FF'
   },
-  
-  scrollView: {
-    padding:  width * 0.07,
+  content: {
+    padding: width * 0.06,
+    paddingBottom: height * 0.1
   },
-    addButton: {
-        flexDirection: 'row',
-        backgroundColor: '#3573FA',
-        alignSelf: 'center',
-        alignItems: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 8,
-        marginVertical: 20,
-    },
-    addButtonText: {
-        color: 'white',
-        marginLeft: 8,
-        fontWeight: 'bold',
-    },
-    list: {
-        paddingHorizontal: 20,
-    },
-    contactItem: {
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#3573FA',
-    },
-    contactName: {
-        color: '#3573FA',
-        fontWeight: 'bold',
-    },
-    fab: {
-        position: 'absolute',
-        bottom: 24,
-        alignSelf: 'center',
-        backgroundColor: '#3573FA',
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 6,
-    },	  
+  header: {
+    fontSize: width * 0.07,
+    fontWeight: 'bold',
+    color: theme.colors.grdBlue,
+    marginBottom: 20,
+    textAlign: 'center'
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: width * 0.05,
+    marginBottom: height * 0.02,
+    elevation: 3
+  },
+  stepTitle: {
+    fontSize: width * 0.045,
+    fontWeight: 'bold',
+    color: theme.colors.grdBlue,
+    marginBottom: 8
+  },
+  stepDescription: {
+    fontSize: width * 0.04,
+    color: '#333'
+  },
+  button: {
+    marginTop: 20
+  }
 });
