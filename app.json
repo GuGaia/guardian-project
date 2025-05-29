@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "guardian-project",
+    "slug": "guardian-project",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/guardiaOwlBlue.png",
+    "scheme": "guardian-project",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/guardiaOwlBlue.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#D9E7FF"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.guardianproject"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/guardiaOwlBlue.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
