@@ -76,7 +76,7 @@ export default function Page() {
                 <CardButton
                     imageSource={require('../../../assets/images/OrientationsToContacts.png')}
                     text="Saiba como orientar seus contatos de emergência"
-                    onPress={() => router.push('/Orientations')}
+                    onPress={() => router.push('/Tutorials/Orientations')}
                     style={styles.GeneralButton}
                   />
                 <CardButton

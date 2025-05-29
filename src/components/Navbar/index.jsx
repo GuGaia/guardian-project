@@ -3,7 +3,6 @@ import { TouchableOpacity, Animated, StyleSheet, Dimensions, View } from 'react-
 import { Icon } from '@/components/Icon';
 import { theme } from '@/theme/theme';
 import { router } from 'expo-router';
-
 const { width, height } = Dimensions.get('window');
 
 export function Navbar() {

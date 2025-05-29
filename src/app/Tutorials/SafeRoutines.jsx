@@ -1,13 +1,5 @@
 import React, { useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, Dimensions,FlatList, StyleSheet,SafeAreaView, TouchableOpacity, } from 'react-native';
 import { useRouter } from 'expo-router';
 import { theme } from '@/theme/theme';
 

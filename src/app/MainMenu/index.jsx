@@ -8,8 +8,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
 import { useRef, useEffect, useState } from 'react';
 import { Header } from "./Header";
+import { useLocation } from '@/hooks/useLocation';
+import { LocationStatusCard } from '@/components/LocationStatusCard';
+import { Vibration } from 'react-native';
+
 
 const { width, height } = Dimensions.get('window');
+
+const handleSosPress = () => {
+  router.push('/EmergencyMode');
+  Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
+};
 
 
 const baseCard = {
@@ -48,56 +57,18 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 	);
   }
 
-function useLocation(isLoggedIn) {
-  const [location, setLocation] = useState(null);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchLocation = async () => {
-      if (!isLoggedIn) {
-        setLocation({
-          latitude: -23.5505,
-          longitude: -46.6333,
-          address: 'Av. Exemplo, 123 - Cidade Fictícia',
-        });
-        return;
-      }
+function SosButton() {
+  const handleSosPress = () => {
+    // Vibração silenciosa
+    Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
 
-      try {
-        const response = await fetch('https://api.seusistema.com/location', {
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer seu_token_aqui', // Aqui você futuramente pega do contexto de auth
-            'Content-Type': 'application/json',
-          },
-        });
+    // Aqui você pode colocar outras ações, como enviar localização ou ativar modo de emergência
+    console.log('SOS ativado');
+  };
 
-        if (!response.ok) {
-          throw new Error('Falha ao buscar localização');
-        }
-
-        const data = await response.json();
-        setLocation({
-          latitude: data.latitude,
-          longitude: data.longitude,
-          address: data.address,
-        });
-      } catch (err) {
-        console.error(err);
-        setError('Erro ao obter localização');
-        setLocation({
-          latitude: -23.5505,
-          longitude: -46.6333,
-          address: 'Av. Exemplo, 123 - Cidade Fictícia',
-        });
-      }
-    };
-
-    fetchLocation();
-  }, [isLoggedIn]);
-
-  return { location, error };
 }
+
 
 
 export default function MainMenu() {
@@ -144,13 +115,15 @@ export default function MainMenu() {
 
 
             <Animated.View style={[ styles.outerCircle, {transform: [{ scale: pulseAnim }], },]}/>
-              <TouchableOpacity style={styles.innerCircle} onPress={() => router.push('/EmergencyMode')}>
-                <TouchableOpacity style={styles.innerInnerCircle} onPress={() => router.push('/EmergencyMode')}>
+              <TouchableOpacity style={styles.innerCircle} onPress={handleSosPress}>
+                <TouchableOpacity style={styles.innerInnerCircle} onPress={handleSosPress}>
                   <Text style={styles.SOStext}>Chame ajuda</Text>
                 </TouchableOpacity>
-              </TouchableOpacity>
+               </TouchableOpacity>
           </View>     
             
+  
+
           <View style={styles.statusRow}>
             <View style={styles.statusCard}>
               <Text style={styles.statusTitle}>Status do botão</Text>
@@ -163,26 +136,8 @@ export default function MainMenu() {
                 />
             
             </View>
-              <View style={styles.statusCard}>
-                <Text style={styles.statusTitle}>Sua Localização</Text>
-
-                {location ? (
-                <View style={styles.locationMockup}>
-                <Text style={styles.locationText}> {location.address}{"\n"}</Text>
-                </View>
-                ) : (
-                <Text>Buscando localização...</Text>
-                )}
-
-                {error && <Text style={{ color: theme.colors.grdRed }}>{error}</Text>}
-
-                <Icon
-                name="Location"
-                size={24}
-                color="#fff"
-                style={styles.locationIcon}
-                />
-              </View>
+      
+              <LocationStatusCard />
 
             </View>
 
@@ -191,6 +146,8 @@ export default function MainMenu() {
             onPress={() => router.push('/Tutorials')}
             style={styles.GeneralButton}
           />
+
+
     
           </View>
         <Navbar/>
