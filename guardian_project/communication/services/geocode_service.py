@@ -20,3 +20,22 @@ def reverse_geocode(lat: float, lon: float) -> str | None:
         # Podemos logar o erro se necessário
         pass
     return None
+
+def get_current_location() -> dict | None:
+    try:
+        ip_resp = requests.get("https://api.ipify.org", timeout=5)
+        if ip_resp.status_code != 200:
+            return None
+        
+        ip_address = ip_resp.text.strip()
+
+        url = f"https://get.geojs.io/v1/ip/geo/{ip_address}.json"
+        geo_resp = requests.get(url, timeout=5)
+
+        if geo_resp.status_code == 200:
+            return geo_resp.json()
+        else:
+            return None
+    except requests.RequestException as e:
+
+        return None
