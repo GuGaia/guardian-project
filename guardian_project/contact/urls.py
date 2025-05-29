@@ -1,4 +1,3 @@
-from rest_framework.routers import DefaultRouter
 from django.urls import path
 from .views import ContactViewSet
 
@@ -14,6 +13,6 @@ contact_detail = ContactViewSet.as_view({
 })
 
 urlpatterns = [
-    path('', contact_list, name='contact-list'),
+    path('',         contact_list,   name='contact-list'),
     path('<int:pk>/', contact_detail, name='contact-detail'),
 ]
