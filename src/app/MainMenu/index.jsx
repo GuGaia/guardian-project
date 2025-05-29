@@ -1,257 +1,271 @@
-import React, {useState} from "react";
-import { SafeAreaView, View, ScrollView, Text, Image, TextInput, StyleSheet,TouchableOpacity} from "react-native"
-import { globalStyles } from '@/theme/globalStyles';
+import React from "react";
+import { Animated, SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { GrdTextInput } from '@/components/inputs/GrdTextInput';
-import { GrdOutlinedButton } from '@/components/buttons/GrdOutlinedButton';
-import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { Link, router } from 'expo-router';
 import { Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Navbar } from '@/components/Navbar';
+import { useRef, useEffect, useState } from 'react';
+import { Header } from "./Header";
+import { useLocation } from '@/hooks/useLocation';
+import { LocationStatusCard } from '@/components/LocationStatusCard';
+import { Vibration } from 'react-native';
 
-
-
-export default function MainMenu () {
-
-	return (
-		<SafeAreaView style={styles.container}>
-			<ScrollView  style={styles.scrollView}>
-				
-				<View style={styles.view}>
-					<Text style={styles.text}>
-						{"Central de socorro"}
-					</Text>
-				</View>
-
-				<TouchableOpacity style={styles.EmergencyButton}  onPress={() => router.push('/EmergencyButton')}>
-				<Image
-						source={require('../../../assets/images/EmergencyButton.png')}
-						resizeMode = {"stretch"}
-						style={styles.image4}
-					/>
-					<Text style={styles.text}>
-						{"Botão de Emergência"} 
-					</Text>
-				
-				</TouchableOpacity>
-
-                <View style={styles.buttonContainer}>
-                    
-                    <View style={styles.row2}>
-					<TouchableOpacity style={styles.row3} onPress={() => router.push('/Settings')}>
-                            <Text style={styles.text}>
-                                {"Configurações"}
-                            </Text>
-
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.row4} onPress={() => router.push('/ContactList')}>
-							<Image
-								source={{uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/U9b7Iuerty/prqb2a5f_expires_30_days.png"}}
-								resizeMode={"stretch"}
-								style={styles.image3}
-							/>
-							<Text style={styles.text}>
-								{"Contatos de emergência"}
-							</Text>
-						</TouchableOpacity>
-                	</View>
-	
-				</View>
-				
-        
-                
-	
-    
-
-				<View style={styles.OrientationsToContacts}>
-					<Image
-						source={require('../../../assets/images/OrientationsToContacts.png')}
-						resizeMode = {"stretch"}
-						style={styles.image4}
-					/>
-					 <Text style={styles.text}>
-                                {"Saiba como orientar seus contatos de emergência"}
-                    </Text>
-					
-				</View>
-
-
-
-			</ScrollView>
-			
-
-			<View style={styles.navbar}>
-				<View style={styles.navbarContent}>
-					<Image
-						source={{ uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/U9b7Iuerty/g7g8stmp_expires_30_days.png" }}
-						resizeMode="contain"
-						style={styles.navbarIcon}
-					/>
-				</View>
-			</View>
-
-
-
-		</SafeAreaView>
-	)
-}
 
 const { width, height } = Dimensions.get('window');
+
+const handleSosPress = () => {
+  router.push('/EmergencyMode');
+  Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
+};
+
+
+const baseCard = {
+  borderRadius: 12,
+  shadowColor: "#00000040",
+  shadowOpacity: 0.3,
+  shadowOffset: { width: 0, height: 4 },
+  shadowRadius: 4,
+  elevation: 4,
+};
+
+const buttonBase = {
+  ...baseCard,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  paddingVertical: height* 0.04,
+  marginBottom: height* 0.015,
+  marginHorizontal: height* 0.03,
+};
+
+function CardButton({ onPress, icon, text, style, imageSource }) {
+	return (
+	  <TouchableOpacity style={[buttonBase, style]} onPress={onPress}>
+		{imageSource ? (
+		  <Image source={imageSource} resizeMode="contain" style={[styles.image, { marginRight: 10 }]} />
+		) : (
+		  <Icon name={icon} size={((width * height)/ 1000) * 0.07} style={{ marginRight: 10 }} />
+		)}
+		<View style={{ flex: 1 }}>
+		  <Text style={styles.statusTitle} numberOfLines={2} adjustsFontSizeToFit>
+			{text}
+		  </Text>
+		</View>
+	  </TouchableOpacity>
+	);
+  }
+
+
+function SosButton() {
+  const handleSosPress = () => {
+    // Vibração silenciosa
+    Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
+
+    // Aqui você pode colocar outras ações, como enviar localização ou ativar modo de emergência
+    console.log('SOS ativado');
+  };
+
+}
+
+
+
+export default function MainMenu() {
+
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const { location, error } = useLocation(false);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
+  console.log(MainMenu); // Deve mostrar uma função. Se for undefined, o import está errado
+
+
+  return (
+
+    <LinearGradient
+      colors={['#FFFFFF', '#9FE7F5']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.background}
+    >
+      <SafeAreaView style={styles.container}>
+        
+        <Header/>
+          
+          <View style={{ flex:1, paddingBottom:  height* 0.08, justifyContent: "center" }}>
+            <Text style={{fontSize: 28, textAlign:"center", fontWeight: "bold",color: theme.colors.grdGray}}>Precisa de ajuda?</Text>
+            <Text style={{fontSize: 16, textAlign:"center", color: theme.colors.grdGray,paddingHorizontal:80}}>Pressione o botão e buscaremos ajuda para você</Text>
+            <View style={styles.sosContainer}>
+
+
+            <Animated.View style={[ styles.outerCircle, {transform: [{ scale: pulseAnim }], },]}/>
+              <TouchableOpacity style={styles.innerCircle} onPress={handleSosPress}>
+                <TouchableOpacity style={styles.innerInnerCircle} onPress={handleSosPress}>
+                  <Text style={styles.SOStext}>Chame ajuda</Text>
+                </TouchableOpacity>
+               </TouchableOpacity>
+          </View>     
+            
+  
+
+          <View style={styles.statusRow}>
+            <View style={styles.statusCard}>
+              <Text style={styles.statusTitle}>Status do botão</Text>
+              <Text style={styles.statusValue}>ativo</Text>
+              <Animated.View
+                style={[
+                styles.statusIndicator,
+                { transform: [{ scale: pulseAnim }] },
+                ]}
+                />
+            
+            </View>
+      
+              <LocationStatusCard />
+
+            </View>
+
+          <CardButton
+            text="Guias Salva-Vidas"
+            onPress={() => router.push('/Tutorials')}
+            style={styles.GeneralButton}
+          />
+
+
+    
+          </View>
+        <Navbar/>
+      </SafeAreaView>
+    </LinearGradient>
+  );
+}
 
 
 const styles = StyleSheet.create({
 
-	container: {
-	  flex: 1,
-	  backgroundColor: "#FFFFFF",
-	},
-	scrollView: {
-	  backgroundColor: "#D9E7FF",
-	},
-	view: {
-	  backgroundColor: "#3573FA",
-	  paddingVertical: 12,
-	  marginBottom: 36,
-	},
-	text: {
-	  color: "#D9E7FF",
-	  fontSize: width * 0.05, // tamanho adaptável
-	  fontWeight: "bold",
-	  textAlign: "center",
-	  marginHorizontal: 16,
-	},
+    background: {
+      
+      flex: 1,
 
-	EmergencyButton:{
+  },
 
-		
-		flex: 1,
-		
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    
+  },
+  sosContainer: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginVertical: '10%',
+  alignSelf: 'center',
+},
+ SOStext: {
+  fontSize: ((width * height) / 1000) * 0.08,
+  color: 'white',
+  fontWeight: "bold",
+  textAlign: "center",
+},
 
-		backgroundColor: theme.colors.grdRed,
-		borderRadius: 12,
-		paddingVertical: 20,
-		paddingHorizontal: 10,
-		marginRight: 20,
-		alignItems: "center",
-		borderRadius: 12,
-	  paddingVertical: 15,
-	  paddingLeft: 17,
-	  marginBottom: 30,
-	  marginHorizontal: 20,
-	  shadowColor: "#00000040",
-	  shadowOpacity: 0.3,
-	  shadowOffset: {
-		width: 0,
-		height: 4,
-	  },
-	  shadowRadius: 4,
-	  elevation: 4,
+outerCircle: {
+  position: 'absolute',
+  width: ((width * height) / 1000) * 0.75,
+  height: ((width * height) / 1000) * 0.75,
+  borderRadius: ((width * height) / 1000) * 0.8,
+  backgroundColor: '#FF6B6B50', 
+},
 
+innerCircle: {
+  width: ((width * height) / 1000) * 0.7,
+  height: ((width * height) / 1000) * 0.7,
+  borderRadius: ((width * height) / 1000) * 0.8,
+  backgroundColor: '#FF6B6B50', 
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+innerInnerCircle: {
+  width: ((width * height) / 1000) * 0.6,
+  height: ((width * height) / 1000) * 0.6,
+  borderRadius: ((width * height) / 1000) * 0.6,
+  backgroundColor: "#FF6B6B",
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+  text: {
+    color: "white",
+    fontSize: ((width * height)/ 1000) * 0.07,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  GeneralButton: {
+    backgroundColor: "white",
+    ...baseCard,
+    paddingVertical: height*0.03,
+    paddingHorizontal: width*0.04,
+  },
+    statusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginHorizontal: 20,
+    paddingBottom: 10,
+  },
 
-	},
+  statusCard: {
+    backgroundColor: 'white',
+    width: width * 0.43,
+    padding: 16,
+    borderRadius: 12,
+    ...baseCard,
+  },
 
-	buttonContainer: {
-	  paddingHorizontal: 20,
-	},
+  statusTitle: {
+    color: theme.colors.grdGray,
+    fontSize: 14,
+    fontWeight: '600',
+  },
 
+  statusValue: {
+    color: "#009933" ,
+    fontSize: 16,
+    marginTop: 8,
+    fontWeight: 'bold',
+  },
+  statusIndicator: {
+  position: 'absolute',
+  bottom: 8,
+  right: 8,
+  width: 14,
+  height: 14,
+  borderRadius: 7,
+  backgroundColor: '#00cc44',
+  shadowColor: '#00cc44',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.8,
+  shadowRadius: 4,
+  elevation: 6,
+},
 
-	row2: {
-	  flexDirection: "row",
-	  alignItems: "flex-start",
-	  marginBottom: 16,
-	  marginHorizontal: 0,
-	  justifyContent: "space-between",
-	},
-	row3: {
-	  flex: 1,
-	  flexDirection: "row",
-	  backgroundColor: "#5C97FF",
-	  borderRadius: 12,
-	  paddingVertical: 20,
-	  paddingHorizontal: 10,
-	  marginRight: 8,
-	  alignItems: "center",
-	},
-	row4: {
-	  flex: 1,
-	  flexDirection: "row",
-	  backgroundColor: "#5C97FF",
-	  borderRadius: 12,
-	  paddingVertical: 20,
-	  paddingHorizontal: 10,
-	  alignItems: "center",
-	},
-	image2: {
-	  borderRadius: 12,
-	  width: width * 0.06,
-	  height: width * 0.06,
-	  marginRight: 8,
-	},
-	image3: {
-	  borderRadius: 12,
-	  width: width * 0.06,
-	  height: width * 0.06,
-	  marginRight: 8,
-	},
-	
-	OrientationsToContacts: {
-	  flexDirection: "row",
-	  alignItems: "center",
-	  backgroundColor: "#3573FA",
-	  borderRadius: 12,
-	  paddingVertical: 15,
-	  paddingLeft: 17,
-	  marginBottom: 30,
-	  marginHorizontal: 20,
-	  shadowColor: "#00000040",
-	  shadowOpacity: 0.3,
-	  shadowOffset: {
-		width: 0,
-		height: 4,
-	  },
-	  shadowRadius: 4,
-	  elevation: 4,
-	},
-	image4: {
-	  width: width * 0.25, // proporcional à tela
-	  height: width * 0.25,
-	  marginRight: 15,
-	},
-	input: {
-	  flex: 1,
-	  color: "#D9E7FF",
-	  fontSize: width * 0.04,
-	  paddingVertical: 10,
-		fontWeight: "bold",
-		flex: 1,
-		flexWrap: "wrap",
-		marginRight: 8, 
-		numberOfLines: 2,
-	},
-	navbar: {
-		position: 'absolute',
-		bottom: 0,
-		left: 0,
-		right: 0,
-		height: 70, 
-		backgroundColor: theme.colors.grdBlue,
-		justifyContent: "center",
-		alignItems: "center",
-		paddingBottom: 10, // espaço para telefones com borda
+locationIcon: {
+  position: 'absolute',
+  bottom: 8,
+  right: 8,
+},
 
-		elevation: 10, // para Android
-	  },
-	  navbarContent: {
-		width: 60,
-		height: 60,
-		backgroundColor: theme.colors.grdBlueLight,
-		borderRadius: 30, // deixa redondo
-		justifyContent: "center",
-		alignItems: "center",
-	  },
-	  navbarIcon: {
-		width: 30,
-		height: 30,
-		tintColor: "#FFFFFF", 
-	  },	  
-  });
+});
