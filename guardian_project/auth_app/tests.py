@@ -15,6 +15,7 @@ class AuthAppLoginViewTest(TestCase):
     @patch('auth_app.views.connection')
     @patch('auth_app.views.bcrypt.checkpw')
     def test_login_success(self, mock_checkpw, mock_connection):
+      
         mock_cursor = MagicMock()
         mock_connection.cursor.return_value.__enter__.return_value = mock_cursor
         mock_cursor.fetchone.return_value = (
@@ -30,10 +31,10 @@ class AuthAppLoginViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.data)
         self.assertEqual(response.data['user']['email'], self.valid_email)
-
+        
     def test_login_missing_fields(self):
-        response = self.client.post(self.url, {'email': self.valid_email})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            response = self.client.post(self.url, {'email': self.valid_email})
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch('auth_app.views.connection')
     def test_login_user_not_found(self, mock_connection):
@@ -75,3 +76,39 @@ class AuthAppLoginViewTest(TestCase):
         })
 
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+    @patch('auth_app.views.connection')
+    @patch('auth_app.views.bcrypt.checkpw')
+    def test_login_user_inactive(self, mock_checkpw, mock_connection):
+        """Cobertura para usuário com 'active' = False"""
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_cursor.fetchone.return_value = (
+            1, 'Usuário Inativo', self.valid_email, self.hashed_password, 'Msg', False, False
+        )
+        mock_checkpw.return_value = True
+
+        response = self.client.post(self.url, {
+            'email': self.valid_email,
+            'password': self.valid_password
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('detail', response.data)
+        self.assertEqual(response.data['detail'], 'Usuário inativo')
+
+    @patch('auth_app.views.connection')
+    @patch('auth_app.views.bcrypt.checkpw')
+    def test_login_db_return_malformed(self, mock_checkpw, mock_connection):
+        """Cobertura para retorno inesperado do banco"""
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value.__enter__.return_value = mock_cursor
+        mock_cursor.fetchone.return_value = ('incompleto',)  # Simula erro de unpack
+        mock_checkpw.return_value = True
+
+        response = self.client.post(self.url, {
+            'email': self.valid_email,
+            'password': self.valid_password
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        

@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from client.models import Client
 from communication.services.alert_service import send_alert_for_client
 from common.auth import validate_token
+from communication.services.geocode_service import get_current_location
 
 class ChannelSendView(APIView):
     def post(self, request, *args, **kwargs):
@@ -23,8 +24,32 @@ class ChannelSendView(APIView):
             )
 
         # coordenadas de exemplo p teste
-        lat = request.data.get("latitude", -23.55052)
-        lon = request.data.get("longitude", -46.633308)
+        lat = request.data.get("latitude", None)
+        lon = request.data.get("longitude", None)
+
+        print(f"{lat} {lon} >>>>>>>>")
+        if lat is None or lon is None:
+            get_location = get_current_location()
+            if get_location:
+                lat = get_location['latitude']
+                lon = get_location['longitude']
+                print(f"{lat} {lon} ///////////")
+
+        print(f"{lat} {lon} <<<<<<<<<<<")
+        if lat is None or lon is None:
+            return Response(
+                {"error": "Coordenadas ausentes e localização automática falhou"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            lat = float(lat)
+            lon = float(lon)
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "Latitude e longitude inválidas"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         alert_sent = send_alert_for_client(client, lat, lon)
         if not alert_sent:

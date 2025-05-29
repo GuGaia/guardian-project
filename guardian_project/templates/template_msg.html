@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+    <html lang="pt-br">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{{ message }}</title>
+            <style>
+                body {
+                    font-family: sans-serif;
+                    margin: 20px;
+                    background-color: #f4f4f4;
+                }
+        
+                .help-container {
+                    background-color: #ffddcc; /* Um tom mais suave de alerta */
+                    color: #cc0000; /* Vermelho mais forte para emergência */
+                    border: 1px solid #ffaaaa;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    border-radius: 8px;
+                    box-shadow: 2px 2px 5px #ccc;
+                }
+        
+                .help-title {
+                    font-size: 1.5em;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                    color: #d9534f; /* Vermelho Bootstrap */
+                }
+        
+                .help-message {
+                    font-size: 1.1em;
+                    line-height: 1.6;
+                    margin-bottom: 15px;
+                }
+        
+                .urgent {
+                    font-weight: bolder;
+                    color: #ff0000; /* Vermelho vivo para enfatizar */
+                }
+            </style>
+        </head>
+        <body>
+        
+            <div class="help-container">
+                <h2 class="help-title">PEDIDO DE AJUDA URGENTE!</h2>
+                <p class="help-message"><span class="urgent">ALERTA:<p></span> {{ full_msg|linebreaksbr }} </p></p>
+            </div>
+        
+            <p style="font-size: 0.8em; color: #777;">Esta é uma mensagem automática de pedido de ajuda.</p>
+        
+        </body>
+    </html>

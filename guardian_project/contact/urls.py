@@ -1,10 +1,18 @@
-# guardian_project/urls.py
+from django.urls import path
+from .views import ContactViewSet
 
-from django.contrib import admin
-from django.urls import path, include
+contact_list = ContactViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
+})
+contact_detail = ContactViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy',
+})
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/clients/', include('client.urls')),        
-    path('api/communications/', include('communication.urls')),
+    path('',         contact_list,   name='contact-list'),
+    path('<int:pk>/', contact_detail, name='contact-detail'),
 ]
