@@ -9,6 +9,7 @@ from client.serializers import ClientSerializer
 import bcrypt
 from rest_framework import status
 from unittest.mock import patch
+from contact.models import Contact
 
 class ClientModelTest(TestCase):
 
@@ -192,3 +193,38 @@ class ClientViewSetTest(TestCase):
             **self.auth_header
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch('client.views.validate_token')
+    def test_update_client_invalid_data(self, mock_validate_token):
+        mock_validate_token.return_value = {"sub": self.client_instance.id}
+        data = {
+            "email": "",  
+            "name": "Novo Nome"
+        }
+        response = self.client_api.put(
+            f"/api/clients/{self.client_instance.id}/",
+            data,
+            **self.auth_header
+        )
+        
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("email", response.data)
+
+class ClientModelMethodTest(TestCase):
+    def setUp(self):
+        self.client_instance = Client.objects.create(
+            name="Ana Paula",
+            email="ana@example.com",
+            password="123456"
+        )
+
+    def test_str_method_returns_name(self):
+        self.assertEqual(str(self.client_instance), "Ana Paula")
+
+    def test_get_contact_emails_returns_only_valid_emails(self):
+        Contact.objects.create(client=self.client_instance, name="Contato 1", email="valido@email.com")
+        Contact.objects.create(client=self.client_instance, name="Contato 2", email="")
+        Contact.objects.create(client=self.client_instance, name="Contato 3", email=None)
+
+        emails = list(self.client_instance.get_contact_emails())
+        self.assertEqual(emails, ["valido@email.com"])

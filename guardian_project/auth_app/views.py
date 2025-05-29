@@ -57,6 +57,11 @@ def login_view(request):
             return Response({
                 'detail': 'Invalid credentials'
             }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        if not active:
+            return Response({
+                'detail': 'Usuário inativo'
+            }, status=status.HTTP_401_UNAUTHORIZED)
 
         # Gerar JWT
         expiration = datetime.utcnow() + timedelta(hours=1)
