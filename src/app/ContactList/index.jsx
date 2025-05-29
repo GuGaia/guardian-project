@@ -1,11 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
+import { Navbar } from '@/components/Navbar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+
+const { width, height } = Dimensions.get('window');
+
 
 export default function Page() {
+    const router = useRouter();
 
     const mockContacts = [
         {
@@ -113,128 +120,109 @@ export default function Page() {
             email: 'isabela.costa@email.com',
             relationship: 'Sobrinha'
         },
-        {
-            id: 16,
-            name: 'Thiago Almeida',
-            phone: '(11) 91234-5678',
-            email: 'thiago.almeida@email.com',
-            relationship: 'Sobrinho'
-        },
-        {
-            id: 17,
-            name: 'Amanda Ferreira',
-            phone: '(11) 98765-4321',
-            email: 'amanda.ferreira@email.com',
-            relationship: 'Colega de faculdade'
-        },
-        {
-            id: 18,
-            name: 'Pedro Souza',
-            phone: '(11) 94567-8901',
-            email: 'pedro.souza@email.com',
-            relationship: 'Amigo'
-        },
-        {
-            id: 19,
-            name: 'Carolina Mendes',
-            phone: '(11) 92345-6789',
-            email: 'carolina.mendes@email.com',
-            relationship: 'Vizinha'
-        },
-        {
-            id: 20,
-            name: 'Felipe Rodrigues',
-            phone: '(11) 95678-1234',
-            email: 'felipe.rodrigues@email.com',
-            relationship: 'Colega de academia'
-        }
     ]
 
-    const router = useRouter();
-
     return (
-        <View style={[globalStyles.container, styles.container]}>
-            <View style={styles.headerCard}>
-                <Text style={[globalStyles.subtitle, styles.subtitle]}>Contatos de Emergência</Text>
-                <TouchableOpacity style={styles.iconContainer} activeOpacity={0.8} onPress={() => router.back()}>
-                    <Icon name="arrowLeft" size={24} color={theme.colors.grdWhite00} />
-                </TouchableOpacity>
+
+        <View style={styles.container}>
+            <View style={styles.header}>
             </View>
+
+            <View style={styles.titleCard}>
+                <View style={styles.titleRow}>
+                    <Icon 
+                    name="contacts" 
+                    size={45} 
+                    />
+                    <View style={{ marginLeft: ((width * height)/ 1000) * 0.05 }}>
+                        <Text style={styles.title}>Contatos de</Text>
+                        <Text style={styles.title}>emergência</Text>
+                    </View>
+                </View>
+            </View>
+
+            <TouchableOpacity style={styles.addButton} onPress={()=> router.push('/ContactList/Adding')} >
+                
+                <Icon name="Plus" size={ ((width * height)/ 1000) * 0.08} style={styles.Icon} />
+                <Text style={styles.addButtonText}>Adicionar contato</Text>
+            </TouchableOpacity>
+
             <FlatList
                 data={mockContacts}
-                contentContainerStyle={styles.listContainer}
+                contentContainerStyle={styles.list}
+                keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <View style={styles.cardContainer}>
-                        <View style={styles.contactCard}>
-                            <Text style={styles.contactName}>{item.name}</Text>
-                        </View>
-                    </View>
+                    
+                    <TouchableOpacity style={styles.contactItem}activeOpacity={0.8} onPress={() => router.push('/ContactList/detalhes')}>
+                        <Text style={styles.contactName}>{item.name}</Text>
+                    </TouchableOpacity>
                 )}
             />
-            <View style={styles.footerCard}/>
+            
+            <Navbar/> 
+            
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-    footerCard: {
-        height: 72,
-        backgroundColor: theme.colors.grdPinkMedium,
-    },
-    headerCard: {
-        height: 244,
-        marginTop: 52,
-        marginHorizontal: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: theme.colors.grdPinkMedium,
-        borderRadius: 12,
-        position: 'relative',
-    },
-    container: {
-        flex: 1,
+container: {
+  flex: 1,
+  backgroundColor: theme.colors.grdBlueLight,
+},
+
+
+    header: {
         backgroundColor: theme.colors.grdBlueLight,
+        height: height * 0.03,
     },
-    subtitle: {
-        color: theme.colors.grdWhite00,
-        fontSize: theme.fontSizes.h1,
-    },
-    cardContainer: {
-        paddingHorizontal: 12,
-    },
-    contactCard: {
+    titleCard: {
         backgroundColor: theme.colors.grdBlue,
-        borderRadius: 12,
-        marginVertical: 8,
-        paddingVertical: 11,
-        paddingHorizontal: 22,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        overflow: 'hidden',
+         height: height * 0.15,
+        alignItems: 'center',
+        justifyContent:'center',
+    },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    title: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize:  ((width * height)/ 1000) * 0.08,
+  },
+
+  scrollView: {
+    padding:  width * 0.07,
+  },
+    addButton: {
+        flexDirection: 'row',
+        backgroundColor: theme.colors.grdBlue,
+        alignSelf: 'center',
+        alignItems: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        marginVertical: 20,
+    },
+    addButtonText: {
+        color: 'white',
+        marginLeft: 8,
+        fontWeight: 'bold',
+    },
+    list: {
+    padding:  width * 0.06,
+    },
+    contactItem: {
+        paddingVertical: height*0.02,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.grdGray,
     },
     contactName: {
-        fontFamily: theme.fonts.interBold,
-        fontSize: theme.fontSizes.body,
-        color: theme.colors.grdWhite00,
+        color: theme.colors.grdGray,
+        fontWeight: 'bold',
     },
-    contactPhone: {
-        fontSize: theme.fontSizes.h3,
-        color: theme.colors.grdWhite00,
-    },
-    contactRelationship: {
-        fontSize: theme.fontSizes.h3,
-        color: theme.colors.grdBlue,
-    },
-    iconContainer: {
-        position: 'absolute',
-        bottom: 16,
-        left: 16,
-    },
-    listContainer: {
-        paddingVertical: 12,
+      Icon: {
+        color: theme.colors.grdGray,
     },
 });
-

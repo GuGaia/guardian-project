@@ -7,8 +7,10 @@ import { GrdTextInput } from '@/components/inputs/GrdTextInput';
 import { GrdOutlinedButton } from '@/components/buttons/GrdOutlinedButton';
 import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { Link, router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Page() {
+
   let loginForm = {
     email: '',
     password: ''
@@ -23,7 +25,8 @@ export default function Page() {
   }
 
   return (
-    <View 
+
+      <View 
       style={[globalStyles.container, styles.container]}
       onStartShouldSetResponder={() => true}
       onResponderGrant={() => {
@@ -37,6 +40,13 @@ export default function Page() {
         }
       }}
     >
+      
+      <LinearGradient
+      colors={['#FFFFFF', '#D0ECEF']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.background}
+    >
       <View style={styles.header} />
       <View style={[globalStyles.centerContainer, styles.centerContainer]}>
         <View style={styles.displayContainer}>
@@ -47,7 +57,7 @@ export default function Page() {
           <Text style={[globalStyles.title, styles.title]}>Guardiã</Text>
           <Image
             source={require('@assets/images/alluraBackInTown.png')}
-            style={{ width: 334, height: 198 }}
+            style={{ width: 300, height: 190 }}
           />
         </View>
         <View style={styles.formContainer}>
@@ -66,7 +76,7 @@ export default function Page() {
           <View style={styles.buttonContainer}>
             <GrdSolidButton
               label="Entrar"
-              onPress={() => router.push('/MainMenu')}
+              onPress={() => router.push('/HowThisWorks')}
               textStyle={styles.loginButtonText}
               size="large"
             />
@@ -87,14 +97,29 @@ export default function Page() {
           </View>
         </View>
       </View>         
+      
+    </LinearGradient>
+
     </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
+
+
   buttonContainer: {
     flexDirection: 'column',
     gap: 24 ,
+  },
+    background: {
+      
+      flex: 1,
+
+  },
+  
+  container: {
+   flex:1,
   },
   registerButtonContainer: {
     paddingHorizontal: 58,

@@ -1,12 +1,13 @@
 export const theme = {
   colors: {
-    grdBlueBackground: '#D9E7FF',
-    grdBlue: '#3573FA',
-    grdBlueLight: '#5C97FF',
+    grdBlueBackground: '#D0ECEF',
+    grdBlue: '#2FADCC',
+    grdBlueLight: '#D0ECEF',
     grdWhite00: '#FFFFFF',
     grdBlack00: '#000000',
-    grdRed: '#DB1313',
-    grdGray00: '#212023',
+    grdRed: '#FF6B6B',
+    grdGray: '#2f2f2f',
+    grdGray00: '#959595',
   },
   fonts: {
     ubuntuLight: 'Ubuntu-Light',
