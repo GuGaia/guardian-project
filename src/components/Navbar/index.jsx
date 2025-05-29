@@ -8,13 +8,13 @@ const { width, height } = Dimensions.get('window');
 
 export function Navbar() {
   return (
-    <Animated.View style={[styles.navbar, { transform: [{ translateY }] }]}>
+ 
       <View style={styles.navbarRow}>
         <NavItem icon="contacts" route="/ContactList" />
         <NavItem icon="Home" route="/MainMenu" />
         <NavItem icon="settings" route="/Settings" />
       </View>
-    </Animated.View>
+  
   );
 }
 
@@ -27,8 +27,11 @@ function NavItem({ icon, route }: { icon: string; route: string }) {
 }
 
 const styles = StyleSheet.create({
-  navbar: {
-    position: 'absolute',
+  navbarRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+      position: 'absolute',
     borderTopLeftRadius: ((width * height) / 1000) * 0.2,
     borderTopRightRadius: ((width * height) / 1000) * 0.2,
     bottom: 0,
@@ -37,18 +40,14 @@ const styles = StyleSheet.create({
     height: height * 0.08,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.grdBlue,
     elevation: 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     zIndex: 1,
-  },
-  navbarRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    
+    backgroundColor: theme.colors.grdBlue,
   },
   navbarContent: {
     width: height * 0.15,
