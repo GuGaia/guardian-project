@@ -21,6 +21,17 @@ class ClientViewSet(viewsets.ModelViewSet):
         clients = self.get_queryset()
         serializer = self.get_serializer(clients, many=True)
         return Response(serializer.data)
+    
+    def retrieve(self, request, *args, **kwargs):
+        auth_header = request.headers.get('Authorization', '')
+        token = auth_header.replace('Bearer ', '')
+        user_data = validate_token(token)
+
+        if not user_data:
+            return Response({'detail': 'Unauthorized'}, status=401)
+
+        return super().retrieve(request, *args, **kwargs)
+
 
     def update(self, request, *args, **kwargs):
         auth_header = request.headers.get('Authorization', '')
