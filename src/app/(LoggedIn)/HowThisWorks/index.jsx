@@ -55,6 +55,11 @@ export default function HowItWorksCarousel() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity onPress={() => router.push('/MainMenu')} style={styles.button}>
+          <Text style={styles.buttonText}>
+            {currentIndex === slides.length - 1 ? 'Concluir' : 'Avançar'}
+          </Text>
+        </TouchableOpacity>
       <FlatList
         data={slides}
         renderItem={renderItem}

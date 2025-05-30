@@ -13,11 +13,15 @@ import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import { Navbar } from '@/components/Navbar';
+import { useAuth } from '@/hooks/Auth';
+import { Platform } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 export default function ProfilePage() {
   const router = useRouter();
+
+  const { signOut } = useAuth();
 
   const user = {
     name: 'Adamastor Pereira ',
@@ -27,15 +31,15 @@ export default function ProfilePage() {
     avatar: null, // Pode substituir com uma URI ou deixar como null para ícone
   };
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
     Alert.alert('Sair', 'Deseja sair da sua conta?', [
       { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Sair',
-        style: 'destructive',
-        onPress: () => router.replace('/login'),
-      },
+      { text: 'Sair', style: 'destructive', onPress: () => signOut() },
     ]);
+  };
+
+  const handleLogout = async () => {
+    Platform.OS === 'web' ? await signOut() : confirmLogout();
   };
 
   return (
@@ -66,12 +70,12 @@ export default function ProfilePage() {
 
         <View style={styles.actions}>
           <TouchableOpacity style={styles.editButton}>
-            <Icon name="edit" size={20} color="#3573FA" />
+            <Icon name="settings" size={20} color="#3573FA" />
             <Text style={[styles.buttonText, { color: theme.colors.grdBlue }]}>Editar Perfil</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Icon name="log-out" size={20} color="#FFF" />
+            <Icon name="arrowLeft" size={20} color="#FFF" />
             <Text style={[styles.buttonText, { color: '#FFF' }]}>Sair</Text>
           </TouchableOpacity>
         </View>

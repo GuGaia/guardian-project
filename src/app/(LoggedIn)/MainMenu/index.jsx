@@ -93,9 +93,6 @@ export default function MainMenu() {
     ).start();
   }, []);
 
-  console.log(MainMenu); // Deve mostrar uma função. Se for undefined, o import está errado
-
-
   return (
 
     <LinearGradient

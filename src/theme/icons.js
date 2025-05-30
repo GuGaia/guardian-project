@@ -22,9 +22,9 @@ export const icons = {
   settings: settings,
   Home: Home,
   contacts: contacts,
-  Plus:Plus,
-  user:user,
-  Location:Location,
+  Plus: Plus,
+  user: user,
+  Location: Location,
 };
 
 // Função auxiliar para obter um ícone

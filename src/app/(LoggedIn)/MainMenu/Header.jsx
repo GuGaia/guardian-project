@@ -6,11 +6,7 @@ import { router } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
-interface HeaderProps {
-  username?: string | null;
-}
-
-export function  Header({ username }: HeaderProps) {
+export default function Header({ username }) {
 
   const displayName = username?.trim() ? username : 'Adamastor';
 
