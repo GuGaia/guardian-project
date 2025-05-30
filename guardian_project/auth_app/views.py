@@ -72,7 +72,6 @@ def login_view(request):
             'default_message': default_message,
             'active': active,
             'have_plus': have_plus,
-            'exp': expiration,
             'iat': datetime.utcnow()
         }
 
