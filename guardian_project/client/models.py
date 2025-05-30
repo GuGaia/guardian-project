@@ -7,6 +7,8 @@ class Client(models.Model):
     default_message = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=True)
     have_plus = models.BooleanField(default=False)
+    number = models.CharField(max_length=255)
+    city = models.CharField(max_length=255, blank=True)
 
     def get_contact_emails(self):
         return self.contacts.exclude(email__isnull=True).exclude(email__exact='').values_list('email', flat=True)
