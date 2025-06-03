@@ -21,14 +21,8 @@ export function Navbar() {
 
 function NavItem({ icon, route, userData }) {
   const handlePress = () => {
-    if (route === '/ContactList' && userData) {
-      router.push({
-        pathname: route,
-        params: { userData }
-      });
-    } else {
       router.push(route);
-    }
+
   };
 
   return (

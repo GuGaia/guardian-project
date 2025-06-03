@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Navbar } from '@/components/Navbar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { contactService } from '@/services/contactService';
@@ -19,57 +19,57 @@ export default function Page() {
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchContacts = async () => {
-            try {
-                let userId;
-                
-                // Tenta obter o ID do userData dos parâmetros
-                if (userData) {
-                    try {
-                        const parsedUserData = JSON.parse(userData);
-                        if (parsedUserData && parsedUserData.id) {
-                            userId = parsedUserData.id;
-                        }
-                    } catch (error) {
-                        console.error("Erro ao fazer parse do userData:", error);
+    const fetchContacts = async () => {
+        try {
+            let userId;
+            // Tenta obter o ID do userData dos parâmetros
+            if (userData) {
+                try {
+                    const parsedUserData = JSON.parse(userData);
+                    if (parsedUserData && parsedUserData.id) {
+                        userId = parsedUserData.id;
                     }
+                } catch (error) {
+                    console.error("Erro ao fazer parse do userData:", error);
                 }
-
-                // Se não conseguiu obter o ID do userData, tenta obter do estado de autenticação
-                if (!userId && user?.authenticated && user?.user?.id) {
-                    userId = user.user.id;
-                }
-
-                // Se ainda não tem ID, redireciona para o login
-                if (!userId) {
-                    console.error("ID do usuário não encontrado");
-                    Alert.alert(
-                        "Erro",
-                        "Não foi possível identificar o usuário. Por favor, faça login novamente.",
-                        [
-                            {
-                                text: "OK",
-                                onPress: () => router.replace('/Login')
-                            }
-                        ]
-                    );
-                    return;
-                }
-
-                console.log("Buscando contatos para o usuário:", userId);
-                const contactList = await contactService.getContactList(userId);
-                setContacts(contactList);
-            } catch (error) {
-                console.error("Erro ao buscar contatos:", error);
-                Alert.alert("Erro", "Não foi possível carregar a lista de contatos.");
-            } finally {
-                setLoading(false);
             }
-        };
+            // Se não conseguiu obter o ID do userData, tenta obter do estado de autenticação
+            if (!userId && user?.authenticated && user?.user?.id) {
+                userId = user.user.id;
+            }
+            // Se ainda não tem ID, redireciona para o login
+            if (!userId) {
+                console.error("ID do usuário não encontrado");
+                Alert.alert(
+                    "Erro",
+                    "Não foi possível identificar o usuário. Por favor, faça login novamente.",
+                    [
+                        {
+                            text: "OK",
+                            onPress: () => router.replace('/Login')
+                        }
+                    ]
+                );
+                return;
+            }
+            console.log("Buscando contatos para o usuário:", userId);
+            const contactList = await contactService.getContactList(userId);
+            setContacts(contactList);
+        } catch (error) {
+            console.error("Erro ao buscar contatos:", error);
+            Alert.alert("Erro", "Não foi possível carregar a lista de contatos.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchContacts();
-    }, [userData, user]);
+    // Atualiza a lista quando a tela recebe foco
+    useFocusEffect(
+        useCallback(() => {
+            console.log("Tela recebeu foco, atualizando lista de contatos...");
+            fetchContacts();
+        }, [userData, user])
+    );
 
     const handleContactPress = (contact) => {
         const currentUserData = userData || (user?.user ? JSON.stringify(user.user) : null);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Navbar } from '@/components/Navbar';
 import { contactService } from '@/services/contactService';
 
@@ -18,11 +18,36 @@ const { width, height } = Dimensions.get('window');
 
 export default function ContactDetails() {
   const router = useRouter();
-  const { contactData, userData } = useLocalSearchParams();
-  const contact = JSON.parse(contactData);
+  const { contactData, userData, shouldRefresh } = useLocalSearchParams();
+  const [contact, setContact] = useState(JSON.parse(contactData));
   const parsedUserData = JSON.parse(userData);
 
+  // Atualiza os dados do contato quando a tela recebe foco
+  useFocusEffect(
+    useCallback(() => {
+      console.log('useFocusEffect executado');
+      console.log('shouldRefresh:', shouldRefresh);
+      console.log('contact:', contact);
+      console.log('parsedUserData:', parsedUserData);
+      
+      const fetchUpdatedContact = async () => {
+        try {
+          console.log('Iniciando busca do contato atualizado...');
+          const updatedContact = await contactService.getContact(parsedUserData.id, contact.id);
+          console.log('contato atualizado:', updatedContact);
+          setContact(updatedContact);
+        } catch (error) {
+          console.error("Erro ao atualizar dados do contato:", error);
+        }
+      };
+
+      // Sempre busca os dados atualizados quando a tela recebe foco
+      fetchUpdatedContact();
+    }, [contact.id, parsedUserData.id])
+  );
+
   const handleDelete = async () => {
+    console.log('Tentando excluir contato:', { userId: parsedUserData, contactId: contact });
     Alert.alert(
       'Confirmar exclusão',
       `Deseja excluir o contato "${contact.name}"?`,
@@ -33,6 +58,7 @@ export default function ContactDetails() {
           style: 'destructive',
           onPress: async () => {
             try {
+              console.log('Tentando excluir contato:', { userId: parsedUserData.id, contactId: contact.id });
               await contactService.deleteContact(parsedUserData.id, contact.id);
               Alert.alert('Sucesso', 'Contato excluído com sucesso!');
               router.back();
@@ -48,11 +74,13 @@ export default function ContactDetails() {
   };
 
   const handleEdit = () => {
+    console.log('Tentando editar contato:', { contact, userData });
     router.push({
       pathname: '/ContactList/Adding',
       params: { 
-        contactData,
+        contactData: JSON.stringify(contact),
         userData,
+        mode: 'edit',
         isEditing: 'true'
       }
     });

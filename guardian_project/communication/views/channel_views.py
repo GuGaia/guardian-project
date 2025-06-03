@@ -14,6 +14,6 @@ class CommunicationViewSet(viewsets.ModelViewSet):
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
         user_data = validate_token(token)
         if not user_data:
-            return JsonResponse({'detail': 'Uyynauthorized'}, status=401)
+            return JsonResponse({'detail': 'Unauthorized'}, status=401)
         request.user_data = user_data
         return super().dispatch(request, *args, **kwargs)

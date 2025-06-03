@@ -11,32 +11,41 @@ import {
 } from 'react-native';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Navbar } from '@/components/Navbar';
-import { useAuth } from '@/hooks/Auth';
+import { useAuth, user } from '@/hooks/Auth';
 import { Platform } from 'react-native';
+import { homeService } from '@/services/homeService';
 
 const { width } = Dimensions.get('window');
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { signOut } = useAuth();
-  const params = useLocalSearchParams();
+  const { signOut, user } = useAuth();
+
   const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (params.userData) {
-      try {
-        const parsedData = JSON.parse(params.userData);
-        console.log('Dados do usuário recebidos no Profile:', parsedData);
-        setUserData(parsedData);
-      } catch (error) {
-        console.error('Erro ao processar dados do usuário no Profile:', error);
+    const fetchUserData = async () => {
+      if (user?.authenticated && user?.user?.id) {
+        try {
+          const data = await homeService.getUserData(user.user.id);
+          setUserData(data);
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário:', error);
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
       }
-    }
-  }, [params.userData]);
+    };
 
-  const user = {
+    fetchUserData();
+  }, [user?.authenticated, user?.user?.id]);
+
+  const userInfo = {
     name: userData?.name || 'Adamastor Pereira',
     email: userData?.email || 'adamastor.pereira@email.com',
     phone: userData?.number || 'Não informado',
@@ -60,25 +69,25 @@ export default function ProfilePage() {
       <Navbar />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.profileCard}>
-          {user.avatar ? (
-            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+          {userInfo.avatar ? (
+            <Image source={{ uri: userInfo.avatar }} style={styles.avatar} />
           ) : (
             <View style={styles.avatarPlaceholder}>
               <Icon name="user" size={40} color="#3573FA" />
             </View>
           )}
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.name}>{userInfo.name}</Text>
+          <Text style={styles.email}>{userInfo.email}</Text>
         </View>
 
         <View style={styles.infoSection}>
           <Text style={styles.infoLabel}>Telefone</Text>
-          <Text style={styles.infoValue}>{user.phone}</Text>
+          <Text style={styles.infoValue}>{userInfo.phone}</Text>
 
           <View style={styles.divider} />
 
           <Text style={styles.infoLabel}>Cidade</Text>
-          <Text style={styles.infoValue}>{user.city}</Text>
+          <Text style={styles.infoValue}>{userInfo.city}</Text>
         </View>
 
         <View style={styles.actions}>

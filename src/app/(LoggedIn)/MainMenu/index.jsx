@@ -2,7 +2,7 @@ import React from "react";
 import { Animated, SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { Link, router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
@@ -59,23 +59,29 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 
 export default function MainMenu() {
   const { user } = useAuth();
-  const params = useLocalSearchParams();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { location, error } = useLocation(false);
 
   useEffect(() => {
-    if (params.userData) {
-      try {
-        const parsedData = JSON.parse(params.userData);
-        console.log('Dados do usuário recebidos:', parsedData);
-        setUserData(parsedData);
-      } catch (error) {
-        console.error('Erro ao processar dados do usuário:', error);
+    const fetchUserData = async () => {
+      if (user?.authenticated && user?.user?.id) {
+        try {
+          const data = await homeService.getUserData(user.user.id);
+          setUserData(data);
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário:', error);
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
       }
-    }
-  }, [params.userData]);
+    };
+
+    fetchUserData();
+  }, [user?.authenticated, user?.user?.id]);
 
   useEffect(() => {
     Animated.loop(

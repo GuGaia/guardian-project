@@ -10,10 +10,8 @@ export default function Header({ username, userData }) {
   const displayName = username?.trim() ? username : 'Adamastor';
 
   const handleProfilePress = () => {
-    console.log('Dados sendo passados para Profile:', userData);
     router.push({
       pathname: '/Profile',
-      params: { userData: JSON.stringify(userData) }
     });
   };
 

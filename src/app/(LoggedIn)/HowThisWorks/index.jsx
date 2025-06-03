@@ -34,29 +34,6 @@ export default function HowItWorksCarousel() {
   const router = useRouter();
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.authenticated && user?.user?.id) {
-        try {
-          console.log('user', user);
-          const data = await homeService.getUserData(user.user.id);
-          setUserData(data);
-        } catch (error) {
-          console.error('Erro ao buscar dados do usuário:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [user?.authenticated, user?.user?.id]);
 
   const handleScroll = (event) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -69,19 +46,9 @@ export default function HowItWorksCarousel() {
     } else {
       router.push({
         pathname: '/MainMenu',
-        params: { userData: JSON.stringify(userData) }
       });
     }
   };
-
-  if (isLoading) {
-    return (
-      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
-        <ActivityIndicator size="large" color="white" />
-        <Text style={styles.loadingText}>Carregando dados...</Text>
-      </SafeAreaView>
-    );
-  }
 
   const renderItem = ({ item }) => (
     <View style={styles.slide}>
@@ -95,12 +62,11 @@ export default function HowItWorksCarousel() {
       <TouchableOpacity 
         onPress={() => router.push({
           pathname: '/MainMenu',
-          params: { userData: JSON.stringify(userData) }
         })} 
         style={styles.button}
       >
         <Text style={styles.buttonText}>
-          {currentIndex === slides.length - 1 ? 'Concluir' : 'Avançar'}
+          {'Concluir'}
         </Text>
       </TouchableOpacity>
       <FlatList
