@@ -1,28 +1,9 @@
 import {createContext, useContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Platform} from 'react';
-import axios from 'axios';
+import {Platform} from 'react-native';
+import api from '@/services/api';
 
 const AuthContext = createContext({});
-
-// Configuração base do axios
-const api = axios.create({
-    baseURL: 'http://192.168.0.103:8000/api', // Ajuste para a URL do seu backend Django
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    },
-    timeout: 10000,
-});
-
-// Interceptor para adicionar o token em todas as requisições
-api.interceptors.request.use(async (config) => {
-    const token = await AsyncStorage.getItem('@auth_token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
 
 export function AuthProvider({children}) {
     const [user, setUser] = useState({
@@ -33,10 +14,10 @@ export function AuthProvider({children}) {
     
     const saveToken = async (token) => {
         try {
-            await AsyncStorage.setItem('@auth_token', token);
             if (Platform.OS === 'web') {
                 localStorage.setItem('@auth_token', token);
             }
+            await AsyncStorage.setItem('@auth_token', token);
         } catch (error) {
             console.error('Error saving token:', error);
         }
@@ -45,7 +26,7 @@ export function AuthProvider({children}) {
     const getToken = async () => {
         try {
             if (Platform.OS === 'web') {
-                return localStorage.getItem('@auth_token') || await AsyncStorage.getItem('@auth_token');
+                return localStorage.getItem('@auth_token');
             }
             return await AsyncStorage.getItem('@auth_token');
         } catch (error) {
@@ -56,11 +37,10 @@ export function AuthProvider({children}) {
 
     const removeToken = async () => {
         try {
-            await AsyncStorage.removeItem('@auth_token');
             if (Platform.OS === 'web') {
                 localStorage.removeItem('@auth_token');
             }
-            console.log('Token removido com sucesso');
+            await AsyncStorage.removeItem('@auth_token');
         } catch (error) {
             console.error('Error removing token:', error);
         }
@@ -68,18 +48,14 @@ export function AuthProvider({children}) {
 
     const signIn = async ({loginForm}) => {
         try {
-            // Simulando uma chamada de API
-            console.log('Tentando login com:', { loginForm });
-            
-            // Chamada real para a API do Django
+            console.log('tentativa de login: ', loginForm);
             const response = await api.post('/login/', {
                 email: loginForm.email,
                 password: loginForm.password
             });
 
-            console.log('Resposta da API:', response.data);
-
             if (response.data.token) {
+                console.log('token encontrado: ', response.data.token);
                 await saveToken(response.data.token);
                 setUser({
                     authenticated: true,
@@ -91,11 +67,9 @@ export function AuthProvider({children}) {
                 throw new Error('Token não encontrado na resposta');
             }
 
-            return response.data;
         } catch (error) {
             console.error('Error during sign in:', error);
             if (error.response) {
-                // Erro retornado pelo servidor
                 throw new Error(error.response.data.detail || 'Erro ao fazer login');
             }
             throw new Error('Erro ao conectar com o servidor');
@@ -104,17 +78,12 @@ export function AuthProvider({children}) {
 
     const signOut = async () => {
         try {
-            // Primeiro remove o token
             await removeToken();
-            
-            // Depois limpa o estado do usuário
             setUser({
                 authenticated: false,
                 user: null,
                 token: null
             });
-            
-            console.log('Saiu com sucesso');
             return true;
         } catch (error) {
             console.error('Error during sign out:', error);
@@ -126,11 +95,25 @@ export function AuthProvider({children}) {
         const checkToken = async () => {
             const token = await getToken();
             if (token) {
-                setUser(prev => ({
-                    ...prev,
-                    authenticated: true,
-                    token: token
-                }));
+                try {
+                    // Fetch user data using the token
+                    const response = await api.get(`/clients/${user?.user?.id}/`);
+                    setUser(prev => ({
+                        ...prev,
+                        authenticated: true,
+                        token: token,
+                        user: response.data
+                    }));
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    // If there's an error, clear the token
+                    await removeToken();
+                    setUser({
+                        authenticated: false,
+                        user: null,
+                        token: null
+                    });
+                }
             }
         };
 
@@ -144,12 +127,10 @@ export function AuthProvider({children}) {
     );
 }
 
-export function useAuth() {
+export const useAuth = () => {
     const context = useContext(AuthContext);
-
-    if(!context) {
+    if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
-    
     return context;
-}
+};

@@ -223,4 +223,4 @@ class ContactViewSetTest(TestCase):
             **self.auth_header
         )
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'detail': 'Unauthorized'})    
+        self.assertEqual(response.json(), {'detail': 'Uyynauthorized'})    

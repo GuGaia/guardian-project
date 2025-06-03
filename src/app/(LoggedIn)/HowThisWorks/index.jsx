@@ -1,7 +1,9 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, Dimensions, FlatList, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, Dimensions, FlatList, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { theme } from '@/theme/theme';
+import { useAuth } from '@/hooks/Auth';
+import { homeService } from '@/services/homeService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,6 +34,29 @@ export default function HowItWorksCarousel() {
   const router = useRouter();
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.authenticated && user?.user?.id) {
+        try {
+          console.log('user', user);
+          const data = await homeService.getUserData(user.user.id);
+          setUserData(data);
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user?.authenticated, user?.user?.id]);
 
   const handleScroll = (event) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -42,9 +67,21 @@ export default function HowItWorksCarousel() {
     if (currentIndex < slides.length - 1) {
       flatListRef.current.scrollToIndex({ index: currentIndex + 1 });
     } else {
-      router.push('/MainMenu');
+      router.push({
+        pathname: '/MainMenu',
+        params: { userData: JSON.stringify(userData) }
+      });
     }
   };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="white" />
+        <Text style={styles.loadingText}>Carregando dados...</Text>
+      </SafeAreaView>
+    );
+  }
 
   const renderItem = ({ item }) => (
     <View style={styles.slide}>
@@ -55,11 +92,17 @@ export default function HowItWorksCarousel() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => router.push('/MainMenu')} style={styles.button}>
-          <Text style={styles.buttonText}>
-            {currentIndex === slides.length - 1 ? 'Concluir' : 'Avançar'}
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => router.push({
+          pathname: '/MainMenu',
+          params: { userData: JSON.stringify(userData) }
+        })} 
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>
+          {currentIndex === slides.length - 1 ? 'Concluir' : 'Avançar'}
+        </Text>
+      </TouchableOpacity>
       <FlatList
         data={slides}
         renderItem={renderItem}
@@ -147,5 +190,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: width * 0.045,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: 'white',
+    marginTop: 10,
+    fontSize: 16,
   },
 });

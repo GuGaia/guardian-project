@@ -2,24 +2,37 @@ import React from 'react';
 import { TouchableOpacity, Animated, StyleSheet, Dimensions, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { theme } from '@/theme/theme';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 const { width, height } = Dimensions.get('window');
 
 export function Navbar() {
+  const { userData } = useLocalSearchParams();
+
   return (
     <Animated.View style={[styles.navbar, { transform: [{ translateY: 0 }] }]}>
       <View style={styles.navbarRow}>
-        <NavItem icon="contacts" route="/ContactList" />
+        <NavItem icon="contacts" route="/ContactList" userData={userData} />
         <NavItem icon="Home" route="/MainMenu" />
         <NavItem icon="settings" route="/Settings" />
       </View>
-  
+    </Animated.View>
   );
 }
 
-function NavItem({ icon, route }) {
+function NavItem({ icon, route, userData }) {
+  const handlePress = () => {
+    if (route === '/ContactList' && userData) {
+      router.push({
+        pathname: route,
+        params: { userData }
+      });
+    } else {
+      router.push(route);
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.navbarContent} onPress={() => router.push(route)}>
+    <TouchableOpacity style={styles.navbarContent} onPress={handlePress}>
       <Icon name={icon} size={((width * height) / 1000) * 0.08} style={styles.navbarIcon} />
     </TouchableOpacity>
   );

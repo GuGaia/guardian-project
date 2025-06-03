@@ -1,17 +1,18 @@
 import React from "react";
-import { Animated, SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { Animated, SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { Link, router } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
 import { useRef, useEffect, useState } from 'react';
-import { Header } from "./Header";
+import Header from "./Header";
 import { useLocation } from '@/hooks/useLocation';
 import { LocationStatusCard } from '@/components/LocationStatusCard';
 import { Vibration } from 'react-native';
-
+import { useAuth } from '@/hooks/Auth';
+import { homeService } from '@/services/homeService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -19,7 +20,6 @@ const handleSosPress = () => {
   router.push('/EmergencyMode');
   Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
 };
-
 
 const baseCard = {
   borderRadius: 12,
@@ -57,24 +57,25 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 	);
   }
 
-
-function SosButton() {
-  const handleSosPress = () => {
-    // Vibração silenciosa
-    Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
-
-    // Aqui você pode colocar outras ações, como enviar localização ou ativar modo de emergência
-    console.log('SOS ativado');
-  };
-
-}
-
-
-
 export default function MainMenu() {
-
+  const { user } = useAuth();
+  const params = useLocalSearchParams();
+  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { location, error } = useLocation(false);
+
+  useEffect(() => {
+    if (params.userData) {
+      try {
+        const parsedData = JSON.parse(params.userData);
+        console.log('Dados do usuário recebidos:', parsedData);
+        setUserData(parsedData);
+      } catch (error) {
+        console.error('Erro ao processar dados do usuário:', error);
+      }
+    }
+  }, [params.userData]);
 
   useEffect(() => {
     Animated.loop(
@@ -93,8 +94,53 @@ export default function MainMenu() {
     ).start();
   }, []);
 
-  return (
+  useEffect(() => {
+    const fetchUserData = async () => {
+      console.log("fetchUserData iniciado, user:", user);
+      try {
+        const data = await homeService.getUserData(user.user.id);
+        console.log("Dados recebidos:", data);
+        if (data) {
+          setUserData(data);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+        setIsLoading(false);
+      }
+    };
 
+    if (user?.authenticated && user?.user?.id) {
+      console.log("Usuário autenticado e ID existe, iniciando fetchUserData");
+      fetchUserData();
+    } else {
+      console.log("Usuário não autenticado ou ID não existe:", user);
+      setIsLoading(false);
+    }
+  }, [user?.authenticated, user?.user?.id]);
+
+  // Log userData changes
+  useEffect(() => {
+    if (userData) {
+      console.log('Dados do usuário atualizados:', userData);
+    }
+  }, [userData]);
+
+  if (isLoading) {
+    return (
+      <LinearGradient
+        colors={['#FFFFFF', '#9FE7F5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={[styles.background, styles.loadingContainer]}
+      >
+        <ActivityIndicator size="large" color={theme.colors.grdGray} />
+        <Text style={styles.loadingText}>Carregando dados...</Text>
+      </LinearGradient>
+    );
+  }
+
+  return (
     <LinearGradient
       colors={['#FFFFFF', '#9FE7F5']}
       start={{ x: 0, y: 0 }}
@@ -103,7 +149,7 @@ export default function MainMenu() {
     >
       <SafeAreaView style={styles.container}>
         
-        <Header/>
+        <Header username={userData?.name || 'Usuário'} userData={userData}/>
           
           <View style={{ flex:1, paddingBottom:  height* 0.08, justifyContent: "center" }}>
             <Text style={{fontSize: 28, textAlign:"center", fontWeight: "bold",color: theme.colors.grdGray}}>Precisa de ajuda?</Text>
@@ -263,6 +309,17 @@ locationIcon: {
   position: 'absolute',
   bottom: 8,
   right: 8,
+},
+
+loadingContainer: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+loadingText: {
+  marginTop: 10,
+  fontSize: 16,
+  color: theme.colors.grdGray,
 },
 
 });

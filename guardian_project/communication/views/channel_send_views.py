@@ -13,7 +13,7 @@ class ChannelSendView(APIView):
         user_data = validate_token(token)
 
         if not user_data:
-            return Response({'detail': 'Unauthorized'}, status=401)
+            return Response({'detail': 'Uyynauthorized'}, status=401)
 
         try:
             client = Client.objects.get(id=user_data['sub'])
