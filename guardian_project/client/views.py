@@ -9,43 +9,44 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
-    def list(self, request):
+    def get_client_from_token(self, request):
         auth_header = request.headers.get('Authorization', '')
-        print("VALOR DO AUTH_HEADER:", auth_header)
         token = auth_header.replace('Bearer ', '')
-        print("VALOR DO TOKEN:", token)
         user_data = validate_token(token)
-        print("VALOR DO USER_DATA:", user_data)
         if not user_data:
+            return None
+        try:
+            return Client.objects.get(id=user_data['sub'])
+        except Client.DoesNotExist:
+            return None
+
+    def list(self, request):
+        client = self.get_client_from_token(request)
+        if not client:
             return Response({'detail': 'Unauthorized'}, status=401)
-
-
-        clients = self.get_queryset()
-        serializer = self.get_serializer(clients, many=True)
+        
+        serializer = ClientSerializer(client)
         return Response(serializer.data)
     
-    def retrieve(self, request, *args, **kwargs):
-        auth_header = request.headers.get('Authorization', '')
-        token = auth_header.replace('Bearer ', '')
-        user_data = validate_token(token)
-
-        if not user_data:
+    def retrieve(self, request, pk=None):
+        client = self.get_client_from_token(request)
+        if not client:
             return Response({'detail': 'Unauthorized'}, status=401)
 
-        return super().retrieve(request, *args, **kwargs)
+        if str(client.id) != str(pk):
+            return Response({'detail': 'Forbidden'}, status=403)
+
+        serializer = ClientSerializer(client)
+        return Response(serializer.data)
 
 
     def update(self, request, *args, **kwargs):
-        auth_header = request.headers.get('Authorization', '')
-        token = auth_header.replace('Bearer ', '')
-        user_data = validate_token(token)
-        print("VALOR DO USER_DATA:", user_data)
-
-        if not user_data:
+        client = self.get_client_from_token(request)
+        if not client:
             return Response({'detail': 'Unauthorized'}, status=401)
 
         try:
-            client = Client.objects.get(id=user_data['sub'])
+            client = Client.objects.get(id=client.id)
         except Client.DoesNotExist:
             return Response({'detail': 'Not Found'}, status=404)
 
