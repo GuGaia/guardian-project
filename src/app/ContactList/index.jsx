@@ -50,76 +50,7 @@ export default function Page() {
             email: 'patricia.lima@email.com',
             relationship: 'Amiga'
         },
-        {
-            id: 6,
-            name: 'Roberto Almeida',
-            phone: '(11) 95678-1234',
-            email: 'roberto.almeida@email.com',
-            relationship: 'Vizinho'
-        },
-        {
-            id: 7,
-            name: 'Juliana Costa',
-            phone: '(11) 93456-7890',
-            email: 'juliana.costa@email.com',
-            relationship: 'Colega de trabalho'
-        },
-        {
-            id: 8,
-            name: 'Fernando Souza',
-            phone: '(11) 97890-1234',
-            email: 'fernando.souza@email.com',
-            relationship: 'Primo'
-        },
-        {
-            id: 9,
-            name: 'Mariana Pereira',
-            phone: '(11) 91234-5678',
-            email: 'mariana.pereira@email.com',
-            relationship: 'Avó'
-        },
-        {
-            id: 10,
-            name: 'Ricardo Mendes',
-            phone: '(11) 98765-4321',
-            email: 'ricardo.mendes@email.com',
-            relationship: 'Avô'
-        },
-        {
-            id: 11,
-            name: 'Camila Rodrigues',
-            phone: '(11) 94567-8901',
-            email: 'camila.rodrigues@email.com',
-            relationship: 'Tia'
-        },
-        {
-            id: 12,
-            name: 'Lucas Oliveira',
-            phone: '(11) 92345-6789',
-            email: 'lucas.oliveira@email.com',
-            relationship: 'Irmão'
-        },
-        {
-            id: 13,
-            name: 'Beatriz Santos',
-            phone: '(11) 95678-1234',
-            email: 'beatriz.santos@email.com',
-            relationship: 'Cunhada'
-        },
-        {
-            id: 14,
-            name: 'Gabriel Lima',
-            phone: '(11) 93456-7890',
-            email: 'gabriel.lima@email.com',
-            relationship: 'Cunhado'
-        },
-        {
-            id: 15,
-            name: 'Isabela Costa',
-            phone: '(11) 97890-1234',
-            email: 'isabela.costa@email.com',
-            relationship: 'Sobrinha'
-        },
+ 
     ]
 
     return (

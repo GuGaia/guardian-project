@@ -55,15 +55,7 @@ export default function SettingsPage() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollView}>
-        {renderSection(
-          "Botão físico",
-          renderBlueButton(
-            "Parear e configurar",
-            () => {},
-            "bluetooth"
-          )
-        )}
-
+       
         {renderSection(
           "Resposta automática",
           renderBlueButton(
@@ -96,7 +88,7 @@ export default function SettingsPage() {
             </View>
 
             <View style={styles.switchRow}>
-              <Text style={styles.switchLabel}>Bloquear botão de energia</Text>
+              <Text style={styles.switchLabel}>Escurecer tela</Text>
               <Switch
                 value={BlockButtons}
                 onValueChange={setBlockButtons}
