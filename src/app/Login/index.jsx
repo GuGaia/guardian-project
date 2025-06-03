@@ -8,16 +8,26 @@ import { GrdOutlinedButton } from '@/components/buttons/GrdOutlinedButton';
 import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { Link, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '@/hooks/Auth';
 
 export default function Page() {
+
+  const { signIn } = useAuth();
 
   let loginForm = {
     email: '',
     password: ''
   }
 
-  const handleLogin = () => {
-    console.log('Login attempt with:', loginForm);
+  const handleLogin = async () => {
+    try {
+      await signIn({ loginForm });
+      router.replace('/(LoggedIn)/HowThisWorks');
+      console.log('Login successful');
+      //router.replace('/HowThisWorks');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   }
 
   const handleRegister = () => {
@@ -76,7 +86,7 @@ export default function Page() {
           <View style={styles.buttonContainer}>
             <GrdSolidButton
               label="Entrar"
-              onPress={() => router.push('/HowThisWorks')}
+              onPress={handleLogin}
               textStyle={styles.loginButtonText}
               size="large"
             />

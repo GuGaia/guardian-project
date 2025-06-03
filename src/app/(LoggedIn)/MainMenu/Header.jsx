@@ -6,18 +6,21 @@ import { router } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
-interface HeaderProps {
-  username?: string | null;
-}
-
-export function  Header({ username }: HeaderProps) {
-
+export default function Header({ username, userData }) {
   const displayName = username?.trim() ? username : 'Adamastor';
+
+  const handleProfilePress = () => {
+    console.log('Dados sendo passados para Profile:', userData);
+    router.push({
+      pathname: '/Profile',
+      params: { userData: JSON.stringify(userData) }
+    });
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Bem-vindo, {displayName}</Text>
-      <TouchableOpacity onPress={() => router.push('/Profile')}>
+      <TouchableOpacity onPress={handleProfilePress}>
         <Icon name="user" size={((width * height) / 1000) * 0.14} style={styles.profileIcon} />
       </TouchableOpacity>
     </View>

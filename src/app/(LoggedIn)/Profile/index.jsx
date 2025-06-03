@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,31 +11,48 @@ import {
 } from 'react-native';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Navbar } from '@/components/Navbar';
+import { useAuth } from '@/hooks/Auth';
+import { Platform } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { signOut } = useAuth();
+  const params = useLocalSearchParams();
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    if (params.userData) {
+      try {
+        const parsedData = JSON.parse(params.userData);
+        console.log('Dados do usuário recebidos no Profile:', parsedData);
+        setUserData(parsedData);
+      } catch (error) {
+        console.error('Erro ao processar dados do usuário no Profile:', error);
+      }
+    }
+  }, [params.userData]);
 
   const user = {
-    name: 'Adamastor Pereira ',
-    email: 'adamastor.pereira@email.com',
-    phone: '(82) 98888-7777',
-    city: 'Maceió - AL',
-    avatar: null, // Pode substituir com uma URI ou deixar como null para ícone
+    name: userData?.name || 'Adamastor Pereira',
+    email: userData?.email || 'adamastor.pereira@email.com',
+    phone: userData?.number || 'Não informado',
+    city: userData?.city || 'Não informado',
+    avatar: null,
   };
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
     Alert.alert('Sair', 'Deseja sair da sua conta?', [
       { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Sair',
-        style: 'destructive',
-        onPress: () => router.replace('/login'),
-      },
+      { text: 'Sair', style: 'destructive', onPress: () => signOut() },
     ]);
+  };
+
+  const handleLogout = async () => {
+    Platform.OS === 'web' ? await signOut() : confirmLogout();
   };
 
   return (
@@ -65,13 +82,13 @@ export default function ProfilePage() {
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.editButton}>
-            <Icon name="edit" size={20} color="#3573FA" />
+          {/* <TouchableOpacity style={styles.editButton}>
+            <Icon name="settings" size={20} color="#3573FA" />
             <Text style={[styles.buttonText, { color: theme.colors.grdBlue }]}>Editar Perfil</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Icon name="log-out" size={20} color="#FFF" />
+            <Icon name="arrowLeft" size={20} color="#FFF" />
             <Text style={[styles.buttonText, { color: '#FFF' }]}>Sair</Text>
           </TouchableOpacity>
         </View>

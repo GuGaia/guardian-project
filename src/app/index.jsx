@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import HomeScreen from "./HomeScreen";
 import { loadFonts } from '../utils/loadFonts';
+import Login from './Login';
 
 export default function Page() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -27,5 +27,7 @@ export default function Page() {
     );
   }
 
-  return <HomeScreen />;
+  return (
+      <Login />
+  );
 }

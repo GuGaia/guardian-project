@@ -68,13 +68,13 @@ export default function Page() {
                 <View style={styles.list}> 
 
                 <CardButton
-                    imageSource={require('../../../assets/images/EmergencyButton.png')}
+                    imageSource={require('@assets/images/EmergencyButton.png')}
                     text="Como o Guardiã funciona?"
                     onPress={() => router.push('/Tutorials/HowItWorks')}
                     style={styles.GeneralButton}
                 />
                 <CardButton
-                    imageSource={require('../../../assets/images/OrientationsToContacts.png')}
+                    imageSource={require('@assets/images/OrientationsToContacts.png')}
                     text="Saiba como orientar seus contatos de emergência"
                     onPress={() => router.push('/Tutorials/Orientations')}
                     style={styles.GeneralButton}

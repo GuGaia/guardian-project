@@ -10,24 +10,19 @@ import {
 } from 'react-native';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Navbar } from '@/components/Navbar';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { contactService } from '@/services/contactService';
 
-const { width,height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default function ContactDetails() {
   const router = useRouter();
+  const { contactData, userData } = useLocalSearchParams();
+  const contact = JSON.parse(contactData);
+  const parsedUserData = JSON.parse(userData);
 
-  // Dados mock só pra UI
-  const contact = {
-    name: 'Maria Silva',
-    phone: '(11) 98765-4321',
-    email: 'maria.silva@email.com',
-    relation: 'Mãe',
-  };
-
-  const handleDelete = () => {
+  const handleDelete = async () => {
     Alert.alert(
       'Confirmar exclusão',
       `Deseja excluir o contato "${contact.name}"?`,
@@ -36,9 +31,15 @@ export default function ContactDetails() {
         {
           text: 'Excluir',
           style: 'destructive',
-          onPress: () => {
-            Alert.alert('Contato excluído');
-            router.back();
+          onPress: async () => {
+            try {
+              await contactService.deleteContact(parsedUserData.id, contact.id);
+              Alert.alert('Sucesso', 'Contato excluído com sucesso!');
+              router.back();
+            } catch (error) {
+              console.error("Erro ao excluir contato:", error);
+              Alert.alert('Erro', 'Não foi possível excluir o contato.');
+            }
           },
         },
       ],
@@ -47,28 +48,30 @@ export default function ContactDetails() {
   };
 
   const handleEdit = () => {
-    Alert.alert('Editar contato', 'Funcionalidade ainda não implementada.');
+    router.push({
+      pathname: '/ContactList/Adding',
+      params: { 
+        contactData,
+        userData,
+        isEditing: 'true'
+      }
+    });
   };
 
   return (
-    
-
-       <View style={styles.container}>
-            
-      
-                  <View style={styles.titleCard}>
-                      <View style={styles.titleRow}>
-                
-                          <View style={{ marginLeft: ((width * height)/ 1000) * 0.05 }}>
-                              <Text style={styles.title}>Detalhes do contato</Text>
-                          </View>
-                      </View>
-                  </View>
+    <View style={styles.container}>
+      <View style={styles.titleCard}>
+        <View style={styles.titleRow}>
+          <View style={{ marginLeft: ((width * height)/ 1000) * 0.05 }}>
+            <Text style={styles.title}>Detalhes do contato</Text>
+          </View>
+        </View>
+      </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.card}>
           <Text style={styles.name}>{contact.name}</Text>
-          <Text style={styles.relation}>{contact.relation}</Text>
+          <Text style={styles.relation}>{contact.relationship}</Text>
         </View>
 
         <View style={styles.section}>
@@ -87,29 +90,21 @@ export default function ContactDetails() {
           </View>
         </View>
 
-        
-            <TouchableOpacity style={styles.saveButton}>
-                        <Text style={styles.saveButtonText}>Editar</Text>
-           </TouchableOpacity>
+        <TouchableOpacity style={styles.saveButton} onPress={handleEdit}>
+          <Text style={styles.saveButtonText}>Editar</Text>
+        </TouchableOpacity>
 
-             <TouchableOpacity style={styles.DeleteButton}>
-                     <Text style={styles.saveButtonText}>Excluir</Text>
-           </TouchableOpacity>
-
+        <TouchableOpacity style={styles.DeleteButton} onPress={handleDelete}>
+          <Text style={styles.saveButtonText}>Excluir</Text>
+        </TouchableOpacity>
       </ScrollView>
 
+      <TouchableOpacity onPress={() => router.back()} style={styles.Button}>
+        <Icon name="arrow-left" size={28} color="#3573FA" />
+      </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.back()} style={styles.Button}>
-              <Icon name="arrow-left" size={28} color="#3573FA" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Editar</Text>
-            <View style={{ width: 28 }} /> 
-
-
-        
-        <Navbar />
+      <Navbar />
     </View>
-
   );
 }
 
@@ -119,22 +114,22 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.grdBlueLight,
   },
   header: {
-        backgroundColor: theme.colors.grdBlueLight,
-        height: height * 0.03,
-    },
-    titleCard: {
-        backgroundColor: theme.colors.grdBlue,
-         height: height * 0.06,
-        alignItems: 'center',
-        justifyContent:'center',
-    },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    title: {
-        color: 'white',
-        fontSize:  ((width * height)/ 1000) * 0.05,
+    backgroundColor: theme.colors.grdBlueLight,
+    height: height * 0.03,
+  },
+  titleCard: {
+    backgroundColor: theme.colors.grdBlue,
+    height: height * 0.06,
+    alignItems: 'center',
+    justifyContent:'center',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  title: {
+    color: 'white',
+    fontSize: ((width * height)/ 1000) * 0.05,
   },
   backButton: {
     padding: 8,
@@ -160,21 +155,6 @@ const styles = StyleSheet.create({
     elevation: 8,
     alignItems: 'center',
   },
-      addButton: {
-        flexDirection: 'row',
-        backgroundColor: theme.colors.grdBlue,
-        alignSelf: 'center',
-        alignItems: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 8,
-        marginVertical: 20,
-    },
-    addButtonText: {
-        color: 'white',
-        marginLeft: 8,
-        fontWeight: 'bold',
-    },
   name: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -216,7 +196,7 @@ const styles = StyleSheet.create({
   separator: {
     backgroundColor: '#eee',
   },
-    saveButton: {
+  saveButton: {
     backgroundColor: theme.colors.grdBlue,
     paddingVertical: 14,
     borderRadius: 12,
@@ -235,5 +215,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-
 });
