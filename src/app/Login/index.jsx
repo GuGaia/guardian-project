@@ -98,7 +98,7 @@ export default function Page() {
             <View style={styles.registerButtonContainer}>
               <GrdOutlinedButton
                 label="Cadastrar"
-                onPress={() => console.log('Tentativa de cadastro com: ', loginForm)}
+                onPress={() => router.push('/CreateAccount')}
                 textStyle={styles.registerButtonText}
                 size="small"
               />
