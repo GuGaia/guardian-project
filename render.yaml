@@ -9,9 +9,8 @@ services:
       pip install --upgrade pip
       pip install -r guardian_project/requirements.txt
       python guardian_project/manage.py collectstatic --noinput
-    preDeployCommand: |
-      python guardian_project/manage.py migrate --noinput
     startCommand: |
+      python guardian_project/manage.py migrate --noinput && \
       gunicorn guardian_project.wsgi:application --log-file -
     autoDeploy: true
 
@@ -44,4 +43,4 @@ databases:
     plan: free
     region: oregon
     databaseName: guardian_db   # Render cria automaticamente
-    user: guardian_user
+    user: guardian_user 
