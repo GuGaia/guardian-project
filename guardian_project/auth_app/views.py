@@ -95,9 +95,11 @@ def login_view(request):
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
-        logger.error(f"Erro no login: {str(e)}")
+        import traceback
+        print("Erro no login:", e)
+        traceback.print_exc()
         return Response({
-            'error': 'Internal server error'
+            'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 #def init_admin(request):
