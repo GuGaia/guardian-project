@@ -100,9 +100,9 @@ def login_view(request):
             'error': 'Internal server error'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-def init_admin(request):
-    User = get_user_model()
-    if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser("admin", "admin@example.com", "admin123")
-        return JsonResponse({"status": "admin created"})
-    return JsonResponse({"status": "admin already exists"})
+#def init_admin(request):
+#    User = get_user_model()
+#    if not User.objects.filter(username="admin").exists():
+#       User.objects.create_superuser("admin", "admin@example.com", "admin123")
+#        return JsonResponse({"status": "admin created"})
+#    return JsonResponse({"status": "admin already exists"})
