@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
@@ -19,31 +20,54 @@ const { width, height } = Dimensions.get('window');
 export default function ContactDetails() {
   const router = useRouter();
   const { contactData, userData, shouldRefresh } = useLocalSearchParams();
-  const [contact, setContact] = useState(JSON.parse(contactData));
+  const [contact, setContact] = useState(null);
+  const [loading, setLoading] = useState(true);
   const parsedUserData = JSON.parse(userData);
+  const initialContactId = JSON.parse(contactData).id;
+
+  // Busca o contato quando a página é carregada
+  useEffect(() => {
+    const fetchContact = async () => {
+      try {
+        setLoading(true);
+        console.log('Buscando contato inicial...');
+        const fetchedContact = await contactService.getContact(parsedUserData.id, initialContactId);
+        console.log('Contato inicial:', fetchedContact);
+        setContact(fetchedContact);
+      } catch (error) {
+        console.error("Erro ao buscar contato inicial:", error);
+        Alert.alert('Erro', 'Não foi possível carregar os dados do contato.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContact();
+  }, [initialContactId, parsedUserData.id]);
 
   // Atualiza os dados do contato quando a tela recebe foco
   useFocusEffect(
     useCallback(() => {
       console.log('useFocusEffect executado');
-      console.log('shouldRefresh:', shouldRefresh);
-      console.log('contact:', contact);
-      console.log('parsedUserData:', parsedUserData);
       
       const fetchUpdatedContact = async () => {
         try {
+          setLoading(true);
           console.log('Iniciando busca do contato atualizado...');
-          const updatedContact = await contactService.getContact(parsedUserData.id, contact.id);
+          const updatedContact = await contactService.getContact(parsedUserData.id, initialContactId);
           console.log('contato atualizado:', updatedContact);
           setContact(updatedContact);
         } catch (error) {
           console.error("Erro ao atualizar dados do contato:", error);
+          Alert.alert('Erro', 'Não foi possível atualizar os dados do contato.');
+        } finally {
+          setLoading(false);
         }
       };
 
       // Sempre busca os dados atualizados quando a tela recebe foco
       fetchUpdatedContact();
-    }, [contact.id, parsedUserData.id])
+    }, [initialContactId, parsedUserData.id])
   );
 
   const handleDelete = async () => {
@@ -78,13 +102,61 @@ export default function ContactDetails() {
     router.push({
       pathname: '/ContactList/Adding',
       params: { 
-        contactData: JSON.stringify(contact),
+        contactData: JSON.stringify({
+          ...contact,
+          phone_number: contact.phone_number,
+          relationship: contact.relationship,
+          channels: contact.channels || []
+        }),
         userData,
         mode: 'edit',
         isEditing: 'true'
       }
     });
   };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.titleCard}>
+          <View style={styles.titleRow}>
+            <View style={{ marginLeft: ((width * height)/ 1000) * 0.05 }}>
+              <Text style={styles.title}>Detalhes do contato</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.grdBlue} />
+          <Text style={styles.loadingText}>Carregando contato...</Text>
+        </View>
+        <TouchableOpacity onPress={() => router.back()} style={styles.Button}>
+          <Icon name="arrow-left" size={28} color="#3573FA" />
+        </TouchableOpacity>
+        <Navbar />
+      </View>
+    );
+  }
+
+  if (!contact) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.titleCard}>
+          <View style={styles.titleRow}>
+            <View style={{ marginLeft: ((width * height)/ 1000) * 0.05 }}>
+              <Text style={styles.title}>Detalhes do contato</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Não foi possível carregar os dados do contato</Text>
+        </View>
+        <TouchableOpacity onPress={() => router.back()} style={styles.Button}>
+          <Icon name="arrow-left" size={28} color="#3573FA" />
+        </TouchableOpacity>
+        <Navbar />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -107,7 +179,7 @@ export default function ContactDetails() {
 
           <View style={styles.infoRow}>
             <Icon name="phone" size={26} color="#3573FA" />
-            <Text style={styles.infoText}>{contact.phone}</Text>
+            <Text style={styles.infoText}>{contact.phone_number}</Text>
           </View>
 
           <View style={styles.separator} />
@@ -242,5 +314,26 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: theme.colors.grdGray,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: theme.colors.grdGray,
+    textAlign: 'center',
   },
 });

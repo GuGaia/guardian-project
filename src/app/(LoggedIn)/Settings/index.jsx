@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -8,40 +8,130 @@ import {
   StyleSheet,
   Switch,
   Dimensions,
+  Modal,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { theme } from "@/theme/theme";
 import { Icon } from "@/components/Icon";
 import { useRouter } from "expo-router";
 import { Navbar } from "@/components/Navbar";
+import { useAuth } from '@/hooks/Auth';
+import { updateAutoMessage } from '@/services/settingsService';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get("window");
 
+const AutoMessageModal = ({ visible, onClose, currentMessage, onUpdate }) => {
+  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Reset newMessage when modal opens
+  useEffect(() => {
+    if (visible) {
+      setNewMessage('');
+    }
+  }, [visible]);
+
+  const handleUpdate = async () => {
+    try {
+      setLoading(true);
+      await onUpdate(newMessage);
+      onClose();
+    } catch (error) {
+      console.error('Error updating message:', error);
+      // Aqui você pode adicionar um tratamento de erro mais específico
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Editar Mensagem Automática</Text>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <Ionicons name="close" size={24} color="#000" />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.label}>Mensagem atual:</Text>
+          <Text style={styles.currentMessage}>{currentMessage}</Text>
+
+          <Text style={styles.label}>Nova mensagem:</Text>
+          <TextInput
+            style={styles.input}
+            value={newMessage}
+            onChangeText={setNewMessage}
+            multiline
+            numberOfLines={4}
+            placeholder="Digite sua nova mensagem automática"
+          />
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.cancelButton]}
+              onPress={onClose}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>Cancelar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.saveButton]}
+              onPress={handleUpdate}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Salvar</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const renderSection = (title, children) => (
+    <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {children}
+    </View>
+);
+
+const renderBlueButton = (text, onPress) => (
+    <TouchableOpacity style={styles.blueButton} onPress={onPress}>
+        <Text style={styles.blueButtonText}>{text}</Text>
+    </TouchableOpacity>
+);
+
 export default function SettingsPage() {
-  const router = useRouter();
+  const { user } = useAuth();
   const [Notifications, setNotifications] = useState(false);
   const [Callings, setCallings] = useState(false);
   const [BlockButtons, setBlockButtons] = useState(false);
   const [BlockPreVisualizationOfMensages, setBlockPreVisualizationOfMensages] =
     useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const renderSection = (title: string, children: React.ReactNode) => (
-    <View style={styles.sectionCard}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.dividerLine} />
-      {children}
-    </View>
-  );
-
-  const renderBlueButton = (
-    text: string,
-    onPress: () => void,
-    iconName?: string
-  ) => (
-    <TouchableOpacity onPress={onPress} style={styles.blueButton}>
-      {iconName && <Icon name={iconName} size={18} color="#FFF" />}
-      <Text style={styles.blueButtonText}>{text}</Text>
-    </TouchableOpacity>
-  );
+  const handleUpdateMessage = async (newMessage) => {
+    try {
+      await updateAutoMessage(user.user.id, newMessage);
+      // Atualizar o estado do usuário com a nova mensagem
+      user.user.default_message = newMessage;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -59,8 +149,7 @@ export default function SettingsPage() {
           "Botão físico",
           renderBlueButton(
             "Parear e configurar",
-            () => {},
-            "bluetooth"
+            () => {}
           )
         )}
 
@@ -68,8 +157,7 @@ export default function SettingsPage() {
           "Resposta automática",
           renderBlueButton(
             "Editar mensagem automática",
-            () => {},
-            "message-circle"
+            () => setModalVisible(true)
           )
         )}
 
@@ -118,6 +206,13 @@ export default function SettingsPage() {
         ))}
       </ScrollView>
 
+      <AutoMessageModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        currentMessage={user.user.default_message}
+        onUpdate={handleUpdateMessage}
+      />
+
       <Navbar />
     </View>
   );
@@ -152,6 +247,7 @@ const styles = StyleSheet.create({
   scrollView: {
     paddingHorizontal: 16,
     padding: 20,
+    gap: 24,
   },
   sectionCard: {
     backgroundColor: "#fff",
@@ -201,5 +297,77 @@ const styles = StyleSheet.create({
     color: "#444",
     marginRight: 12,
     flexWrap: "wrap",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: '90%',
+    maxWidth: 500,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    padding: 5,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  currentMessage: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 20,
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#f5f5f5',
+  },
+  saveButton: {
+    backgroundColor: theme.colors.grdBlue,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
   },
 });
