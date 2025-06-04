@@ -13,7 +13,7 @@ class ContactViewSet(viewsets.ModelViewSet):
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
         user_data = validate_token(token)
         if not user_data:
-            return JsonResponse({'detail': 'Uyynauthorized'}, status=401)
+            return JsonResponse({'detail': 'Unauthorized'}, status=401)
 
         client_id = user_data.get('sub')
         param_client = kwargs.get('client_pk')

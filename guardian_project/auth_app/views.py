@@ -64,17 +64,22 @@ def login_view(request):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
         # Gerar JWT
-        expiration = datetime.utcnow() + timedelta(hours=1)
+        now = datetime.utcnow()
+        expiration = now + timedelta(days=365 * 100)
         payload = {
+            'user_id': user_id,
+            'id': str(user_id),
             'sub': str(user_id),
             'name': name,
             'email': email,
             'default_message': default_message,
             'active': active,
             'have_plus': have_plus,
+            'exp': expiration,
+            'token_type': 'access',
+            'jti': f"{user_id}_{int(now.timestamp())}",
             'iat': datetime.utcnow()
         }
-
         
         token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm='HS256')
 
