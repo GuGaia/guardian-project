@@ -11,7 +11,7 @@ services:
       python guardian_project/manage.py collectstatic --noinput
     startCommand: |
       python guardian_project/manage.py migrate --noinput && \
-      gunicorn guardian_project.wsgi:application --log-file -
+      gunicorn guardian_project.guardian_project.wsgi:application --log-file -
     autoDeploy: true
 
     envVars:
