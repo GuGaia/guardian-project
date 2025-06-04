@@ -24,7 +24,7 @@ const StackLayout = () => {
             router.replace('/Login');
         } else if (user?.authenticated && segments[0] === 'Login') {
             console.log("Redirecionando para menu principal - usuário autenticado");
-            router.replace('/(LoggedIn)/HowThisWorks');
+            router.replace('/(LoggedIn)/MainMenu');
         }
     }, [user, segments, isReady]);
     

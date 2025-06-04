@@ -6,7 +6,8 @@ import {
   Keyboard, 
   Platform, 
   Image, 
-  Alert 
+  Alert,
+  ScrollView
 } from 'react-native';
 import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
@@ -17,21 +18,27 @@ import { GrdSolidButton } from '@/components/buttons/GrdSolidButton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { useAuth } from '@/hooks/Auth';
 
 export default function CreateAccount() {
+  const { register } = useAuth();
   const [registerForm, setRegisterForm] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
+    number: '',
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
     if (
       !registerForm.name ||
       !registerForm.email ||
       !registerForm.password ||
-      !registerForm.confirmPassword
+      !registerForm.confirmPassword ||
+      !registerForm.number
     ) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos.');
       return;
@@ -42,41 +49,26 @@ export default function CreateAccount() {
       return;
     }
 
-    try {
-      const response = await fetch('SEU_IP/api/clients/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: registerForm.name,
-          email: registerForm.email,
-          password: registerForm.password,
-        }),
-      });
+    setIsLoading(true);
 
-      if (response.ok) {
-        Alert.alert(
-          'Sucesso!',
-          'Cadastro realizado com sucesso.',
-          [
-            {
-              text: 'OK',
-              onPress: () => router.replace('/(LoggedIn)/HowThisWorks'),
-            },
-          ],
-          { cancelable: false }
-        );
-      } else {
-        const errorData = await response.json();
-        Alert.alert(
-          'Erro no cadastro',
-          errorData.message || 'Não foi possível realizar o cadastro.'
-        );
-      }
+    try {
+      await register({
+        name: registerForm.name,
+        email: registerForm.email,
+        password: registerForm.password,
+        number: registerForm.number,
+      });
+      
+      // Redirecionar para o menu após o registro bem-sucedido
+      router.replace('/(LoggedIn)/HowThisWorks');
+
     } catch (error) {
-      console.error('Erro na requisição:', error);
-      Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+      Alert.alert(
+        'Erro no cadastro',
+        error.message || 'Não foi possível realizar o cadastro.'
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,68 +94,82 @@ export default function CreateAccount() {
         style={styles.background}
       >
         <View style={styles.header} />
-        <View style={[globalStyles.centerContainer, styles.centerContainer]}>
-          <View style={styles.displayContainer}>
-            <Icon name="guardianOwl" size={88} />
-            <Text style={[globalStyles.title, styles.title]}>Criar Conta</Text>
-            <Image
-              source={require('@assets/images/alluraBackInTown.png')}
-              style={{ width: 260, height: 150 }}
-            />
-          </View>
-
-          <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <GrdTextInput
-                label="Nome completo"
-                onChangeText={(value) => {
-                  setRegisterForm({ ...registerForm, name: value });
-                }}
-              />
-              <GrdTextInput
-                label="E-mail"
-                inputMode="email"
-                onChangeText={(value) => {
-                  setRegisterForm({ ...registerForm, email: value });
-                }}
-              />
-              <GrdTextInput
-                label="Senha"
-                onChangeText={(value) => {
-                  setRegisterForm({ ...registerForm, password: value });
-                }}
-                secureTextEntry
-              />
-              <GrdTextInput
-                label="Confirmar senha"
-                onChangeText={(value) => {
-                  setRegisterForm({ ...registerForm, confirmPassword: value });
-                }}
-                secureTextEntry
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={[globalStyles.centerContainer, styles.centerContainer]}>
+            <View style={styles.displayContainer}>
+              <Icon name="guardianOwl" size={88} />
+              <Text style={[globalStyles.title, styles.title]}>Criar Conta</Text>
+              <Image
+                source={require('@assets/images/alluraBackInTown.png')}
+                style={{ width: 260, height: 150 }}
               />
             </View>
 
-            <View style={styles.buttonContainer}>
-              <GrdSolidButton
-                label="Cadastrar"
-                onPress={handleRegister}
-                textStyle={styles.registerButtonText}
-                size="large"
-              />
-              <View style={styles.separatorContainer}>
-                <View style={styles.separatorLine} />
-                <Text style={styles.separatorText}>ou</Text>
-                <View style={styles.separatorLine} />
+            <View style={styles.formContainer}>
+              <View style={styles.inputContainer}>
+                <GrdTextInput
+                  label="Nome completo"
+                  onChangeText={(value) => {
+                    setRegisterForm({ ...registerForm, name: value });
+                  }}
+                />
+                <GrdTextInput
+                  label="E-mail"
+                  inputMode="email"
+                  onChangeText={(value) => {
+                    setRegisterForm({ ...registerForm, email: value });
+                  }}
+                />
+                <GrdTextInput
+                  label="Número de telefone"
+                  inputMode="tel"
+                  onChangeText={(value) => {
+                    setRegisterForm({ ...registerForm, number: value });
+                  }}
+                />
+                <GrdTextInput
+                  label="Senha"
+                  onChangeText={(value) => {
+                    setRegisterForm({ ...registerForm, password: value });
+                  }}
+                  secureTextEntry
+                />
+                <GrdTextInput
+                  label="Confirmar senha"
+                  onChangeText={(value) => {
+                    setRegisterForm({ ...registerForm, confirmPassword: value });
+                  }}
+                  secureTextEntry
+                />
               </View>
-              <GrdOutlinedButton
-                label="Já tenho conta"
-                onPress={() => router.back()}
-                textStyle={styles.loginButtonText}
-                size="small"
-              />
+
+              <View style={styles.buttonContainer}>
+                <GrdSolidButton
+                  label={isLoading ? "Cadastrando..." : "Cadastrar"}
+                  onPress={handleRegister}
+                  textStyle={styles.registerButtonText}
+                  size="large"
+                  disabled={isLoading}
+                />
+                <View style={styles.separatorContainer}>
+                  <View style={styles.separatorLine} />
+                  <Text style={styles.separatorText}>ou</Text>
+                  <View style={styles.separatorLine} />
+                </View>
+                <GrdOutlinedButton
+                  label="Já tenho conta"
+                  onPress={() => router.replace('/Login')}
+                  textStyle={styles.loginButtonText}
+                  size="small"
+                />
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </LinearGradient>
     </View>
   );
@@ -236,5 +242,8 @@ const styles = StyleSheet.create({
     color: theme.colors.grdBlue,
     fontFamily: theme.fonts.interBold,
     fontSize: theme.fontSizes.body,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
 });

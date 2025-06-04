@@ -22,16 +22,12 @@ export default function Page() {
   const handleLogin = async () => {
     try {
       await signIn({ loginForm });
-      router.replace('/(LoggedIn)/HowThisWorks');
+      router.replace('/(LoggedIn)/MainMenu');
       console.log('Login successful');
       //router.replace('/HowThisWorks');
     } catch (error) {
       console.error('Login failed:', error);
     }
-  }
-
-  const handleRegister = () => {
-    console.log('Register attempt with:', loginForm);
   }
 
   return (

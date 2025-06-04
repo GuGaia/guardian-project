@@ -9,7 +9,8 @@ export function AuthProvider({children}) {
     const [user, setUser] = useState({
         authenticated: false,
         user: null,
-        token: null
+        token: null,
+        shouldRedirectToHowItWorks: false
     });
     
     const saveToken = async (token) => {
@@ -46,7 +47,7 @@ export function AuthProvider({children}) {
         }
     };
 
-    const signIn = async ({loginForm}) => {
+    const signIn = async ({loginForm, isFromRegistration = false}) => {
         try {
             console.log('tentativa de login: ', loginForm);
             const response = await api.post('/login/', {
@@ -60,7 +61,8 @@ export function AuthProvider({children}) {
                 setUser({
                     authenticated: true,
                     user: response.data.user,
-                    token: response.data.token
+                    token: response.data.token,
+                    shouldRedirectToHowItWorks: isFromRegistration
                 });
                 return response.data;
             } else {
@@ -82,12 +84,43 @@ export function AuthProvider({children}) {
             setUser({
                 authenticated: false,
                 user: null,
-                token: null
+                token: null,
+                shouldRedirectToHowItWorks: false
             });
             return true;
         } catch (error) {
             console.error('Error during sign out:', error);
             throw error;
+        }
+    }
+
+    const register = async ({name, email, password, number}) => {
+        try {
+            const response = await api.post('/clients/', {
+                name,
+                email,
+                password,
+                number
+            });
+            if (response.data) {
+                
+                // After successful registration, call signIn with the same credentials
+                return await signIn({
+                    loginForm: {
+                        email,
+                        password
+                    },
+                    isFromRegistration: true
+                });
+            } else {
+                throw new Error('Erro ao realizar cadastro');
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            if (error.response) {
+                throw new Error(error.response.data.detail || 'Erro ao realizar cadastro');
+            }
+            throw new Error('Erro ao conectar com o servidor');
         }
     }
 
@@ -102,7 +135,8 @@ export function AuthProvider({children}) {
                         ...prev,
                         authenticated: true,
                         token: token,
-                        user: response.data
+                        user: response.data,
+                        shouldRedirectToHowItWorks: false
                     }));
                 } catch (error) {
                     console.error('Error fetching user data:', error);
@@ -111,7 +145,8 @@ export function AuthProvider({children}) {
                     setUser({
                         authenticated: false,
                         user: null,
-                        token: null
+                        token: null,
+                        shouldRedirectToHowItWorks: false
                     });
                 }
             }
@@ -121,7 +156,7 @@ export function AuthProvider({children}) {
     }, []);
     
     return (
-        <AuthContext.Provider value={{ user, signIn, signOut }}>
+        <AuthContext.Provider value={{ user, signIn, signOut, register }}>
             {children}
         </AuthContext.Provider>
     );
