@@ -9,6 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import connection
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
 
@@ -97,3 +99,10 @@ def login_view(request):
         return Response({
             'error': 'Internal server error'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+def init_admin(request):
+    User = get_user_model()
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser("admin", "admin@example.com", "admin123")
+        return JsonResponse({"status": "admin created"})
+    return JsonResponse({"status": "admin already exists"})
