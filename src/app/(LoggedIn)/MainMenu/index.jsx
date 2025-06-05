@@ -1,5 +1,5 @@
-import React from "react";
-import { Animated, SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import React, { useRef, useEffect, useState } from "react";
+import { Animated, SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Dimensions, Vibration } from "react-native";
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { router } from 'expo-router';
@@ -59,6 +59,7 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 
 export default function MainMenu() {
   const { user } = useAuth();
+  const params = useLocalSearchParams();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
