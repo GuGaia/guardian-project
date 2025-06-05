@@ -3,22 +3,19 @@ import { Animated, SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { router } from 'expo-router';
-import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
-import { useRef, useEffect, useState } from 'react';
 import Header from "./Header";
 import { useLocation } from '@/hooks/useLocation';
 import { LocationStatusCard } from '@/components/LocationStatusCard';
-import { Vibration } from 'react-native';
 import { useAuth } from '@/hooks/Auth';
 import { homeService } from '@/services/homeService';
 import { NativeModules } from 'react-native';
+import { useSos } from '@/hooks/useSOS';
 
 const { width, height } = Dimensions.get('window');
 const BluetoothModule = NativeModules.BluetoothModule;
 const { Storage } = NativeModules;
-
 
 const handleSosPress = () => {
   router.push('/EmergencyMode');
@@ -63,12 +60,10 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 
 export default function MainMenu() {
   const { user } = useAuth();
-  const params = useLocalSearchParams();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { location, error } = useLocation(false);
-  const [conectado,setConectado] = useState(false)
 
   useEffect(() => {
     const fetchUserData = async () => {
