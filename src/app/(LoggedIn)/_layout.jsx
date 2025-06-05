@@ -1,7 +1,9 @@
-import { Stack } from 'expo-router';
+import { Tabs, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { BackHandler } from 'react-native';
 import { usePathname } from 'expo-router';
+import { Icon } from '@/components/Icon';
+import { theme } from '@/theme/theme';
 
 export default function ProtectedLayout() {
   const pathname = usePathname();
@@ -19,35 +21,62 @@ export default function ProtectedLayout() {
   }, [pathname]);
 
   return (
-    <Stack
+    <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarStyle: {
+          display: 'none', // Esconde a tab bar padrão pois estamos usando nossa Navbar customizada
+        },
       }}
     >
-      <Stack.Screen 
+      <Tabs.Screen 
         name="MainMenu/index"
+        options={{
+          href: '/MainMenu',
+        }}
       />
-      <Stack.Screen 
+      <Tabs.Screen 
         name="ContactList/index"
+        options={{
+          href: '/ContactList',
+        }}
       />
-      <Stack.Screen 
-        name="EmergencyMode/index"
-      />
-      <Stack.Screen 
+      <Tabs.Screen 
         name="Settings/index"
+        options={{
+          href: '/Settings',
+        }}
       />
-      <Stack.Screen 
+      <Tabs.Screen 
+        name="EmergencyMode/index"
+        options={{
+          href: null, // Desabilita a navegação por tab para esta tela
+        }}
+      />
+      <Tabs.Screen 
         name="Tutorials/index"
+        options={{
+          href: null,
+        }}
       />
-      <Stack.Screen
+      <Tabs.Screen
         name="HowThisWorks/index"
+        options={{
+          href: null,
+        }}
       />
-      <Stack.Screen
+      <Tabs.Screen
         name="Orientations/index"
+        options={{
+          href: null,
+        }}
       />
-      <Stack.Screen
+      <Tabs.Screen
         name="Profile/index"
+        options={{
+          href: null,
+        }}
       />
-    </Stack>
+    </Tabs>
   );
 }

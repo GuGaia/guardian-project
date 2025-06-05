@@ -22,16 +22,12 @@ export default function Page() {
   const handleLogin = async () => {
     try {
       await signIn({ loginForm });
-      router.replace('/(LoggedIn)/HowThisWorks');
+      router.replace('/(LoggedIn)/MainMenu');
       console.log('Login successful');
       //router.replace('/HowThisWorks');
     } catch (error) {
       console.error('Login failed:', error);
     }
-  }
-
-  const handleRegister = () => {
-    console.log('Register attempt with:', loginForm);
   }
 
   return (
@@ -98,7 +94,7 @@ export default function Page() {
             <View style={styles.registerButtonContainer}>
               <GrdOutlinedButton
                 label="Cadastrar"
-                onPress={() => console.log('Tentativa de cadastro com: ', loginForm)}
+                onPress={() => router.push('/CreateAccount')}
                 textStyle={styles.registerButtonText}
                 size="small"
               />

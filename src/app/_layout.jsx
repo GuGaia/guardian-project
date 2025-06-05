@@ -4,6 +4,8 @@ import { Stack, useSegments, router } from "expo-router";
 import { AppProvider } from "@/hooks";
 import { Platform } from "react-native";
 
+const unauthenticatedRoutes = ['Login', '', 'SignUp'];
+
 const StackLayout = () => {
     const segments = useSegments();
     const { user } = useAuth();
@@ -22,9 +24,9 @@ const StackLayout = () => {
         if (inAuthGroup && !user?.authenticated) {
             console.log("Redirecionando para login - usuário não autenticado");
             router.replace('/Login');
-        } else if (user?.authenticated && segments[0] === 'Login') {
+        } else if (user?.authenticated && (unauthenticatedRoutes.includes(segments[0]) || !segments[0])) {
             console.log("Redirecionando para menu principal - usuário autenticado");
-            router.replace('/(LoggedIn)/HowThisWorks');
+            router.replace('/(LoggedIn)/MainMenu');
         }
     }, [user, segments, isReady]);
     

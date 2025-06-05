@@ -22,6 +22,17 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'BLACKLIST_AFTER_ROTATION': False,
+}
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -32,7 +43,8 @@ SECRET_KEY = 'django-insecure-jx+)pag+2=*5nps2+8r7$^rphnf)0xnld(91pcb@k-_q6d@t0%
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*'
+    *config("ALLOWED_HOSTS", default="", cast=Csv()),
+    config("RENDER_EXTERNAL_HOSTNAME", default=""),  # hostname dinâmico da Render
 ]
 
 # Application definition
@@ -69,6 +81,17 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://192.168.0.103:8000',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'BLACKLIST_AFTER_ROTATION': False,
+}
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
@@ -173,5 +196,4 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'BLACKLIST_AFTER_ROTATION': False,
 }

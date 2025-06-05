@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View,TouchableOpacity, Text, StyleSheet, Dimensions, Alert, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Dimensions, Alert, ScrollView } from 'react-native';
 import { globalStyles } from '@/theme/globalStyles';
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
@@ -20,53 +20,44 @@ export default function Page() {
   const parsedContactData = params.contactData ? JSON.parse(params.contactData) : null;
   const mode = params.mode;
 
+  // Initialize states
   const [name, setName] = useState('');
   const [phone_number, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [relation, setRelation] = useState('');
-  const [selectedChannels, setSelectedChannels] = useState([]);
+  const [selectedChannels, setSelectedChannels] = useState([1]);
 
-  // Carrega os dados do contato apenas uma vez quando o componente monta
+  // Update states when params change
   useEffect(() => {
     if (mode === 'edit' && parsedContactData) {
-      console.log('Dados do contato para edição:', parsedContactData);
-      console.log('Canais do contato:', parsedContactData.channels);
-      
       setName(parsedContactData.name || '');
       setPhone(parsedContactData.phone_number || '');
       setEmail(parsedContactData.email || '');
       setRelation(parsedContactData.relationship || '');
-      
-      // Extrair os IDs dos objetos de canal
-      const channels = Array.isArray(parsedContactData.channels) 
-        ? parsedContactData.channels.map(channel => channel.id)
-        : [];
-      console.log('Canais formatados:', channels);
-      setSelectedChannels(channels);
+      setSelectedChannels(
+        parsedContactData.channels
+          ? parsedContactData.channels.map(channel => channel.id)
+          : [1]
+      );
     } else {
-      // Se não estiver no modo de edição, inicializa com SMS selecionado
+      // Reset states for create mode
+      setName('');
+      setPhone('');
+      setEmail('');
+      setRelation('');
       setSelectedChannels([1]);
     }
-  }, []); // Removida a dependência de mode e parsedContactData
+  }, [params.contactData, mode]);
 
   const handleChannelToggle = (channelId) => {
-    console.log('Toggle canal:', channelId);
-    console.log('Canais atuais:', selectedChannels);
     setSelectedChannels(prev => {
       if (prev.includes(channelId)) {
-        // Se já está selecionado, remove
         return prev.filter(id => id !== channelId);
       } else {
-        // Se não está selecionado, adiciona
         return [...prev, channelId];
       }
     });
   };
-
-  // Log quando selectedChannels mudar
-  useEffect(() => {
-    console.log('selectedChannels atualizado:', selectedChannels);
-  }, [selectedChannels]);
 
   const handleSave = async () => {
     try {
@@ -88,18 +79,16 @@ export default function Page() {
         channel_ids: selectedChannels
       };
 
-      console.log('Dados do contato a serem enviados:', contactData);
-      console.log('ID do usuário:', parsedUserData.id);
-
       if (mode === 'edit') {
         await contactService.updateContact(parsedUserData.id, parsedContactData.id, contactData);
       } else {
         await contactService.addContact(parsedUserData.id, contactData);
       }
+      
       Alert.alert('Sucesso', 'Contato salvo com sucesso!');
-      router.back({
+      router.replace({
+        pathname: '/ContactList',
         params: {
-          contactData: JSON.stringify(contactData),
           userData: JSON.stringify(parsedUserData),
           shouldRefresh: 'true'
         }
