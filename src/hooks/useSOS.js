@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Vibration, Alert } from 'react-native';
-import axios from 'axios';
 import { useLocation } from './useLocation';
+import api from '@/services/api';
 
 export function useSos() {
   const { location, error: locationError } = useLocation();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   const triggerSos = async () => {
     setLoading(true);
@@ -22,7 +22,7 @@ export function useSos() {
         return;
       }
 
-      const response = await axios.post('/api/communications/alert/send/', {
+      const response = await api.post('/communications/alert/send/', {
         latitude: location.latitude,
         longitude: location.longitude,
         address: location.address,

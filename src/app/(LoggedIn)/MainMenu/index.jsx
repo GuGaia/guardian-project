@@ -3,23 +3,16 @@ import { Animated, SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { router } from 'expo-router';
-import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
-import { useRef, useEffect, useState } from 'react';
 import Header from "./Header";
 import { useLocation } from '@/hooks/useLocation';
 import { LocationStatusCard } from '@/components/LocationStatusCard';
-import { Vibration } from 'react-native';
 import { useAuth } from '@/hooks/Auth';
 import { homeService } from '@/services/homeService';
+import { useSos } from '@/hooks/useSOS';
 
 const { width, height } = Dimensions.get('window');
-
-const handleSosPress = () => {
-  router.push('/EmergencyMode');
-  Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
-};
 
 const baseCard = {
   borderRadius: 12,
@@ -59,11 +52,17 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 
 export default function MainMenu() {
   const { user } = useAuth();
-  const params = useLocalSearchParams();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { location, error } = useLocation(false);
+  const { triggerSos } = useSos();
+
+  const handleSosPress = async () => {
+    await triggerSos();
+    router.push('/EmergencyMode');
+    Vibration.vibrate([0, 500, 200, 500, 200, 500], false);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
