@@ -183,7 +183,7 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
     private fun postHttp(latitude: Double?, longitude: Double?, token: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val url = URL("http://192.168.0.4:8000/api/alert/")
+                val url = URL("http://192.168.0.4:8000/api/communications/alert/send/")
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "POST"
                 connection.setRequestProperty("Content-Type", "application/json")
