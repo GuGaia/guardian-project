@@ -49,19 +49,22 @@ class CommunicationChannelModelTest(TestCase):
 
 class CommunicationAPITest(TestCase):
     def setUp(self):
+        self.client_instance = Client.objects.create(
+            name="Usuário Teste", email="teste@example.com", password="123"
+        )
         self.client_api = APIClient()
-        self.auth_header = {'HTTP_AUTHORIZATION': 'Bearer mock-token'}
+        self.client_api.force_authenticate(user=self.client_instance)
 
     @patch('communication.views.channel_views.validate_token')
     def test_create_channel_via_api(self, mock_validate_token):
-        mock_validate_token.return_value = {'sub': 1}
-        response = self.client_api.post('/api/communications/', {"name": "SMS"}, format='json', **self.auth_header)
+        mock_validate_token.return_value = {'sub': self.client_instance.id}
+        response = self.client_api.post('/api/communications/', {"name": "SMS"}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @patch('communication.views.channel_views.validate_token')
     def test_list_channels_via_api(self, mock_validate_token):
-        mock_validate_token.return_value = {'sub': 1}
-        response = self.client_api.get('/api/communications/', **self.auth_header)
+        mock_validate_token.return_value = {'sub': self.client_instance.id}
+        response = self.client_api.get('/api/communications/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 class SendAlertForClientTest(TestCase):
@@ -223,20 +226,23 @@ class SmsServiceTest(TestCase):
 
 class ChannelSendViewTest(TestCase):
     def setUp(self):
+        self.client_instance = Client.objects.create(
+            name="Usuário Teste", email="teste@example.com", password="123"
+        )
         self.client_api = APIClient()
-        self.auth_header = {'HTTP_AUTHORIZATION': 'Bearer mock-token'}
+        self.client_api.force_authenticate(user=self.client_instance)
         self.url = '/api/communications/alert/send/'
 
     @patch('communication.views.channel_send_views.validate_token')
     @patch('communication.views.channel_send_views.Client')
     @patch('communication.views.channel_send_views.send_alert_for_client')
     def test_send_alert_with_coordinates_success(self, mock_send_alert, mock_client_model, mock_validate_token):
-        mock_validate_token.return_value = {'sub': 1}
+        mock_validate_token.return_value = {'sub': self.client_instance.id}
         mock_client_model.objects.get.return_value = MagicMock()
         mock_send_alert.return_value = True
 
         payload = {"lat": -23.5, "lon": -46.6}
-        response = self.client_api.post(self.url, payload, format='json', **self.auth_header)
+        response = self.client_api.post(self.url, payload, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertIn("success", response.data['status'])
 
@@ -244,40 +250,41 @@ class ChannelSendViewTest(TestCase):
     @patch('communication.views.channel_send_views.Client')
     @patch('communication.views.channel_send_views.send_alert_for_client')
     def test_send_alert_without_coordinates_success(self, mock_send_alert, mock_client_model, mock_validate_token):
-        mock_validate_token.return_value = {'sub': 1}
+        mock_validate_token.return_value = {'sub': self.client_instance.id}
         mock_client_model.objects.get.return_value = MagicMock()
         mock_send_alert.return_value = True
 
-        response = self.client_api.post(self.url, {}, format='json', **self.auth_header)
+        response = self.client_api.post(self.url, {}, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertIn("success", response.data['status'])
 
     @patch('client.models.Client.objects.get')
     @patch('communication.views.channel_send_views.validate_token')
     def test_send_alert_client_not_found(self, mock_validate_token, mock_get):
-        mock_validate_token.return_value = {'sub': 1}
+        mock_validate_token.return_value = {'sub': self.client_instance.id}
         mock_get.side_effect = Client.DoesNotExist
 
-        response = self.client_api.post(self.url, {}, format='json', **self.auth_header)
+        response = self.client_api.post(self.url, {}, format='json')
 
         self.assertEqual(response.status_code, 404)
         self.assertIn('error', response.data)
 
     @patch('communication.views.channel_send_views.validate_token')
     def test_send_alert_unauthenticated(self, mock_validate_token):
+        self.client_api.logout()
         mock_validate_token.return_value = None
-        response = self.client_api.post(self.url, {}, format='json', **self.auth_header)
+        response = self.client_api.post(self.url, {}, format='json')
         self.assertEqual(response.status_code, 401)
 
     @patch('communication.views.channel_send_views.validate_token')
     @patch('communication.views.channel_send_views.Client')
     @patch('communication.views.channel_send_views.send_alert_for_client')
     def test_send_alert_failure(self, mock_send_alert, mock_client_model, mock_validate_token):
-        mock_validate_token.return_value = {'sub': 1}
+        mock_validate_token.return_value = {'sub': self.client_instance.id}
         mock_client_model.objects.get.return_value = MagicMock()
         mock_send_alert.return_value = False
 
-        response = self.client_api.post(self.url, {}, format='json', **self.auth_header)
+        response = self.client_api.post(self.url, {}, format='json')
         self.assertEqual(response.status_code, 500)
 
 class TestSendAlertForClientEdgeCases(TestCase):
