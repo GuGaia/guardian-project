@@ -59,7 +59,9 @@ export default function SettingsPage() {
           "Botão físico",
           renderBlueButton(
             "Parear e configurar",
-            () => {},
+            () => {
+              router.push('/BluetoothConnect')
+            },
             "bluetooth"
           )
         )}
