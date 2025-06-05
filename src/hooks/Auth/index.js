@@ -89,7 +89,7 @@ export function AuthProvider({children}) {
                     setUser({
                         authenticated: true,
                         user: clientResponse.data,
-                        token: response.data.token
+                        token: response.data.token,
                         shouldRedirectToHowItWorks: isFromRegistration
                     });
                 } catch (error) {
