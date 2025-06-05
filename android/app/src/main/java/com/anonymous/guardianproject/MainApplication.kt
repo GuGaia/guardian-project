@@ -3,6 +3,9 @@ package com.anonymous.guardianproject
 import android.app.Application
 import android.content.res.Configuration
 
+import com.anonymous.guardianproject.BluetoothPackage
+import com.anonymous.guardianproject.StoragePackage
+
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactNativeHost
@@ -25,6 +28,8 @@ class MainApplication : Application(), ReactApplication {
             val packages = PackageList(this).packages
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(new MyReactNativePackage());
+            packages.add(BluetoothPackage())
+            packages.add(StoragePackage())
             return packages
           }
 

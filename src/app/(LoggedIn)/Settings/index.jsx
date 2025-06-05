@@ -145,6 +145,16 @@ export default function SettingsPage() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollView}>
+        {renderSection(
+          "Botão físico",
+          renderBlueButton(
+            "Parear e configurar",
+            () => {
+              router.push('/BluetoothConnect')
+            },
+            "bluetooth"
+          )
+        )}
 
         {renderSection(
           "Resposta automática",
