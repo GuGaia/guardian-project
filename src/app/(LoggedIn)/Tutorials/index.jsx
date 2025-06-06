@@ -70,7 +70,7 @@ export default function Page() {
                 <CardButton
                     imageSource={require('@assets/images/EmergencyButton.png')}
                     text="Como o Guardiã funciona?"
-                    onPress={() => router.push('/Tutorials/HowItWorks')}
+                    onPress={() => router.push('/Tutorials/HowThisWorks')}
                     style={styles.GeneralButton}
                 />
                 <CardButton

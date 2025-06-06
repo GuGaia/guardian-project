@@ -1,10 +1,14 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import { NativeModules } from 'react-native';
+
+
+const { Storage } = NativeModules;
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.103:8000/api',
+  baseURL: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.4:8000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -26,6 +30,8 @@ api.interceptors.request.use(
         config.headers.Authorization = `${token}`;
         console.log('URL da requisição:', config.url);
         console.log('Headers da requisição:', config.headers);
+        await Storage.saveToken(token);
+
       } else {
         console.log('Nenhum token encontrado para a requisição:', config.url);
       }
