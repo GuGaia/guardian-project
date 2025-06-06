@@ -16,12 +16,12 @@ logger = logging.getLogger(__name__)
 def login_view(request):
     try:
         # Debug: verificar tabelas (remover em produção)
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-            tables = cursor.fetchall()
-            print("Tabelas disponíveis:")
-            for table in tables:
-                print(f"- {table[0]}")
+#        with connection.cursor() as cursor:
+#            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+#            tables = cursor.fetchall()
+#            print("Tabelas disponíveis:")
+#            for table in tables:
+#                print(f"- {table[0]}")
 
         email = request.data.get('email')
         password = request.data.get('password')
