@@ -9,8 +9,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import connection
-from django.http import JsonResponse
-from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
 
@@ -18,12 +16,12 @@ logger = logging.getLogger(__name__)
 def login_view(request):
     try:
         # Debug: verificar tabelas (remover em produção)
-        #with connection.cursor() as cursor:
-        #    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        #    tables = cursor.fetchall()
-        #    print("Tabelas disponíveis:")
-        #    for table in tables:
-        #        print(f"- {table[0]}")
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            tables = cursor.fetchall()
+            print("Tabelas disponíveis:")
+            for table in tables:
+                print(f"- {table[0]}")
 
         email = request.data.get('email')
         password = request.data.get('password')
@@ -50,7 +48,9 @@ def login_view(request):
 
         # Tratar diferentes tipos de dados da senha hash
         if isinstance(hashed_password, memoryview):
-            hashed_password = hashed_password.tobytes().decode()
+            hashed_password = bytes(hashed_password)
+        elif isinstance(hashed_password, str):
+            hashed_password = hashed_password.encode('utf-8')
 
         # Verificar senha
         if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
@@ -93,16 +93,7 @@ def login_view(request):
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
-        import traceback
-        print("Erro no login:", e)
-        traceback.print_exc()
+        logger.error(f"Erro no login: {str(e)}")
         return Response({
-            'error': str(e)
+            'error': 'Internal server error'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-#def init_admin(request):
-#    User = get_user_model()
-#    if not User.objects.filter(username="admin").exists():
-#       User.objects.create_superuser("admin", "admin@example.com", "admin123")
-#        return JsonResponse({"status": "admin created"})
-#    return JsonResponse({"status": "admin already exists"})
