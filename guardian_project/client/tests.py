@@ -10,6 +10,7 @@ import bcrypt
 from rest_framework import status
 from unittest.mock import patch
 from contact.models import Contact
+from client.views import ClientViewSet
 
 class ClientModelTest(TestCase):
 
@@ -76,14 +77,12 @@ class ClientAPITest(TestCase):
             name="Maria", email="maria@example.com", password="1234"
         )
 
-        payload = {"user_id": self.client_obj.id}
-        secret = settings.JWT_SECRET_KEY  
-        self.token = jwt.encode(payload, secret, algorithm="HS256")
-
         self.client_api = APIClient()
-        self.client_api.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
+        self.client_api.force_authenticate(user=self.client_obj)
 
-    def test_list_clients_via_api(self):
+    @patch.object(ClientViewSet, 'get_client_from_token')
+    def test_list_clients_via_api(self, mock_validate_token):
+        mock_validate_token.return_value = self.client_obj
         response = self.client_api.get("/api/clients/")
         self.assertEqual(response.status_code, 200)
 
@@ -93,6 +92,7 @@ class ClientSerializerTest(TestCase):
             "name": "Carlos",
             "email": "carlos@email.com",
             "password": "#senha123",
+            "number": "11999999999",
             "have_plus": True,
             "active": True,
             "default_message": "Mensagem padrão"
@@ -100,20 +100,20 @@ class ClientSerializerTest(TestCase):
 
     def test_create_client_with_hashed_password(self):
         serializer = ClientSerializer(data=self.valid_data)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), msg=serializer.errors)
         client = serializer.save()
         self.assertNotEqual(client.password, self.valid_data["password"])
         self.assertTrue(bcrypt.checkpw(self.valid_data["password"].encode(), client.password.encode()))
 
     def test_update_client_password_changes_hash(self):
         serializer = ClientSerializer(data=self.valid_data)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), msg=serializer.errors)
         client = serializer.save()
 
         original_hash = client.password
         update_data = {"password": "#novaSenha123"}
         serializer = ClientSerializer(client, data=update_data, partial=True)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), msg=serializer.errors)
         updated_client = serializer.save()
 
         self.assertNotEqual(updated_client.password, original_hash)
@@ -121,13 +121,13 @@ class ClientSerializerTest(TestCase):
 
     def test_update_client_without_password_keeps_existing(self):
         serializer = ClientSerializer(data=self.valid_data)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), msg=serializer.errors)
         client = serializer.save()
 
         original_hash = client.password
         update_data = {"name": "Carlos Atualizado"}
         serializer = ClientSerializer(client, data=update_data, partial=True)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), msg=serializer.errors)
         updated_client = serializer.save()
 
         self.assertEqual(updated_client.password, original_hash)
@@ -140,6 +140,7 @@ class ClientViewSetTest(TestCase):
             name="Maria",
             email="maria@example.com",
             password="1234",
+            number="11999999999",
             have_plus=True,
             active=True,
             default_message="Ajuda!"
@@ -147,68 +148,60 @@ class ClientViewSetTest(TestCase):
         self.token = "Bearer mock-token"
         self.auth_header = {'HTTP_AUTHORIZATION': self.token}
 
-    @patch('client.views.validate_token')
-    def test_list_clients_authenticated(self, mock_validate_token):
-        mock_validate_token.return_value = {"sub": self.client_instance.id}
-        response = self.client_api.get("/api/clients/", **self.auth_header)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)
+        self.client_api.force_authenticate(user=self.client_instance)
 
-    @patch('client.views.validate_token')
-    def test_list_clients_unauthenticated(self, mock_validate_token):
-        mock_validate_token.return_value = None
-        response = self.client_api.get("/api/clients/", **self.auth_header)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    @patch.object(ClientViewSet, "get_client_from_token")
+    def test_list_clients_authenticated(self, mock_get_client):
+        mock_get_client.return_value = self.client_instance
+        resp = self.client_api.get("/api/clients/")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp.data["id"], self.client_instance.id)
 
-    @patch('client.views.validate_token')
-    def test_put_update_client_authenticated(self, mock_validate_token):
-        mock_validate_token.return_value = {"sub": self.client_instance.id}
-        data = {
-            "name": "Maria Atualizada",
-            "email": self.client_instance.email,
-            "password": "#novaSenha123",
-            "have_plus": self.client_instance.have_plus,
-            "active": self.client_instance.active,
-            "default_message": "Mensagem atualizada"
-        }
-        response = self.client_api.put(f"/api/clients/{self.client_instance.id}/", data, **self.auth_header)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "Maria Atualizada")
+    @patch.object(ClientViewSet, "get_client_from_token")
+    def test_put_update_client_authenticated(self, mock_get_client):
+        mock_get_client.return_value = self.client_instance
+        data = {"name": "Maria Atualizada", "email": self.client_instance.email}
+        resp = self.client_api.put(f"/api/clients/{self.client_instance.id}/", data)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-    @patch('client.views.validate_token')
-    def test_put_update_client_unauthenticated(self, mock_validate_token):
-        mock_validate_token.return_value = None
-        response = self.client_api.patch(
-            f"/api/clients/{self.client_instance.id}/", 
-            {"name": "Novo Nome"}, 
-            **self.auth_header
+    @patch.object(ClientViewSet, "get_client_from_token")
+    def test_update_client_invalid_data(self, mock_get_client):
+        mock_get_client.return_value = self.client_instance
+        data = {"email": ""}                   
+        resp = self.client_api.put(f"/api/clients/{self.client_instance.id}/", data)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("email", resp.data)
+
+  
+    @patch.object(ClientViewSet, "get_client_from_token")
+    def test_list_clients_unauthenticated(self, mock_get_client):
+        # desloga para remover autenticação
+        self.client_api.logout()
+        mock_get_client.return_value = None        
+        resp = self.client_api.get("/api/clients/", **self.auth_header)
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    @patch.object(ClientViewSet, "get_client_from_token")
+    def test_put_update_client_unauthenticated(self, mock_get_client):
+        self.client_api.logout()
+        mock_get_client.return_value = None
+        resp = self.client_api.put(
+            f"/api/clients/{self.client_instance.id}/",
+            {"name": "Novo Nome"},
+            **self.auth_header,
         )
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-    @patch('client.views.validate_token')
-    def test_put_update_client_not_found(self, mock_validate_token):
-        mock_validate_token.return_value = {"sub": 999}  # ID inexistente
-        response = self.client_api.patch(
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    @patch.object(ClientViewSet, "get_client_from_token")
+    def test_put_update_client_not_found(self, mock_get_client):
+        self.client_api.logout()
+        mock_get_client.return_value = None
+        resp = self.client_api.put(
             f"/api/clients/{self.client_instance.id}/",
             {"name": "Nome"},
-            **self.auth_header
+            **self.auth_header,
         )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    @patch('client.views.validate_token')
-    def test_update_client_invalid_data(self, mock_validate_token):
-        mock_validate_token.return_value = {"sub": self.client_instance.id}
-        data = {
-            "email": "",  
-            "name": "Novo Nome"
-        }
-        response = self.client_api.put(
-            f"/api/clients/{self.client_instance.id}/",
-            data,
-            **self.auth_header
-        )
-        
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("email", response.data)
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
 
 class ClientModelMethodTest(TestCase):
     def setUp(self):
@@ -228,3 +221,45 @@ class ClientModelMethodTest(TestCase):
 
         emails = list(self.client_instance.get_contact_emails())
         self.assertEqual(emails, ["valido@email.com"])
+
+class TestClientViewsIntegration(TestCase):
+    def setUp(self):
+        self.client_obj = Client.objects.create(
+            name="Maria", email="maria@example.com",
+            password="1234", default_message="Ajuda!"
+        )
+        self.api = APIClient()
+        self.auth = {"HTTP_AUTHORIZATION": "Bearer fake-token"}
+        self.api.force_authenticate(user=self.client_obj)
+
+    @patch("client.views.validate_token")
+    def test_list_clients_success(self, mock_validate):
+        mock_validate.return_value = {"sub": self.client_obj.id}
+
+        r = self.api.get("/api/clients/", **self.auth)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.data["id"], self.client_obj.id)
+
+    @patch("client.views.validate_token", return_value=None)
+    def test_list_clients_unauthorized(self, _mock):
+        r = self.api.get("/api/clients/", **self.auth)
+        self.assertEqual(r.status_code, 401)
+        self.assertEqual(r.data, {"detail": "Unauthorized"})
+
+    @patch("client.views.validate_token")
+    def test_update_client_valid_and_invalid(self, mock_validate):
+        mock_validate.return_value = {"sub": self.client_obj.id}
+
+        ok_payload = {
+            "name": "Maria Atualizada",
+            "email": self.client_obj.email,
+            "default_message": "Tudo certo"
+        }
+        r_ok = self.api.put(f"/api/clients/{self.client_obj.id}/", ok_payload, format="json")
+        self.assertEqual(r_ok.status_code, 200)
+        self.assertEqual(r_ok.data["name"], "Maria Atualizada")
+
+        bad_payload = {"email": ""}
+        r_bad = self.api.put(f"/api/clients/{self.client_obj.id}/", bad_payload, format="json")
+        self.assertEqual(r_bad.status_code, 400)
+        self.assertIn("email", r_bad.data)

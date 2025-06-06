@@ -120,6 +120,7 @@ class ContactAPITest(TestCase):
     def setUp(self):
         self.client_api = APIClient()
         self.client_obj = Client.objects.create(name="Maria", email="maria@example.com", password="1234")
+        self.client_api.force_authenticate(user=self.client_obj)
         self.channel = CommunicationChannel.objects.create(name="email")
         self.auth_header = {'HTTP_AUTHORIZATION': 'Bearer mock-token'}
 
@@ -202,6 +203,7 @@ class ContactViewSetTest(TestCase):
         self.api_client = APIClient()
         self.client_db = Client.objects.create(name="Teste", email="teste@email.com", password="1234")
         self.other_client = Client.objects.create(name="Outro", email="outro@email.com", password="1234")
+        self.api_client.force_authenticate(user=self.client_db)
         self.auth_header = {'HTTP_AUTHORIZATION': 'Bearer mock-token'}
 
     @patch('contact.views.validate_token')
@@ -223,4 +225,4 @@ class ContactViewSetTest(TestCase):
             **self.auth_header
         )
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'detail': 'Unauthorized'})    
+        self.assertEqual(response.json(), {'detail': 'Unauthorized'})      

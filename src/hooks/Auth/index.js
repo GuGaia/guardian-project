@@ -9,11 +9,12 @@ export function AuthProvider({children}) {
     const [user, setUser] = useState({
         authenticated: false,
         user: null,
-        token: null
+        token: null,
+        shouldRedirectToHowItWorks: false
     });
     
     const [loading, setLoading] = useState(true);
-    
+
     const saveToken = async (token, userId) => {
         try {
             console.log('Salvando token e userId:', { token, userId });
@@ -64,7 +65,7 @@ export function AuthProvider({children}) {
         }
     };
 
-    const signIn = async ({loginForm}) => {
+    const signIn = async ({loginForm, isFromRegistration = false}) => {
         try {
             console.log('Tentativa de login:', loginForm);
             const response = await api.post('/login/', {
@@ -77,10 +78,10 @@ export function AuthProvider({children}) {
                 // Extrair o ID do usuário do token JWT
                 const tokenPayload = JSON.parse(atob(response.data.token.split('.')[1]));
                 const userId = tokenPayload.user_id;
-                
+
                 console.log('ID do usuário extraído do token:', userId);
                 await saveToken(response.data.token, userId);
-                
+
                 // Buscar os dados do cliente específico usando o ID extraído do token
                 try {
                     const clientResponse = await api.get(`/clients/${userId}/`);
@@ -88,12 +89,13 @@ export function AuthProvider({children}) {
                     setUser({
                         authenticated: true,
                         user: clientResponse.data,
-                        token: response.data.token
+                        token: response.data.token,
+                        shouldRedirectToHowItWorks: isFromRegistration
                     });
                 } catch (error) {
                     console.error('Error fetching client data:', error);
                 }
-                
+
                 return response.data;
             } else {
                 throw new Error('Token não encontrado na resposta');
@@ -115,12 +117,43 @@ export function AuthProvider({children}) {
             setUser({
                 authenticated: false,
                 user: null,
-                token: null
+                token: null,
+                shouldRedirectToHowItWorks: false
             });
             return true;
         } catch (error) {
             console.error('Error during sign out:', error);
             throw error;
+        }
+    }
+
+    const register = async ({name, email, password, number}) => {
+        try {
+            const response = await api.post('/clients/', {
+                name,
+                email,
+                password,
+                number
+            });
+            if (response.data) {
+
+                // After successful registration, call signIn with the same credentials
+                return await signIn({
+                    loginForm: {
+                        email,
+                        password
+                    },
+                    isFromRegistration: true
+                });
+            } else {
+                throw new Error('Erro ao realizar cadastro');
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            if (error.response) {
+                throw new Error(error.response.data.detail || 'Erro ao realizar cadastro');
+            }
+            throw new Error('Erro ao conectar com o servidor');
         }
     }
 
@@ -133,16 +166,17 @@ export function AuthProvider({children}) {
                     console.log('Token encontrado, buscando dados do usuário...');
                     // Configurar o token no header do axios
                     api.defaults.headers.common['Authorization'] = `${token}`;
-                    
+
                     // Buscar os dados do cliente específico usando o ID salvo
                     const clientResponse = await api.get(`/clients/${userId}/`);
-                    
+
                     if (clientResponse.data) {
                         console.log('Usuário autenticado com sucesso:', clientResponse.data);
                         setUser({
                             authenticated: true,
                             token: token,
-                            user: clientResponse.data
+                            user: clientResponse.data,
+                            shouldRedirectToHowItWorks: false
                         });
                     } else {
                         throw new Error('Dados do usuário não encontrados');
@@ -165,9 +199,9 @@ export function AuthProvider({children}) {
         console.log('Carregando estado inicial...');
         return null;
     }
-    
+
     return (
-        <AuthContext.Provider value={{ user, signIn, signOut }}>
+        <AuthContext.Provider value={{ user, signIn, signOut, register }}>
             {children}
         </AuthContext.Provider>
     );

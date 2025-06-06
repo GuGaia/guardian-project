@@ -47,12 +47,6 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
   }
 
 
-
-
-
-
-
-
 export function LocationStatusCard() {
   const { location, error } = useLocation();
 
