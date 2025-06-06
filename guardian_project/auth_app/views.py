@@ -36,6 +36,7 @@ def login_view(request):
 
         # Correção principal: usar %s para placeholders no Django
         with connection.cursor() as cursor:
+            print("[DEBUG] DB in use:", connection.settings_dict["NAME"])
             cursor.execute(
                 "SELECT id, name, email, password, default_message, active, have_plus FROM clients WHERE email = %s", 
                 [email]
