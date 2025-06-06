@@ -21,6 +21,7 @@ import { updateAutoMessage } from '@/services/settingsService';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get("window");
+const router = useRouter();
 
 const AutoMessageModal = ({ visible, onClose, currentMessage, onUpdate }) => {
   const [newMessage, setNewMessage] = useState('');
