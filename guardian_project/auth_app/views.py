@@ -50,9 +50,7 @@ def login_view(request):
 
         # Tratar diferentes tipos de dados da senha hash
         if isinstance(hashed_password, memoryview):
-            hashed_password = bytes(hashed_password)
-        elif isinstance(hashed_password, str):
-            hashed_password = hashed_password.encode('utf-8')
+            hashed_password = hashed_password.tobytes().decode()
 
         # Verificar senha
         if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
