@@ -43,6 +43,7 @@ SECRET_KEY = 'django-insecure-jx+)pag+2=*5nps2+8r7$^rphnf)0xnld(91pcb@k-_q6d@t0%
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    #'*',
     *config("ALLOWED_HOSTS", default="", cast=Csv()),
     config("RENDER_EXTERNAL_HOSTNAME", default=""),  # hostname dinâmico da Render
 ]

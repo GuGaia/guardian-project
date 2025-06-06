@@ -64,6 +64,7 @@ export default function MainMenu() {
   const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { location, error } = useLocation(false);
+  const [conectado, setConectado] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
