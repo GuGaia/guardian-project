@@ -23,7 +23,7 @@ def login_view(request):
 #            for table in tables:
 #                print(f"- {table[0]}")
 
-        email = request.data.get('email')
+        email = request.data.get('email', '').strip().lower()
         password = request.data.get('password')
 
         print(f"[DEBUG] Email recebido: {email}")
