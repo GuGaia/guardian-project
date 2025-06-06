@@ -26,6 +26,9 @@ def login_view(request):
         email = request.data.get('email')
         password = request.data.get('password')
 
+        print(f"[DEBUG] Email recebido: {email}")
+        print(f"[DEBUG] Tentando buscar no banco...")
+
         if not email or not password:
             return Response({
                 'detail': 'Both email and password are required'
@@ -40,28 +43,35 @@ def login_view(request):
             user = cursor.fetchone()
 
         if not user:
+            print("[DEBUG] Nenhum usuário encontrado com esse email.")
             return Response({
                 'detail': 'Invalid credentials'
             }, status=status.HTTP_401_UNAUTHORIZED)
 
+        print("[DEBUG] Usuário encontrado!")
         user_id, name, email, hashed_password, default_message, active, have_plus = user
 
+        print(f"[DEBUG] Hash armazenado: {hashed_password}")
+        print(f"[DEBUG] Verificando senha...")
+        
         # Tratar diferentes tipos de dados da senha hash
-        if isinstance(hashed_password, memoryview):
-            hashed_password = bytes(hashed_password)
-        elif isinstance(hashed_password, str):
+        if isinstance(hashed_password, str):
             hashed_password = hashed_password.encode('utf-8')
 
         # Verificar senha
         if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+            print("[DEBUG] Senha inválida.")
             return Response({
                 'detail': 'Invalid credentials'
             }, status=status.HTTP_401_UNAUTHORIZED)
         
         if not active:
+            print("[DEBUG] Usuário inativo.")
             return Response({
                 'detail': 'Usuário inativo'
             }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        print("[DEBUG] Login bem-sucedido, gerando token...")
 
         # Gerar JWT
         now = datetime.utcnow()
