@@ -8,7 +8,7 @@ const { Storage } = NativeModules;
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL:  'http://192.168.0.3:8000/api',//process.env.EXPO_PUBLIC_API_URL ||,
+  baseURL:  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.3:8000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
