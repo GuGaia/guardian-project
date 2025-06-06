@@ -9,9 +9,9 @@ from communication.services.geocode_service import reverse_geocode
 from communication.services.email_service import service_send_mail
 from communication.services.sms_service import service_send_sms
 from decouple import config
-from communication.views.channel_send_views import ChannelSendView
 from client.models import Client
 from twilio.base.exceptions import TwilioRestException
+
 
 class CommunicationChannelModelTest(TestCase):
 
@@ -369,3 +369,15 @@ class CommunicationViewSetAuthTest(TestCase):
         response = self.client_api.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.json(), {'detail': 'Unauthorized'})        
+
+class TestReverseGeocodeExtra(TestCase):
+
+    @patch("communication.services.geocode_service.requests.get")
+    def test_reverse_geocode_non_200_status(self, mock_get):
+        mock_get.return_value = MagicMock(status_code=404)
+        self.assertIsNone(reverse_geocode(-23.5, -46.6))
+
+    @patch("communication.services.geocode_service.requests.get")
+    def test_reverse_geocode_exception(self, mock_get):
+        mock_get.side_effect = Exception("timeout")
+        self.assertIsNone(reverse_geocode(-23.5, -46.6))
