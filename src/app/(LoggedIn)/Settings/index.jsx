@@ -21,6 +21,7 @@ import { updateAutoMessage } from '@/services/settingsService';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get("window");
+const router = useRouter();
 
 const AutoMessageModal = ({ visible, onClose, currentMessage, onUpdate }) => {
   const [newMessage, setNewMessage] = useState('');
@@ -145,6 +146,16 @@ export default function SettingsPage() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollView}>
+        {renderSection(
+          "Botão físico",
+          renderBlueButton(
+            "Parear e configurar",
+            () => {
+              router.push('/BluetoothConnect')
+            },
+            "bluetooth"
+          )
+        )}
 
         {renderSection(
           "Resposta automática",

@@ -3,18 +3,19 @@ import { Animated, SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet
 import { theme } from '@/theme/theme';
 import { Icon } from '@/components/Icon';
 import { router } from 'expo-router';
-import { Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Navbar } from '@/components/Navbar';
-import { useRef, useEffect, useState } from 'react';
 import Header from "./Header";
 import { useLocation } from '@/hooks/useLocation';
 import { LocationStatusCard } from '@/components/LocationStatusCard';
-import { Vibration } from 'react-native';
 import { useAuth } from '@/hooks/Auth';
 import { homeService } from '@/services/homeService';
+import { NativeModules } from 'react-native';
+import { useSos } from '@/hooks/useSOS';
 
 const { width, height } = Dimensions.get('window');
+const BluetoothModule = NativeModules.BluetoothModule;
+const { Storage } = NativeModules;
 
 const handleSosPress = () => {
   router.push('/EmergencyMode');
@@ -59,11 +60,11 @@ function CardButton({ onPress, icon, text, style, imageSource }) {
 
 export default function MainMenu() {
   const { user } = useAuth();
-  const params = useLocalSearchParams();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { location, error } = useLocation(false);
+  const [conectado, setConectado] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -99,7 +100,21 @@ export default function MainMenu() {
         }),
       ])
     ).start();
-  }, []);
+
+    const checkDevice = async () => {
+          try {
+            const mac = await Storage.getMac();
+            const isConnected = await BluetoothModule.isDeviceConnected(mac);
+            console.log(isConnected)
+            setConectado(isConnected);
+          } catch (error) {
+            console.error('Erro ao verificar conexão Bluetooth:', error);
+            setConectado(false);
+          }
+        };
+    
+        checkDevice();
+  });
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -176,14 +191,28 @@ export default function MainMenu() {
 
           <View style={styles.statusRow}>
             <View style={styles.statusCard}>
-              <Text style={styles.statusTitle}>Status do botão</Text>
-              <Text style={styles.statusValue}>ativo</Text>
-              <Animated.View
-                style={[
-                styles.statusIndicator,
-                { transform: [{ scale: pulseAnim }] },
-                ]}
-                />
+
+              {conectado ? (
+                <>
+                  <Text style={styles.statusValue}>Ativo</Text>
+                    <Animated.View
+                        style={[
+                                styles.statusIndicator,
+                                { transform: [{ scale: pulseAnim }] },
+                              ]}
+                                />
+                    </>
+              ) : (
+                <>
+                  <Text style={styles.statusErrorTitle}>Desativado</Text>
+                    <Animated.View
+                        style={[
+                                styles.statusIndicatorError,
+                                { transform: [{ scale: pulseAnim }] },
+                                ]}
+                                />
+                </>
+              )}
             
             </View>
       
@@ -276,6 +305,48 @@ innerInnerCircle: {
     marginHorizontal: 20,
     paddingBottom: 10,
   },
+
+  statusIndicator: {
+  position: 'absolute',
+  bottom: 8,
+  right: 8,
+  width: 14,
+  height: 14,
+  borderRadius: 7,
+  backgroundColor: '#00cc44',
+  shadowColor: '#00cc44',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.8,
+  shadowRadius: 4,
+  elevation: 6,
+},
+  statusIndicatorError: {
+  position: 'absolute',
+  bottom: 8,
+  right: 8,
+  width: 14,
+  height: 14,
+  borderRadius: 7,
+  backgroundColor: '#FF6B6B',
+  shadowColor: '#FF6B6B',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.8,
+  shadowRadius: 4,
+  elevation: 6,
+},
+
+  statusTitle: {
+    color: theme.colors.grdGray,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  statusErrorTitle: {
+    color: theme.colors.grdRed,
+    fontSize: 16,
+    marginTop: 8,
+    fontWeight: 'bold',
+  },
+
 
   statusCard: {
     backgroundColor: 'white',
