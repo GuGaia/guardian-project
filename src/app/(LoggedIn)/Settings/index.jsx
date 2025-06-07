@@ -19,6 +19,7 @@ import { Navbar } from "@/components/Navbar";
 import { useAuth } from '@/hooks/Auth';
 import { updateAutoMessage } from '@/services/settingsService';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const { width, height } = Dimensions.get("window");
 

@@ -31,7 +31,8 @@ def send_alert_for_client(client, lat: float = None, lon: float = None, channel_
 
             print(f"full msg {full_msg}")
             if channel_name == "sms":
-                success = service_send_sms(contact.phone_number, full_msg)
+                full_message_sms =  base_msg + f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+                success = service_send_sms(contact.phone_number, full_message_sms)
                 if not success:
                     print(f"Falha ao enviar SMS para {contact.phone_number}")
                     return False

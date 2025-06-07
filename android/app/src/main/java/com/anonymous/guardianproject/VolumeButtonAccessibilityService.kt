@@ -140,11 +140,12 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
                     val latitude = location.latitude
                     val longitude = location.longitude
                     val token = prefs.getString("token", null) ?: ""
+                    val client = prefs.getInt("client", 0) ?: 0
                     Log.d("VolumeService", "Localização: $latitude, $longitude")
-                    postHttp(latitude, longitude, token)
+                    postHttp(latitude, longitude, token, client)
                 } else {
                     Log.e("VolumeService", "Localização não encontrada")
-                    postHttp(null, null,null)
+                    postHttp(null, null,null,null)
                 }
             }
     }
@@ -180,18 +181,19 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
     // }
 
 
-    private fun postHttp(latitude: Double?, longitude: Double?, token: String?) {
+private fun postHttp(latitude: Double?, longitude: Double?, token: String?, client: Int?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val url = URL("http://192.168.0.4:8000/api/communications/alert/send/")
+                val url = URL("http://192.168.202.163:8000/api/communications/alert/send/")
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "POST"
                 connection.setRequestProperty("Content-Type", "application/json")
-                connection.setRequestProperty("Authorization", "Bearer $token")
+                connection.setRequestProperty("Authorization", "$token")
                 connection.doOutput = true
 
                 val body = """
                     {
+                        "client_id": ${client ?: "null"},
                         "latitude": ${latitude ?: "null"},
                         "longitude": ${longitude ?: "null"}
                     }

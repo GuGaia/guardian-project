@@ -8,15 +8,21 @@ from communication.services.geocode_service import get_current_location
 
 class ChannelSendView(APIView):
     def post(self, request, *args, **kwargs):
+        
         auth_header = request.headers.get('Authorization', '')
         token = auth_header.replace('Bearer ', '')
-        user_data = validate_token(token)
+        print(token)
+        # user_data = validate_token(token)
 
-        if not user_data:
-            return Response({'detail': 'Unauthorized'}, status=401)
+        # if not user_data:
+        #     return Response({'detail': 'Unauthorized'}, status=401)
 
         try:
-            client = Client.objects.get(id=user_data['sub'])
+            client_id = request.data.get("client_id")
+            print(client_id)
+            client = Client.objects.get(id=client_id)
+            
+            print(client)
         except Client.DoesNotExist:
             return Response(
                 {"error": "Cliente não encontrado"},

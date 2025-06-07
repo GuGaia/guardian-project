@@ -64,12 +64,14 @@ export default function MainMenu() {
   const [isLoading, setIsLoading] = useState(true);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const { location, error } = useLocation(false);
+  const [conectado, setConectado] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (user?.authenticated && user?.user?.id) {
         try {
           const data = await homeService.getUserData(user.user.id);
+          await Storage.saveClient(user.user.id)
           setUserData(data);
           setIsLoading(false);
         } catch (error) {

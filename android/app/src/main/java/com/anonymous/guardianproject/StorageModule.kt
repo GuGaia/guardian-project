@@ -25,6 +25,17 @@ class StorageModule(reactContext: ReactApplicationContext) :
         promise.resolve(mac)
     }
     @ReactMethod
+    fun saveClient(client: Int, promise: Promise) {
+        prefs.edit { putInt("client", client) }
+        promise.resolve(true)
+    }
+
+    @ReactMethod
+    fun getClient(promise: Promise) {
+        val client = prefs.getInt("client", 0)
+        promise.resolve(client)
+    }
+    @ReactMethod
     fun saveToken(token: String, promise: Promise) {
         prefs.edit { putString("token", token) }
         promise.resolve(true)
